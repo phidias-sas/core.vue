@@ -1,4 +1,4 @@
-# my-vue-project
+# core.vue
 
 > Phidias Core Application for Vue
 
