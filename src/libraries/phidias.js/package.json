@@ -1,0 +1,79 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "phidias.js@1.0.1",
+        "scope": null,
+        "escapedName": "phidias.js",
+        "name": "phidias.js",
+        "rawSpec": "1.0.1",
+        "spec": "1.0.1",
+        "type": "version"
+      },
+      "/home/santiago/Dropbox/dev/repositories/my-vue-project"
+    ]
+  ],
+  "_from": "phidias.js@1.0.1",
+  "_id": "phidias.js@1.0.1",
+  "_inCache": true,
+  "_location": "/phidias.js",
+  "_nodeVersion": "7.2.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/phidias.js-1.0.1.tgz_1480618045163_0.9396604495123029"
+  },
+  "_npmUser": {
+    "name": "phidias",
+    "email": "santiago.cortes@phidias.com.co"
+  },
+  "_npmVersion": "4.0.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "phidias.js@1.0.1",
+    "scope": null,
+    "escapedName": "phidias.js",
+    "name": "phidias.js",
+    "rawSpec": "1.0.1",
+    "spec": "1.0.1",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/phidias.js/-/phidias.js-1.0.1.tgz",
+  "_shasum": "71f3559dd26bd0091c610884fe95a0c3aab7d524",
+  "_shrinkwrap": null,
+  "_spec": "phidias.js@1.0.1",
+  "_where": "/home/santiago/Dropbox/dev/repositories/my-vue-project",
+  "author": {
+    "name": "Santiago Cortes",
+    "email": "santiago.cortes@phidias.com.co"
+  },
+  "dependencies": {
+    "dexie": "^1.4.2",
+    "whatwg-fetch": "^1.0.0"
+  },
+  "description": "JavaScript client libraries to interact with phidias APIs",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "71f3559dd26bd0091c610884fe95a0c3aab7d524",
+    "tarball": "https://registry.npmjs.org/phidias.js/-/phidias.js-1.0.1.tgz"
+  },
+  "gitHead": "52339b1ce3f11ea5d44d881b7c0060a9b3b19635",
+  "license": "MIT",
+  "main": "lib/main.js",
+  "maintainers": [
+    {
+      "name": "phidias",
+      "email": "santiago.cortes@phidias.com.co"
+    }
+  ],
+  "name": "phidias.js",
+  "optionalDependencies": {},
+  "private": false,
+  "readme": "ERROR: No README data found!",
+  "scripts": {},
+  "version": "1.0.1"
+}
