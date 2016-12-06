@@ -60,6 +60,7 @@ import People from './states/People.vue'
 import Person from './states/Person.vue'
 
 import Santiago from './states/Santiago.vue'
+import Sanchez from './states/Sanchez.vue'
 
 Vue.use(VueRouter);
 
@@ -68,6 +69,7 @@ const router = new VueRouter({
 		{ path: '/', redirect: '/dashboard' },
 
 		{ path: '/santiago', component: Santiago },
+		{ path: '/sanchez', component: Sanchez },
 
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
