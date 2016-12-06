@@ -59,11 +59,15 @@ import Root from './states/Root.vue'
 import People from './states/People.vue'
 import Person from './states/Person.vue'
 
+import Santiago from './states/Santiago.vue'
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
 	routes: [
 		{ path: '/', redirect: '/dashboard' },
+
+		{ path: '/santiago', component: Santiago },
 
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
