@@ -26,6 +26,8 @@ import PhiPersonInscriptions from './components/Phi/Person/Inscriptions.vue';
 import PhiTypePicker from './components/Phi/Type/Picker.vue';
 import PhiRolePicker from './components/Phi/Role/Picker.vue';
 
+import PhiFullCalendar from './components/Phi/FullCalendar.vue';
+
 Vue.component("quill", Quill);
 Vue.component("dropzone", Dropzone);
 Vue.component("phi-drawer", PhiDrawer);
@@ -36,6 +38,8 @@ Vue.component("phi-person-picker", PhiPersonPicker);
 Vue.component("phi-person-inscriptions", PhiPersonInscriptions);
 Vue.component("phi-type-picker", PhiTypePicker);
 Vue.component("phi-role-picker", PhiRolePicker);
+
+Vue.component("phi-full-calendar", PhiFullCalendar);
 
 /* Set up routes */
 import Code from './states/Code.vue'
@@ -61,6 +65,7 @@ import Person from './states/Person.vue'
 
 import Santiago from './states/Santiago.vue'
 import Sanchez from './states/Sanchez.vue'
+import Leo from './states/Leo.vue'
 
 Vue.use(VueRouter);
 
@@ -70,6 +75,7 @@ const router = new VueRouter({
 
 		{ path: '/santiago', component: Santiago },
 		{ path: '/sanchez', component: Sanchez },
+		{ path: '/leo', component: Leo },
 
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
