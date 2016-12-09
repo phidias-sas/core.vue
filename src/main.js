@@ -78,7 +78,7 @@ const router = new VueRouter({
 		{ path: '/santiago', component: Santiago },
 		{ path: '/sanchez', component: Sanchez },
 		{ path: '/leo', component: Leo },
-		{ path: '/sebas', component: Sebas, name: 'sebas'},
+		{ path: '/sebas', component: Sebas},
 
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
