@@ -72,6 +72,7 @@ export default {
 	props: ["person"],
 
 	data () {
+		let that = this;
 		return {
 			calendarConfig: {
 				lang: 'es',
@@ -97,7 +98,7 @@ export default {
 				},
 
 				eventClick: function(thisEvent) {
-					alert("Post thread id: "+thisEvent.post.thread);
+					that.$router.push({ name: 'read', params: { threadId: thisEvent.post.thread }});
 				}
 			}
 		}
@@ -122,7 +123,7 @@ export default {
 		backButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('prev'));
 		forwardButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('next'));
 		todayButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('today'));
-		monthButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('changeView', 'month'));
+		monthButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('changeView', 'listMonth'));
 		weekButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('changeView', 'agendaWeek'));
 		dayButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('changeView', 'agendaDay'));
 
