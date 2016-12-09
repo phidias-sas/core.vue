@@ -41,6 +41,8 @@
 				<hr>-->
 
 				<div @click="logout()">Cerrar sesión</div>
+				
+				<router-link :to="{name:'sebas'}">Configuracion (Sebas)</router-link>
 
 				<hr>
 				<div @click="clearCache()">[borrar cache]</div>
