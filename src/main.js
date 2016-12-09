@@ -74,7 +74,6 @@ const router = new VueRouter({
 		{ path: '/', redirect: '/dashboard' },
 
 		{ path: '/santiago', component: Santiago },
-		{ path: '/sanchez', component: Sanchez },
 		{ path: '/leo', component: Leo },
 
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
@@ -99,6 +98,7 @@ const router = new VueRouter({
 					]
 				},
 
+				{ path: '/sanchez', component: Sanchez  },
 				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' }
 
 			]

@@ -43,6 +43,7 @@
 				<div @click="logout()">Cerrar sesión</div>
 
 				<hr>
+				<router-link to="/sanchez"><i class="fa fa-cog" aria-hidden="true"></i> Opciones (Sanchez)</router-link>
 				<div @click="clearCache()">[borrar cache]</div>
 			</div>
 		</ons-splitter-side>
