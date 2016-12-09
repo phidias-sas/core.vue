@@ -128,16 +128,21 @@ export default {
 		dayButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('changeView', 'agendaDay'));
 
 		filtersButton.addEventListener("click", () => this.$el.querySelector("ons-splitter-side[data-pannel='calendar-filters']").open());
-
-		let title = this.$el.querySelector("div.fc-toolbar.fc-header-toolbar > div.fc-center > h2");
-		title.style.fontSize = "20px";
 	}
 }
 
 </script>
 
-<style scoped>
+<style>
 	@import url('../../../node_modules/fullcalendar/dist/fullcalendar.min.css');
+
+	div.fc-toolbar.fc-header-toolbar > div.fc-center > h2{
+		font-size: 20px;
+	}
+
+	div.fc-toolbar.fc-header-toolbar{
+		margin-bottom: 0.5em;
+	}
 
 	.calendar-container{
 		margin-top: 7px;
