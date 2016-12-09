@@ -12,7 +12,8 @@ export default {
 
 	data () {
 		return {
-			app
+			app,
+
 		}
 	}
 }
