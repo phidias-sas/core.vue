@@ -41,7 +41,6 @@
 				<label class="phi-menu-label">pruebas</label>
 				<router-link to="/people">Personas</router-link>
 				<router-link to="/root">Grupos</router-link>
-				<hr>
 -->
 				<router-link to="/settings">Preferencias</router-link>
 				<hr>
