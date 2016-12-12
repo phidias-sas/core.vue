@@ -42,9 +42,9 @@
 
 				<div @click="logout()">Cerrar sesión</div>
 				
-				<router-link to="sebas">Configuracion (Sebas)</router-link>
 
 				<hr>
+				<router-link to="sebas">Configuracion (Sebas)</router-link>
 				<router-link to="/sanchez"><i class="fa fa-cog" aria-hidden="true"></i> Opciones (Sanchez)</router-link>
 				<div @click="clearCache()">[borrar cache]</div>
 			</div>
