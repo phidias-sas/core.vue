@@ -19,6 +19,10 @@
 						<p >  
 							Desea  borrar  el caché?
 							<ons-button  @click="clearCache()"> <i class="fa fa-trash-o" aria-hidden="true"></i> Borrar</ons-button>
+						</p><br><br>
+						<p >  
+							Registrar notificaciones
+							<ons-button  @click="registerPush()"> <i class="fa fa-cog" aria-hidden="true"></i> Registrar</ons-button>
 						</p>
 					</div>
 				</div>
@@ -30,14 +34,18 @@
 import app from '../store/app.js'
 
 export default {
-	data () {
+	data() {
 		return {
 			app
 		}
 	},
 	methods: {
-		clearCache () {
+		clearCache() {
 			this.app.api.cache.empty().then(() => { alert("Cache borrado") });
+		},
+
+		registerPush() {
+			return app.registerPushNotifications();
 		}
 	},
 

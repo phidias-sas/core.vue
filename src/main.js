@@ -42,32 +42,37 @@ Vue.component("phi-role-picker", PhiRolePicker);
 Vue.component("phi-full-calendar", PhiFullCalendar);
 
 /* Set up routes */
-import Code from './states/Code.vue'
-import Login from './states/Login.vue'
+import Index from './states/Index.vue';
 
-import Deck from './states/Deck.vue'
-import Dashboard from './states/Dashboard.vue'
-import Folder from './states/Thread/Folder.vue'
-import Read from './states/Thread/Read.vue'
+import Code from './states/Code.vue';
+import Login from './states/Login.vue';
 
-import NodeContainer from './states/Node/Container.vue'
-import NodeDashboard from './states/Node/Dashboard.vue'
-import NodePosts from './states/Node/Posts.vue'
-import NodeCompose from './states/Node/Compose.vue'
+import Deck from './states/Deck.vue';
+import Dashboard from './states/Dashboard.vue';
+import Folder from './states/Thread/Folder.vue';
+import Read from './states/Thread/Read.vue';
 
-import NodePeople from './states/Node/People.vue'
-import NodeNodes from './states/Node/Nodes.vue'
-import NodeImport from './states/Node/Import.vue'
+import Calendar from './states/Calendar.vue';
+import Settings from './states/Settings.vue';
 
-import Root from './states/Root.vue'
-import People from './states/People.vue'
-import Person from './states/Person.vue'
+import NodeContainer from './states/Node/Container.vue';
+import NodeDashboard from './states/Node/Dashboard.vue';
+import NodePosts from './states/Node/Posts.vue';
+import NodeCompose from './states/Node/Compose.vue';
+
+import NodePeople from './states/Node/People.vue';
+import NodeNodes from './states/Node/Nodes.vue';
+import NodeImport from './states/Node/Import.vue';
+
+import Root from './states/Root.vue';
+import People from './states/People.vue';
+import Person from './states/Person.vue';
 
 // pruebas
-import Santiago from './states/Santiago.vue'
-import Sanchez from './states/Sanchez.vue'
-import Leo from './states/Leo.vue'
-import Sebas from './states/Sebas.vue'
+import Santiago from './states/Santiago.vue';
+import Sanchez from './states/Sanchez.vue';
+import Leo from './states/Leo.vue';
+import Sebas from './states/Sebas.vue';
 
 Vue.use(VueRouter);
 
@@ -87,9 +92,13 @@ const router = new VueRouter({
 				{ path: '/dashboard', component: Dashboard, meta: {order: 1} },
 				{ path: '/folder/:folder', component: Folder, meta: {order: 2}, name: 'folder' },
 				{ path: '/read/:threadId', component: Read, meta: {order: 99}, name: 'read' },
-				{ path: '/people',   component: People,   meta: {order: 10}, name: 'people' },
+				{ path: '/people', component: People, meta: {order: 10}, name: 'people' },
 				{ path: '/person/:personId', component: Person, meta: {order: 11}, name: 'person' },
-				{ path: '/root',   component: Root,   meta: {order: 12}, name: 'root' },
+
+				{ path: '/calendar', component: Calendar, meta: {order: 12}, name: 'calendar' },
+				{ path: '/settings', component: Settings, meta: {order: 12}, name: 'settings' },
+
+				{ path: '/root', component: Root,   meta: {order: 12}, name: 'root' },
 
 				{ path: '/nodes/:nodeId', component: NodeContainer, meta: {order: 13},
 					children: [
@@ -101,7 +110,7 @@ const router = new VueRouter({
 					]
 				},
 
-				{ path: '/sanchez', component: Sanchez  },
+				{ path: '/sanchez', component: Sanchez },
 				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' }
 
 			]
@@ -110,16 +119,17 @@ const router = new VueRouter({
 	]
 });
 
+
+import app from './store/app.js';
+
 /*
 Navigation guards:
 redirect to /code if app is not initialized,
 redirect to /login if user is not authenticated
 */
-import app from './store/app.js';
 
 router.beforeEach((to, from, next) => {
-
-	if (to.name != 'code' && !app.isLoaded) {
+	if (to.name != 'code' && !app.isReady) {
 		next({name: 'code'});
 		return;
 	}
@@ -132,22 +142,31 @@ router.beforeEach((to, from, next) => {
 	next();
 });
 
-/* Initialize the app (via the Index component) */
-import Index from './states/Index.vue'
+/* Initialize the app (at the Index component) */
+app.on("load", () => {
+	new Vue({
+		el: '#app',
+		render: h => h(Index),
+		router
+	});
+});
 
-new Vue({
-	el: '#app',
-	render: h => h(Index),
-	router
+/* Clear cache on incoming notification */
+app.on("notification", data => {
+	app.api.clear(`people/${app.user.id}/posts/types`);
+	app.api.clear(`people/${app.user.id}/posts/inbox`);
+	app.api.clear(`/people/${app.user.id}/threads/inbox`);
+	app.api.clear(`/people/${app.user.id}/threads/archive`);
+	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.id}`);
 });
 
 /* serviceWoker registration */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-    // Registration was successful
-    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-  }).catch(function(err) {
-    // registration failed :(
-    console.log('ServiceWorker registration failed: ', err);
-  });
+	navigator.serviceWorker.register('static/service-worker.js').then(registration => {
+		// Registration was successful
+		console.log('ServiceWorker registration successful with scope: ', registration.scope);
+	}).catch(err => {
+		// registration failed :(
+		console.log('ServiceWorker registration failed: ', err);
+	});
 }

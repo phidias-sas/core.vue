@@ -78,7 +78,12 @@ export default {
 				});
 
 		}
-	}
+	},
+
+	beforeRouteLeave (to, from, next) {
+		this.isLoading = true;
+		next();
+	}	
 }
 </script>
 

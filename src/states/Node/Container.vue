@@ -5,7 +5,7 @@
 			<div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
 				<ul class="phi-breadcrumbs phi-page-toolbar-wide">
-					<li v-for="crumb in app.breadcrumbs">
+					<li v-for="crumb in app.navigation.breadcrumbs">
 						<router-link :to="{name:'node', params:{nodeId:crumb.id}}" v-text="crumb.name"></router-link>
 					</li>
 				</ul>
@@ -82,7 +82,7 @@ export default {
 	created () {
 		this.fetch()
 			.then(node => {
-				app.pushCrumb(node);
+				app.navigation.push(node);
 			});
 	},
 

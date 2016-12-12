@@ -20,7 +20,7 @@
 			collapse="portrait"
 			swipeable
 			>
-			<header class="phi-media">
+			<header class="phi-media" v-if="app.user">
 				<div class="phi-media-figure phi-avatar">
 					<img :src="app.user.avatar" :alt="app.user.firstName">
 				</div>
@@ -28,25 +28,24 @@
 			</header>
 			<div class="phi-menu" @click="toggleMenu">
 				<router-link to="/dashboard">Bandeja de entrada</router-link>
+				<router-link to="/calendar">Calendario</router-link>
 				<router-link to="/folder/archive">Archivados</router-link>
 				<hr>
-
+<!--
 				<label class="phi-menu-label">años lectivos</label>
-				<router-link v-for="node in nodes.items" :to="{name:'node', params:{nodeId:node.id}}" v-text="node.name" @click.native="app.clearCrumbs()"></router-link>
+				<router-link v-for="node in nodes.items" :to="{name:'node', params:{nodeId:node.id}}" v-text="node.name" @click.native="app.navigation.clear()"></router-link>
 				<hr>
+ -->
 
-				<!--<label class="phi-menu-label">pruebas</label>
+<!--
+				<label class="phi-menu-label">pruebas</label>
 				<router-link to="/people">Personas</router-link>
 				<router-link to="/root">Grupos</router-link>
-				<hr>-->
-
-				<div @click="logout()">Cerrar sesión</div>
-				
-				<router-link to="sebas">Configuracion (Sebas)</router-link>
-
 				<hr>
-				<router-link to="/sanchez"><i class="fa fa-cog" aria-hidden="true"></i> Opciones (Sanchez)</router-link>
-				<div @click="clearCache()">[borrar cache]</div>
+-->
+				<router-link to="/settings">Preferencias</router-link>
+				<hr>
+				<div @click="logout()">Cerrar sesión</div>
 			</div>
 		</ons-splitter-side>
 
@@ -71,7 +70,7 @@ export default {
 	},
 
 	mounted () {
-		this.nodes = app.api.collection("nodes");
+		// this.nodes = app.api.collection("nodes");
 		this.nodes.fetch();
 	},
 
@@ -117,18 +116,13 @@ export default {
 				outgoingCover && (outgoingCover.style.height = newCoverHeight + "px");
 
 				incomingCover && (incomingCover.style.backgroundColor = incomingCover.initialbackgroundColor);
-	
+
 			}, 0);
 		},
 
 		afterLeave (el) {
 			incomingCover && (incomingCover.style.height = "auto");
 			outgoingCover && (outgoingCover.style.height = "auto");
-		},
-
-
-		clearCache () {
-			this.app.api.cache.empty().then(() => { alert("Cache borrado") });
 		}
 	},
 

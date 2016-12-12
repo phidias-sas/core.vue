@@ -1,35 +1,7 @@
-import {App} from '../libraries/phidias.js/lib/main.js'; 
+import {App} from '../libraries/phidias.js/lib/main.js';
 
-var app = new App;
-
-/* Manage local storage persistense */
-var appKey    = "phidias-vue-app";
-var storedApp = window.localStorage[appKey];
-if (storedApp) {
-    app.load(JSON.parse(storedApp));
-    // app.api.cacheIsEnabled = false;
-}
-
-app.on("load", () => {
-    window.localStorage[appKey] = JSON.stringify(app.options);
+var app = new App("core", {
+	googleClientId: "890266961007.apps.googleusercontent.com"
 });
-
-/* Load session from localStorage */
-var tokenKey    = appKey+":token";
-var storedToken = window.localStorage[tokenKey];
-if (storedToken) {
-    app.setToken(storedToken);
-}
-
-app.on("login", () => {
-    window.localStorage[tokenKey] = app.token;
-});
-
-app.on("logout", () => {
-    window.localStorage.removeItem(tokenKey);
-});
-
-/* Google Client ID */
-app.options.googleClientId = "890266961007.apps.googleusercontent.com";
 
 export default app;

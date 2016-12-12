@@ -2,7 +2,7 @@
 	<div class="phi-page scrollable">
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar" :class="{_hidden: toolbarIsHidden}">
-				
+
 				<button v-if="$route.params.folder == 'archive'" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
 				<button v-if="$route.params.folder != 'archive'" class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
 
@@ -210,6 +210,17 @@ export default {
 		toggle (thread) {
 			this.selection.toggle(thread.id);
 		}
+	},
+
+	beforeRouteEnter (to, from, next) {
+
+		var folder = new Folder(app, to.params.folder);
+		folder.fetch({
+			type: to.query.type || null,
+			page: 1,
+			q:    null
+		})
+		.then(() => next());
 	}
 
 }

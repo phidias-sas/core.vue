@@ -16,6 +16,10 @@ export default class Client {
 		return new Collection(this, url);
 	}
 
+	setCaching(value) {
+		this.cacheIsEnabled = !!value;
+	}
+
 	/* Bearer token */
 	setToken(tokenString) {
 		this.token = tokenString;
@@ -36,7 +40,9 @@ export default class Client {
 		}
 
 		var request = new Request(url, options);
-		if (this.token) {
+
+		/* Send token in a Authorization header (unless request specifies its own Authorization header) */
+		if (this.token && (!options || !options.headers || !options.headers.Authorization)) {
 			request.headers.set("Authorization", "Bearer " + this.token);
 		}
 

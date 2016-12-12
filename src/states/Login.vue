@@ -19,7 +19,7 @@
 			</div>
 		</form>
 
-		<router-link v-if="canChangeCode" to="/code" class="reset">Cambiar institución</router-link>
+		<button v-if="canChangeCode" class="reset" @click="resetCode()">Cambiar institución</button>
 
 	</div>
 </template>
@@ -28,7 +28,7 @@
 import app from '../store/app.js';
 
 export default {
-	data () {
+	data() {
 		return {
 			app,
 			username: null,
@@ -39,13 +39,13 @@ export default {
 	},
 
 	computed: {
-		isLoading () {
-			return app.api.isLoading;
+		isLoading() {
+			return !!app.api && app.api.isLoading;
 		}
 	},
 
 	methods: {
-		login () {
+		login() {
 			this.error = null;
 
 			if (!this.username || !this.password) {
@@ -62,20 +62,25 @@ export default {
 				});
 		},
 
-		googleLogin () {
+		googleLogin() {
 			this.app.googleLogin()
 				.then(this.redirect);
 		},
 
-		redirect () {
+		redirect() {
 			this.username = this.password = null;
 			this.$router.push("/dashboard");
+		},
+
+		resetCode() {
+			this.app.clear();
+			this.$router.push('code');
 		}
 	},
 
 	/*
 	Autofocus is REALLY anoying on mobile because it opens the keyboard unexpectedly
-	mounted () {
+	mounted() {
 		this.$el.querySelector("input").focus();
 	}
 	*/
@@ -133,6 +138,11 @@ export default {
 		color: #555;
 		text-transform: uppercase;
 		text-decoration: none;
+
+		border: 0;
+		background: transparent;
+		font-size: 1em;
+		cursor: pointer;
 	}
 
 }

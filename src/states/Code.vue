@@ -3,17 +3,17 @@
 
 		<form @submit.prevent="submit()">
 
-			<phi-input v-model="inputCode" label="código de la institución" autocorrect="off" autocapitalize="off" spellcheck="false"></phi-input>
+			<phi-input v-model="inputCode" label="código de la institución" @input="error = false" autocorrect="off" autocapitalize="off" spellcheck="false"></phi-input>
 
 			<footer>
 
-				<button class="phi-button">
+				<button class="phi-button" :class="{danger: !!error}" :disabled="!inputCode.trim()">
 					<span v-show="!isLoading && !error">CONTINUAR</span>
 					<span v-show="isLoading" class="loading">
 						<i class="fa fa-spinner fa-spin"></i>
 						BUSCANDO
 					</span>
-					<span v-show="error" class="error" v-text="error"></span>					
+					<span v-show="error">CÓDIGO NO ENCONTRADO</span>					
 				</button>
 
 			</footer>
@@ -42,9 +42,9 @@ export default {
 	data () {
 		return {
 			app,
-			inputCode: null,
+			inputCode: "",
 			isLoading: false,
-			error: null
+			error: false
 		}
 	},
 
@@ -58,9 +58,9 @@ export default {
 					this.isLoading = false;
 					this.$router.push("login");
 				})
-				.catch((error) => {
+				.catch(error => {
 					this.isLoading = false;
-					this.error     = error;
+					this.error     = true;
 				});
 
 			return false;
