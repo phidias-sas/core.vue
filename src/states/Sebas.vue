@@ -9,7 +9,8 @@
 				</div>
 				<div class="center">{{ state }}</div>
 				<div class="right">
-					<ons-toolbar-button @click="refresh"><i class="fa fa-refresh"></i></ons-toolbar-button>
+					<ons-toolbar-button @click="refresh()" title="Recargar pagina"><i class="fa fa-refresh"></i></ons-toolbar-button>
+					<ons-toolbar-button @click="borrarCache()" title="Borrar Cache"><i class="fa fa-trash"></i></ons-toolbar-button>
 				</div>
 			</ons-toolbar>
 
@@ -25,22 +26,30 @@
 					</ons-col>
 				</ons-row>
 				<br>
-
-
-				<ul class="list">
-					<li class="list__item list__item--chevron" v-for="persona in personas">
-						<div class="list__item__center">{{ persona.firstName }}</div>
-					</li>
-				</ul>
+				
+				<div class="lista">
+					<ons-list-item v-for="persona in personas">
+						<div class="left">
+							<img class="list__item__thumbnail" :src="persona.avatar">
+						</div>
+						<div class="center">
+							<span class="list__item__title">{{ persona.firstName }}</span><span class="list__item__subtitle">{{ persona.email }}</span>
+						</div>
+					</ons-list-item>
+				</div>
 			</div>
 		</ons-page>
+		
 	</div>
 </template>
 
 <script>
+import app from '../store/app.js'
+
 export default{
 	data() {
 		return {
+			app,
 			state: 'Sebastian',
 			personas: [],
 			loader: false,
@@ -59,7 +68,12 @@ export default{
 
 		refresh () {
 			location.reload();
+		},
+
+		borrarCache () {
+			this.app.api.cache.empty().then(() => { alert("Se borró el cache") });
 		}
+
 	}
 }
 </script>
@@ -77,6 +91,11 @@ export default{
 		}
 		.button{
 			background: red;
+		}
+		.lista{
+			width: 100%;
+			height: 480px;
+			overflow-y: scroll; 
 		}
 	}
 </style>
