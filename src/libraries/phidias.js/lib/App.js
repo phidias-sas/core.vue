@@ -154,14 +154,14 @@ export default class App {
 		};
 	}
 
-	emit (eventName, args) {
+	emit (eventName, args = []) {
 		eventName = eventName.toLowerCase();
 		if (!this.listeners[eventName]) {
 			return;
 		}
 
-		this.listeners[eventName].forEach((callback) => {
-			callback(args);
+		this.listeners[eventName].forEach(callback => {
+			callback.apply(this, args);
 		});
 	}
 
@@ -189,7 +189,7 @@ export default class App {
 		this.store();
 
 		this.api.setToken(this.data.token);
-		this.emit("login", this.data.user);
+		this.emit("login", [this.data.user]);
 
 		this.registerPushNotifications();
 
@@ -363,7 +363,7 @@ export default class App {
 					*/
 					if ('serviceWorker' in navigator) {
 						navigator.serviceWorker.addEventListener('message', (event) => {
-							this.emit("notification", event.data);
+							this.emit("notification", [event.data, event]);
 						});
 					}
 				})
@@ -405,14 +405,14 @@ export default class App {
 
 		});
 
-		push.on('notification', data => {
-			// data.message,
-			// data.title,
-			// data.count,
-			// data.sound,
-			// data.image,
-			// data.additionalData
-			this.emit("notification", data.additionalData.payload ? data.additionalData.payload : data);
+		push.on('notification', notification => {
+			// notification.message,
+			// notification.title,
+			// notification.count,
+			// notification.sound,
+			// notification.image,
+			// notification.additionalData
+			this.emit("notification", [notification.additionalData.payload ? notification.additionalData.payload : null, notification]);
 		});
 
 		push.on('error', function(e) {

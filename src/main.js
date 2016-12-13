@@ -69,11 +69,12 @@ import People from './states/People.vue';
 import Person from './states/Person.vue';
 
 // pruebas
+import Test from './states/Test.vue';
+
 import Santiago from './states/Santiago.vue';
 import Sanchez from './states/Sanchez.vue';
 import Leo from './states/Leo.vue';
 import Sebas from './states/Sebas.vue';
-
 
 Vue.use(VueRouter);
 
@@ -84,7 +85,7 @@ const router = new VueRouter({
 		{ path: '/santiago', component: Santiago },
 		{ path: '/leo', component: Leo },
 		{ path: '/sebas', component: Sebas},
-		
+
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
 
@@ -111,8 +112,10 @@ const router = new VueRouter({
 					]
 				},
 
-				{ path: '/sanchez', component: Sanchez },
-				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' }
+				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' },
+				
+				{ path: '/test', component: Test },
+				{ path: '/sanchez', component: Sanchez }
 
 			]
 		},
@@ -153,12 +156,16 @@ app.on("load", () => {
 });
 
 /* Clear cache on incoming notification */
-app.on("notification", data => {
+app.on("notification", (data, notification) => {
 	app.api.clear(`people/${app.user.id}/posts/types`);
 	app.api.clear(`people/${app.user.id}/posts/inbox`);
 	app.api.clear(`/people/${app.user.id}/threads/inbox`);
 	app.api.clear(`/people/${app.user.id}/threads/archive`);
-	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.id}`);
+	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.thread}`);
+
+	if (!notification.additionalData.foreground) {
+		router.push({name: 'read', params: {threadId: data.post.thread}});
+	}
 });
 
 /* serviceWoker registration */
