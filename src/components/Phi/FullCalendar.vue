@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<phi-drawer :open="drawerIsOpen">
+		<ons-popover direction="down" data-id="calendar-views" cancelable>
 			<ul class="phi-menu">
 				<li @click="changeView('month')" data-vname="month">Mes</li>
 				<li @click="changeView('agendaDay')" data-vname="agendaDay">Día</li>
 				<li @click="changeView('agendaWeek')" data-vname="agendaWeek">Semana</li>
 				<li @click="changeView('listMonth')" data-vname="listMonth">Agenda</li>
 			</ul>
-		</phi-drawer>
+		</ons-popover>
 		<div class="calendar-container" :person="person"></div>
 	</div>
 </template>
@@ -36,14 +36,14 @@ export default {
 					viewSwitcher: {
 						text: 'Ver',
 						click: function(evt) {
-							that.drawerIsOpen = !that.drawerIsOpen;
+							that.$el.querySelector("ons-popover[data-id='calendar-views']").show(this);
 						}
 					}
 				},
 				header: {
-					left: 'viewSwitcher, today',
+					left: 'viewSwitcher',
 					center: 'title',
-					right: 'prev, next'
+					right: 'today,prev,next'
 				},
 
 				events: function(start, end, timezone, callback) {
@@ -85,15 +85,22 @@ export default {
 				//{name: "listDay", "es": "lista diaria"}
 			],
 			currentView: null,
-			calendarContainer: null,
-			drawerIsOpen: false
+			calendarContainer: null
 		}
 	},
 
 	watch: {
 		currentView (){
-			let drawerItem = this.$el.querySelector("li[data-vname='"+this.currentView+"']");
-			drawerItem.classList.add("phi-menu-selected");
+			let changerButton = this.$el.querySelector("button.fc-viewSwitcher-button");
+			
+			this.calendarViews.map((viewDef) => {
+				if(viewDef.name == this.currentView) {
+					changerButton.innerHTML = viewDef.es;
+				}
+			});
+
+			let menuItem = this.$el.querySelector("li[data-vname='"+this.currentView+"']");
+			menuItem.classList.add("phi-menu-selected");
 		}	
 	},
 
@@ -163,7 +170,7 @@ export default {
 			let previousItem = this.$el.querySelector("li[data-vname='"+previousView+"']");
 			previousItem.classList.remove("phi-menu-selected");
 
-			this.drawerIsOpen = false;
+			this.$el.querySelector("ons-popover[data-id='calendar-views']").hide();
 		}
 	},
 
