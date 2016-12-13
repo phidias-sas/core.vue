@@ -147,6 +147,7 @@ export default {
 	methods: {
 		initializeCalendar () {
 			this.calendarContainer = this.$el.getElementsByClassName("calendar-container")[0];
+
 			$(this.calendarContainer).fullCalendar(this.calendarConfig);
 			this.currentView = this.calendarConfig.defaultView;
 			this.$el.querySelector("ons-input[input-id='"+this.currentView+"']").setAttribute("checked", true);
@@ -199,10 +200,12 @@ export default {
 	},
 
 	mounted() {
-
 		this.initializeCalendar();
 		this.createToolbar();
-		
+	},
+
+	created() {
+		$(this.calendarContainer).fullCalendar('render');
 	}
 }
 
