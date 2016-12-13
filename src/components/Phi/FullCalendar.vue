@@ -1,59 +1,24 @@
 <template>
-	<ons-splitter>
-  		<ons-splitter-side data-pannel="calendar-filters" side="right" width="85vw" collapse swipeable>
-			<ons-page>
-				<ons-list>
-					<ons-list-item>
-						<label class="left">
-							<ons-input type="checkbox" input-id="check-1"></ons-input>
-						</label>
-						<label for="check-1" class="center">
-							Reuniones
-						</label>
-					</ons-list-item>
-					<ons-list-item>
-						<label class="left">
-							<ons-input type="checkbox" input-id="check-2"></ons-input>
-						</label>
-						<label for="check-2" class="center">
-							Tareas
-						</label>
-					</ons-list-item>
-					<ons-list-item>
-						<label class="left">
-							<ons-input type="checkbox" input-id="check-3"></ons-input>
-						</label>
-						<label for="check-3" class="center">
-							Cumpleaños
-						</label>
-					</ons-list-item>
-				</ons-list>
-			</ons-page>
-  		</ons-splitter-side>
-		<ons-splitter-content>
-			<ons-page>
-				<ons-toolbar>
-					<div class="left">
-						<ons-toolbar-button data-action="calendar-back">
-							<ons-icon icon="fa-chevron-left"></ons-icon>
-						</ons-toolbar-button>
-						<ons-toolbar-button data-action="calendar-forward">
-							<ons-icon icon="fa-chevron-right"></ons-icon>
-						</ons-toolbar-button>
-					</div>
-					<div class="center">
-						<ons-toolbar-button data-action="calendar-today">Hoy</ons-toolbar-button>
-					</div>
-					<div class="right">
-						<ons-toolbar-button data-action="calendar-views"></ons-toolbar-button>
-						<ons-toolbar-button data-action="filters-pannel">
-							<ons-icon icon="fa-filter"></ons-icon>
-						</ons-toolbar-button>
-					</div>
-				</ons-toolbar>
-				<div class="calendar-container" :person="person"></div>
-			</ons-page>
-  		</ons-splitter-content>
+	<div>
+		<ons-page>
+			<ons-toolbar>
+				<div class="left">
+					<ons-toolbar-button data-action="calendar-today">
+						<ons-icon icon="fa-calendar-check-o"></ons-icon>
+					</ons-toolbar-button>
+				</div>
+				<div class="center">
+					<ons-toolbar-button data-action="calendar-views"></ons-toolbar-button>
+				</div>
+				<div class="right">
+					<ons-toolbar-button data-action="filters-pannel">
+						<ons-icon icon="fa-filter"></ons-icon>
+					</ons-toolbar-button>
+				</div>
+			</ons-toolbar>
+
+			<div class="calendar-container" :person="person"></div>
+		</ons-page>
 
 		<ons-popover direction="down" data-action="calendar-views" cancelable>
 			<ons-list>
@@ -68,8 +33,37 @@
 				</ons-list-item>
 			</ons-list>
 		</ons-popover>
-	</ons-splitter>
-	
+
+		<ons-popover direction="down" data-action="calendar-filters" cancelable>
+			<ons-list>
+				<ons-list-header>Filtros</ons-list-header>
+				<ons-list-item tappable>
+					<label class="left">
+						<ons-input name="reuniones" type="checkbox" input-id="reuniones"></ons-input>
+					</label>
+					<label for="reuniones" class="center">
+						Reuniones	
+					</label>
+				</ons-list-item>
+				<ons-list-item tappable>
+					<label class="left">
+						<ons-input name="cumpleanos" type="checkbox" input-id="cumpleanos"></ons-input>
+					</label>
+					<label for="cumpleanos" class="center">
+						Cumpleaños	
+					</label>
+				</ons-list-item>
+				<ons-list-item tappable>
+					<label class="left">
+						<ons-input name="capacitaciones" type="checkbox" input-id="capacitaciones"></ons-input>
+					</label>
+					<label for="capacitaciones" class="center">
+						Capacitaciones	
+					</label>
+				</ons-list-item>
+			</ons-list>
+		</ons-popover>
+	</div>
 </template>
 
 <script>
@@ -89,9 +83,9 @@ export default {
 		return {
 			calendarConfig: {
 				lang: 'es',
-				defaultView: 'agendaDay',
+				defaultView: 'listMonth',
 				firstDay: 0,
-				aspectRatio: 1,
+				height: 'parent',
 				header: {
 					left: false,
 					center: 'title',
@@ -156,6 +150,7 @@ export default {
 
 		let viewListButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-views']");
 		let viewsPopover = this.$el.querySelector("ons-popover[data-action='calendar-views']");
+		let filtersPopover = this.$el.querySelector("ons-popover[data-action='calendar-filters']");
 
 		let viewOptions = this.$el.querySelectorAll("ons-input[name='available-calendar-views']");
 		for (var viewOption of viewOptions) {
@@ -169,19 +164,33 @@ export default {
 			});
 		}
 
-		let backButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-back']");
-		let forwardButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-forward']");
+		let headerLeft = this.$el.querySelector("div.fc-toolbar.fc-header-toolbar > div.fc-left");
+		let headerRight = this.$el.querySelector("div.fc-toolbar.fc-header-toolbar > div.fc-right");
+
+		let customLeftButton = document.createElement("ons-button");
+		customLeftButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('prev'));
+		let customLeftButtonIcon = document.createElement("ons-icon");
+		customLeftButtonIcon.setAttribute("icon", "fa-chevron-left");
+		customLeftButton.appendChild(customLeftButtonIcon);
+		headerLeft.appendChild(customLeftButton);
+
+		let customRightButton = document.createElement("ons-button");
+		customRightButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('next'));
+		let customRightButtonIcon = document.createElement("ons-icon");
+		customRightButtonIcon.setAttribute("icon", "fa-chevron-right");
+		customRightButton.appendChild(customRightButtonIcon);
+		headerRight.appendChild(customRightButton);
+
 		let todayButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-today']");
 
 		let filtersButton = this.$el.querySelector("ons-toolbar-button[data-action='filters-pannel']");
 
-		backButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('prev'));
-		forwardButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('next'));
 		todayButton.addEventListener("click", () => $(calenndarContainer).fullCalendar('today'));
 
 		viewListButton.addEventListener("click", () => viewsPopover.show(viewListButton));
 		
-		filtersButton.addEventListener("click", () => this.$el.querySelector("ons-splitter-side[data-pannel='calendar-filters']").open());
+		filtersButton.addEventListener("click", () => filtersPopover.show(filtersButton));
+
 	}
 }
 
@@ -190,15 +199,10 @@ export default {
 <style>
 	@import url('../../../node_modules/fullcalendar/dist/fullcalendar.min.css');
 
-	ons-toolbar-button{
-		white-space: nowrap;
-		overflow: hidden;
-		max-width: 35vw;
-		text-overflow: ellipsis;
-	}
-
 	div.fc-toolbar.fc-header-toolbar > div.fc-center > h2{
 		font-size: 20px;
+		line-height: 36px;
+		vertical-align: middle;
 	}
 
 	div.fc-toolbar.fc-header-toolbar{
@@ -208,4 +212,13 @@ export default {
 	.calendar-container{
 		margin-top: 7px;
 	}
+
+	div.fc-toolbar.fc-header-toolbar > div.fc-left{
+		padding-left: 5px;
+	}
+
+	div.fc-toolbar.fc-header-toolbar > div.fc-right{
+		padding-right: 5px;
+	}
+	
 </style>
