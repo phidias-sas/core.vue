@@ -73,6 +73,7 @@ import Santiago from './states/Santiago.vue';
 import Sanchez from './states/Sanchez.vue';
 import Leo from './states/Leo.vue';
 import Sebas from './states/Sebas.vue';
+import Felipe from './states/Felipe.vue';
 
 
 Vue.use(VueRouter);
@@ -84,6 +85,7 @@ const router = new VueRouter({
 		{ path: '/santiago', component: Santiago },
 		{ path: '/leo', component: Leo },
 		{ path: '/sebas', component: Sebas},
+		{ path: '/Felipe', component: Felipe},
 		
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
