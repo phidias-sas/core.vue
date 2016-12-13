@@ -1,67 +1,14 @@
 <template>
 	<div>
-		<ons-page>
-			<ons-toolbar>
-				<div class="left">
-					<ons-toolbar-button data-action="filters-pannel">
-						<ons-icon icon="fa-filter"></ons-icon>
-					</ons-toolbar-button>
-				</div>
-				<div class="center" data-action="toolbar-title"></div>
-				<div class="right">
-					<ons-toolbar-button data-action="calendar-today">
-						<ons-icon icon="fa-calendar-check-o"></ons-icon>
-					</ons-toolbar-button>
-					<ons-toolbar-button data-action="calendar-views">
-						<ons-icon icon="fa-ellipsis-v"></ons-icon>
-					</ons-toolbar-button>
-				</div>
-			</ons-toolbar>
-			<ons-progress-bar data-action="events-loading" v-show="loadingEvents" indeterminate></ons-progress-bar>
-			<div class="calendar-container" :person="person"></div>
-		</ons-page>
-
-		<ons-popover direction="down" data-action="calendar-views" cancelable>
-			<ons-list>
-				<ons-list-item tappable v-for="calendarDef in calendarViews">
-					<label class="left">
-						<ons-input name="available-calendar-views" type="radio" :input-id="calendarDef.name"></ons-input>
-					</label>
-					<label :for="calendarDef.name" class="center">
-						{{ calendarDef.es }}
-					</label>
-				</ons-list-item>
-			</ons-list>
-		</ons-popover>
-
-		<ons-popover direction="down" data-action="calendar-filters" cancelable>
-			<ons-list>
-				<ons-list-item tappable>
-					<label class="left">
-						<ons-input name="reuniones" type="checkbox" input-id="reuniones"></ons-input>
-					</label>
-					<label for="reuniones" class="center">
-						Reuniones	
-					</label>
-				</ons-list-item>
-				<ons-list-item tappable>
-					<label class="left">
-						<ons-input name="cumpleanos" type="checkbox" input-id="cumpleanos"></ons-input>
-					</label>
-					<label for="cumpleanos" class="center">
-						Cumpleaños	
-					</label>
-				</ons-list-item>
-				<ons-list-item tappable>
-					<label class="left">
-						<ons-input name="capacitaciones" type="checkbox" input-id="capacitaciones"></ons-input>
-					</label>
-					<label for="capacitaciones" class="center">
-						Capacitaciones	
-					</label>
-				</ons-list-item>
-			</ons-list>
-		</ons-popover>
+		<phi-drawer :open="drawerIsOpen">
+			<ul class="phi-menu">
+				<li @click="changeView('month')" data-vname="month">Mes</li>
+				<li @click="changeView('agendaDay')" data-vname="agendaDay">Día</li>
+				<li @click="changeView('agendaWeek')" data-vname="agendaWeek">Semana</li>
+				<li @click="changeView('listMonth')" data-vname="listMonth">Agenda</li>
+			</ul>
+		</phi-drawer>
+		<div class="calendar-container" :person="person"></div>
 	</div>
 </template>
 
@@ -75,7 +22,7 @@ require("../../../node_modules/fullcalendar/dist/locale/es.js");
 export default {
 	name: "phi-full-calendar",
 
-	props: ["person"],
+	props: ["person", "defaultView", "events"],
 
 	data () {
 		let that = this;
@@ -85,10 +32,18 @@ export default {
 				defaultView: 'listMonth',
 				firstDay: 0,
 				height: 'parent',
+				customButtons: {
+					viewSwitcher: {
+						text: 'Ver',
+						click: function(evt) {
+							that.drawerIsOpen = !that.drawerIsOpen;
+						}
+					}
+				},
 				header: {
-					left: false,
-					center: false,
-					right: false
+					left: 'viewSwitcher, today',
+					center: 'title',
+					right: 'prev, next'
 				},
 
 				events: function(start, end, timezone, callback) {
@@ -107,50 +62,52 @@ export default {
 					that.$router.push({ name: 'read', params: { threadId: thisEvent.post.thread }});
 				},
 
-				viewRender: function(view, element){
-					let toolbarTitle = that.$el.querySelector("div[data-action='toolbar-title']");
-					toolbarTitle.innerHTML = view.title;
-				},
-
 				loading: function(isLoading, view){
 					if(isLoading){
-						that.loadingEvents = isLoading;
+						that.$parent.loadingEvents = isLoading;
 					}
 				},
 
 				eventAfterAllRender: function(view){
-					that.loadingEvents = false;
+					that.$parent.loadingEvents = false;
 				}
 			},
 
 			calendarViews: [
-				{name: "month", "es": "mes"}, 
-				{name: "basicWeek", "es": "semana"}, 
-				{name: "basicDay", "es": "día"}, 
-				{name: "agendaWeek", "es": "agenda semanal"}, 
-				{name: "agendaDay", "es": "agenda día"}, 
-				{name: "listYear", "es": "lista anual"}, 
-				{name: "listMonth", "es": "lista mensual"}, 
-				{name: "listWeek", "es": "lista semanal"}, 
-				{name: "listDay", "es": "lista diaria"}
+				{name: "month", "es": "Mes"}, 
+				//{name: "basicWeek", "es": "semana"}, 
+				//{name: "basicDay", "es": "día"},
+				{name: "agendaDay", "es": "Día"}, 
+				{name: "agendaWeek", "es": "Semana"}, 
+				//{name: "listYear", "es": "lista anual"}, 
+				{name: "listMonth", "es": "Agenda"}, 
+				//{name: "listWeek", "es": "lista semanal"}, 
+				//{name: "listDay", "es": "lista diaria"}
 			],
 			currentView: null,
 			calendarContainer: null,
-			loadingEvents: false
+			drawerIsOpen: false
 		}
 	},
 
 	watch: {
-		
+		currentView (){
+			let drawerItem = this.$el.querySelector("li[data-vname='"+this.currentView+"']");
+			drawerItem.classList.add("phi-menu-selected");
+		}	
 	},
 
 	methods: {
 		initializeCalendar () {
 			this.calendarContainer = this.$el.getElementsByClassName("calendar-container")[0];
 
+			if(this.defaultView){
+				this.calendarConfig.defaultView = this.defaultView;
+			}
+
 			$(this.calendarContainer).fullCalendar(this.calendarConfig);
 			this.currentView = this.calendarConfig.defaultView;
-			this.$el.querySelector("ons-input[input-id='"+this.currentView+"']").setAttribute("checked", true);
+			
 		},
 
 		createToolbar (){
@@ -196,12 +153,22 @@ export default {
 			viewListButton.addEventListener("click", () => viewsPopover.show(viewListButton));
 			
 			filtersButton.addEventListener("click", () => filtersPopover.show(filtersButton));
+		},
+
+		changeView (viewName){
+			let previousView = this.currentView;
+			$(this.calendarContainer).fullCalendar('changeView', viewName);
+			this.currentView = viewName;
+
+			let previousItem = this.$el.querySelector("li[data-vname='"+previousView+"']");
+			previousItem.classList.remove("phi-menu-selected");
+
+			this.drawerIsOpen = false;
 		}
 	},
 
 	mounted() {
 		this.initializeCalendar();
-		this.createToolbar();
 	}
 }
 
@@ -211,8 +178,8 @@ export default {
 	@import url('../../../node_modules/fullcalendar/dist/fullcalendar.min.css');
 
 	div.fc-toolbar.fc-header-toolbar > div.fc-center > h2{
-		font-size: 20px;
-		line-height: 36px;
+		font-size: 17px;
+		line-height: 33px;
 		vertical-align: middle;
 	}
 
@@ -221,15 +188,21 @@ export default {
 	}
 
 	.calendar-container{
-		margin-top: 7px;
+		margin-top: 3px;
+		height:85vh;
 	}
 
 	div.fc-toolbar.fc-header-toolbar > div.fc-left{
-		padding-left: 5px;
+		padding-left: 3px;
 	}
 
 	div.fc-toolbar.fc-header-toolbar > div.fc-right{
-		padding-right: 5px;
+		padding-right: 3px;
+	}
+
+	.phi-menu-selected{
+		 background-color: rgba(0, 0, 0, 0.1);
+		 font-weight: bold;
 	}
 	
 </style>
