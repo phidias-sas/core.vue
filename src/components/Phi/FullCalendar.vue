@@ -202,10 +202,6 @@ export default {
 	mounted() {
 		this.initializeCalendar();
 		this.createToolbar();
-	},
-
-	created() {
-		$(this.calendarContainer).fullCalendar('render');
 	}
 }
 
