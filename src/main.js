@@ -54,6 +54,7 @@ import Read from './states/Thread/Read.vue';
 
 import Calendar from './states/Calendar.vue';
 import Settings from './states/Settings.vue';
+import Map from './states/Map.vue';
 
 import NodeContainer from './states/Node/Container.vue';
 import NodeDashboard from './states/Node/Dashboard.vue';
@@ -99,7 +100,7 @@ const router = new VueRouter({
 
 				{ path: '/calendar', component: Calendar, meta: {order: 12}, name: 'calendar' },
 				{ path: '/settings', component: Settings, meta: {order: 12}, name: 'settings' },
-				{ path: '/felipe', component: Felipe, meta: {order: 12}, name: 'Felipe'},
+				{ path: '/map', component: Map, meta: {order: 12}, name: 'map' },
 
 				{ path: '/root', component: Root,   meta: {order: 12}, name: 'root' },
 
@@ -116,7 +117,8 @@ const router = new VueRouter({
 				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' },
 				
 				{ path: '/test', component: Test },
-				{ path: '/sanchez', component: Sanchez }
+				{ path: '/sanchez', component: Sanchez },
+				{ path: '/felipe', component: Felipe },
 
 			]
 		},
