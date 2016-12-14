@@ -1,35 +1,3 @@
-<!-- <template>
-	<div id="settings">
-			<ons-page>
-			<ons-toolbar><div class="center"> Preferencias</div></ons-toolbar>
-			<ons-list> 
-				<ons-list-header>Notificaciones Android</ons-list-header> 
-				<ons-list-item v-for="preference in preferences">
-					<div class="left"><i class="fa fa-bell-o"></i></div> 
-					<div class="center">{{ preference.type }}</div>
-					<div class="right">
-						<ons-switch 
-								:checked="preference.isEnabled == '1' ? true: false" 
-								@change="markNotification(preference.isEnabled, preference.destination, preference.type)">
-						</ons-switch>
-					</div>
-				</ons-list-item>
-				
-				<ons-list-header>General</ons-list-header>
-				<ons-list-item>
-					<div class="left"> <i class="fa fa-trash"></i> </div>
-					<div clas="center">
-						<button class="phi-button" @click="cacheDelete">
-							Borrar cache
-						</button>
-					</div>
-				</ons-list-item>
-			</ons-list>
-			</phi-drawer>
-			</ons-page>
-	</div>
-</template> -->
-
 <template>
 	<div class="phi-page">
 		<div class="phi-page-cover">
@@ -107,6 +75,7 @@ export default {
 		return {
 			app,
 			preferences: [],
+			postTypes: [],
 			loadingEvents: false,
 			openNotifications: false,
 			openGeneral: false,
@@ -115,7 +84,6 @@ export default {
 	},
 
 	mounted(){
-		// Endpoint to get destinations: https://{url}/people/{id_people}/notifications/destination?
 		this.getPreferences();		
 	},
 
@@ -126,13 +94,34 @@ export default {
 		},
 
 		getPreferences(){
+			
+			/* Load post types */
+			fetch(this.getPostTypes())
+			 	.then(response => response.json())
+			 	.then(datos => {
+			 		datos.forEach( dato => {
+			 			this.postTypes.push({
+			 				type: dato.singular,
+			 				isEnabled: 1
+			 			})
+			 		})
+			 	})
+
+			/* Load preferences from gcm transport type*/
 			fetch(this.getEndPointNotifications())
 				.then(response => response.json())
 				.then(data => {
 					data.forEach( dato => {
 						if (dato.transport == 'gcm')
 						{
-							this.preferences = dato.preferences;		
+							if (dato.preferences.length == 0)
+							{
+								this.preferences = this.postTypes;										
+							}
+							else
+							{
+								this.preferences = dato.preferences;			
+							}							
 							this.preferenceDest = dato.id;
 							this.openNotifications = dato.isEnabled == "1" ? true : false;	
 						}
@@ -141,21 +130,24 @@ export default {
 		},		
 
 		getEndPointNotifications() {
-			// return `/people/{id_people}/notifications/destinations?`;  
+			// {endPoint}/people/{id_people}/notifications/destinations  
 			return this.app.data.endpoint+'/people/'+this.app.user.id+'/notification/destinations';
 
 		},
 
-		// https://phidias.api.phidias.co/people/{id_people}/notification/destinations/{idDestination}
-		markNotification(preferenceEnable, preferenceDestination, preferenceType) {
-			console.log(preferenceEnable);
+		getPostTypes() {
+			return this.app.data.endpoint+'/types/post';
+		},
+
+		// {endPoint}/people/{id_people}/notification/destinations/{idDestination}
+		markNotification(preferenceEnable, preferenceType) {
 
 			let tempPreferences = [];
 			this.preferences.forEach( dato => {
 				if (dato.type == preferenceType)
 				{
 					tempPreferences.push({
-						destination: preferenceDestination,
+						destination: this.preferenceDest,
 						type: preferenceType,
 						isEnabled: preferenceEnable,
 						schedule: null
@@ -169,13 +161,8 @@ export default {
 			this.preferences = tempPreferences;
 
 			this.app.api
-			  	.put('people/'+this.app.user.id+'/notification/destinations/'+preferenceDestination, {
-			  		// person: this.app.user.id,
-			  		// preferences: this.preferences
-			   		id: preferenceDestination,
-			   		person: this.app.user.id,
-					destination: null,
-					schedule: null,
+			  	.put('people/'+this.app.user.id+'/notification/destinations/'+this.preferenceDest, {
+			   		person: this.app.user.id,					
 			   		preferences: this.preferences
 			  	})
 			  	.then(response => console.log(response));
