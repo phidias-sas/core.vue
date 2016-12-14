@@ -84,7 +84,6 @@ const router = new VueRouter({
 		{ path: '/santiago', component: Santiago },
 		{ path: '/leo', component: Leo },
 		{ path: '/sebas', component: Sebas},
-		{ path: '/Felipe', component: Felipe},
 	
 		{ path: '/', redirect: '/dashboard' },
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
@@ -100,6 +99,7 @@ const router = new VueRouter({
 
 				{ path: '/calendar', component: Calendar, meta: {order: 12}, name: 'calendar' },
 				{ path: '/settings', component: Settings, meta: {order: 12}, name: 'settings' },
+				{ path: '/felipe', component: Felipe, meta: {order: 12}, name: 'Felipe'},
 
 				{ path: '/root', component: Root,   meta: {order: 12}, name: 'root' },
 
