@@ -177,6 +177,10 @@ export default {
 					this.displayViewsMenu = false;
 				}
 			});
+
+			document.addEventListener('scroll', evt =>  {
+				this.positionViewMenu();	
+			}, true);
 		}
 	},
 
