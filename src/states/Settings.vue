@@ -1,51 +1,9 @@
 <!-- <template>
-	<div class="phi-page">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<h1>Preferencias</h1>
-			</div>
-		</div>
-		<div class="phi-page-contents">
-			<div class="phi-card _padded">
-				<button class="phi-button" @click="clearCache()">
-					<i class="fa fa-trash-o" aria-hidden="true"></i>
-					<span>ELIMINAR CACHE</span>
-				</button>
-			</div>
-		</div>
-	</div>
-</template>
-<script>
-import app from '../store/app.js'
-
-export default {
-	data() {
-		return {
-			app
-		}
-	},
-	methods: {
-		clearCache() {
-			this.app.api.cache.empty().then(() => { alert("Cache borrado") });
-		},
-
-		registerPush() {
-			return app.registerPushNotifications();
-		}
-	},
-
-	mounted() {
-	}
-}
-</script> -->
-
-<template>
 	<div id="settings">
 			<ons-page>
 			<ons-toolbar><div class="center"> Preferencias</div></ons-toolbar>
-			<ons-list>
-				<ons-list-header>Notificaciones Android</ons-list-header>
+			<ons-list> 
+				<ons-list-header>Notificaciones Android</ons-list-header> 
 				<ons-list-item v-for="preference in preferences">
 					<div class="left"><i class="fa fa-bell-o"></i></div> 
 					<div class="center">{{ preference.type }}</div>
@@ -67,8 +25,78 @@ export default {
 					</div>
 				</ons-list-item>
 			</ons-list>
+			</phi-drawer>
 			</ons-page>
 	</div>
+</template> -->
+
+<template>
+<div id="Settings">
+	<div class="phi-page">
+		<div class="phi-page-cover">
+			<div class="phi-page-toolbar">
+				<button class="phi-button" @click="$parent.$el.left.toggle()"> 
+					<i class="fa fa-bars"></i>
+				</button>
+				<h1>Preferencias</h1>
+			</div>
+		</div>
+
+		<ons-progress-bar indeterminate v-show="loadingEvents"></ons-progress-bar>
+
+		<div class="phi-page-contents">
+			
+			<ons-list-item > 
+				<div class="left"><i class="fa fa-bell-o"></i></div> 
+				<div class="center"> <h4> Notificaciones Android </h1> </div>
+				<div class="right"> 
+					<ons-switch 
+							:checked="openNotifications" 
+							@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
+					</ons-switch> 
+				</div>
+			</ons-list-item>		
+
+			<phi-drawer :open="openNotifications"> 
+			<div id="panel_Notifications">
+				<ons-list-item v-for="preference in preferences">
+					<div class="left">{{ preference.type }}</div>
+					<div class="right">
+						<ons-switch 
+								:checked="preference.isEnabled == '1' ? true: false" 
+								@change="markNotification(preference.isEnabled, preference.destination, preference.type)">
+						</ons-switch>
+					</div>
+				</ons-list-item>
+			</div>
+			</phi-drawer>	
+
+			<ons-list-item > 
+				<div class="left"><i class="fa fa fa-cog"></i></div> 
+				<div class="center"> <h4> General </h1> </div>
+				<div class="right"> 
+					<ons-switch 
+							:checked="openGeneral" 
+							@change="openGeneral = !openGeneral">
+					</ons-switch> 
+				</div>
+			</ons-list-item>
+
+			<phi-drawer :open="openGeneral"> 
+			<div id="panel_General">
+				<ons-list-item>
+					<div clas="center">
+						<button class="phi-button" @click="cacheDelete()">
+							<i class="fa fa-trash-o" aria-hidden="true"></i>
+							<span>Elimniar cache</span>
+						</button>
+					</div>
+				</ons-list-item>
+			</div>
+			</phi-drawer>
+		</div>
+	</div>
+</div>
 </template>
 
 <script>
@@ -80,13 +108,16 @@ export default {
 	data () {
 		return {
 			app,
-			preferences: []
+			preferences: [],
+			loadingEvents: false,
+			openNotifications: false,
+			openGeneral: false,
+			preferenceDest: null
 		}
 	},
 
 	mounted(){
-		// Endpoint to get destinations: 
-		// https://{url}/people/{id_people}/notifications/destination?
+		// Endpoint to get destinations: https://{url}/people/{id_people}/notifications/destination?
 		this.getPreferences();		
 	},
 
@@ -104,6 +135,8 @@ export default {
 						if (dato.transport == 'gcm')
 						{
 							this.preferences = dato.preferences;		
+							this.preferenceDest = dato.id;
+							this.openNotifications = dato.isEnabled ? true : false;	
 						}
 					})
 			})
@@ -125,7 +158,7 @@ export default {
 					tempPreferences.push({
 						destination: preferenceDestination,
 						type: preferenceType,
-						isEnabled: preferenceEnable ? 0 : 1,
+						isEnabled: preferenceEnable ? 1 : 0,
 						schedule: null
 					});
 				}
@@ -138,10 +171,25 @@ export default {
 
 			this.app.api
 			  	.put('people/'+this.app.user.id+'/notification/destinations/'+preferenceDestination, {
-			  		person: this.app.user.id,
-			  		preferences: this.preferences
+			  		// person: this.app.user.id,
+			  		// preferences: this.preferences
+			   		id: preferenceDestination,
+			   		person: this.app.user.id,
+					destination: null,
+					schedule: null,
+			   		preferences: this.preferences
 			  	})
 			  	.then(response => console.log(response));
+		},
+
+		markGeneralNotification(preferenceDestination, preferenceEnable) {
+
+			this.app.api
+			 	.put('people/'+this.app.user.id+'/notification/destinations/'+preferenceDestination,{
+			 		id: preferenceDestination,
+			 		isEnabled: preferenceEnable ? 1 : 0
+			 	})
+			 	.then(response => console.log(response));
 		}
 
 	}
