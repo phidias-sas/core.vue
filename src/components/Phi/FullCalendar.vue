@@ -9,7 +9,7 @@
 			</ul>
 		</div>
 
-		<div class="calendar-container" :person="person"></div>
+		<div class="calendar-container"></div>
 	</div>
 </template>
 
@@ -23,7 +23,7 @@ require("../../../node_modules/fullcalendar/dist/locale/es.js");
 export default {
 	name: "phi-full-calendar",
 
-	props: ["person", "defaultView", "events"],
+	props: ["defaultView", "eventSources"],
 
 	data () {
 		let that = this;
@@ -48,7 +48,7 @@ export default {
 					center: 'title',
 					right: 'today,prev,next'
 				},
-
+/*
 				events: function(start, end, timezone, callback) {
 					let calendarContainer = this.view.el.parent().parent();
 					$.ajax({
@@ -60,19 +60,19 @@ export default {
 						}
 					});
 				},
-
+*/
 				eventClick: function(thisEvent) {
 					that.$router.push({ name: 'read', params: { threadId: thisEvent.post.thread }});
 				},
 
 				loading: function(isLoading, view){
 					if(isLoading){
-						that.$parent.loadingEvents = isLoading;
+						that.$emit("loadingEvents", isLoading);
 					}
 				},
 
 				eventAfterAllRender: function(view){
-					that.$parent.loadingEvents = false;
+					that.$emit("loadingEvents", false);
 				},
 
 				viewRender: function(view, element) {
@@ -114,6 +114,27 @@ export default {
 			if(this.defaultView){
 				this.calendarConfig.defaultView = this.defaultView;
 			}
+
+			let internalSources = [];
+
+			let that = this;
+			for (let i = 0; i < this.eventSources.length; i++){
+				let sourceUrl =  that.eventSources[i];
+				let source = {
+					events: function(start, end, timezone, callback){
+						$.ajax({
+						url: sourceUrl + '?start='+start.format("DD-MM-YYYY")+'&end='+end.format("DD-MM-YYYY"),
+							dataType: 'json',
+							headers: { 'Accept': 'application/json+fullcalendar' },
+							success: function(resp) {
+								callback(resp);
+							}
+						});
+					}
+				}
+				internalSources.push(source);
+			}
+			this.calendarConfig.eventSources = internalSources;
 
 			$(this.calendarContainer).fullCalendar(this.calendarConfig);
 			this.currentView = this.calendarConfig.defaultView;
@@ -160,8 +181,8 @@ export default {
 	},
 
 	mounted() {
-		this.initializeCalendar();
 		this.addMenuEvents();
+		this.initializeCalendar();
 	}
 }
 
@@ -205,6 +226,7 @@ export default {
 		border: 1px solid #ccc;
 		border-radius: 3px;
 		z-index: 2;
+		overflow: scroll;
 	}
 	
 </style>

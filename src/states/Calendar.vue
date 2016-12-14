@@ -8,12 +8,13 @@
             </div>            
         </div>
 		
-		<ons-progress-bar indeterminate v-show="loadingEvents"></ons-progress-bar>
+		<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
         
 		<div class="phi-page-contents">
 			<phi-full-calendar 
-			:person="app.user.id" 
 			:defaultView="defaultView"
+			:eventSources="eventSources"  
+			@loadingEvents="switchProgressBar"
 			></phi-full-calendar>
         </div>
     </div>
@@ -29,7 +30,14 @@ export default {
 		return {
 			app,
 			defaultView: 'listMonth',
-			loadingEvents: false
+			eventSources: ['https://phidias.api.phidias.co/people/'+app.user.id+'/calendar/feed'], //only urls by now!!!
+			isLoading: false
+		}
+	},
+
+	methods: {
+		switchProgressBar (state) {
+			this.isLoading = state;
 		}
 	}
 }
