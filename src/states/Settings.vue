@@ -31,7 +31,6 @@
 </template> -->
 
 <template>
-<div id="Settings">
 	<div class="phi-page">
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar">
@@ -64,7 +63,7 @@
 					<div class="right">
 						<ons-switch 
 								:checked="preference.isEnabled == '1' ? true: false" 
-								@change="markNotification(preference.isEnabled, preference.destination, preference.type)">
+								@change="markNotification(preference.isEnabled = !preference.isEnabled, preference.destination, preference.type)">
 						</ons-switch>
 					</div>
 				</ons-list-item>
@@ -96,7 +95,6 @@
 			</phi-drawer>
 		</div>
 	</div>
-</div>
 </template>
 
 <script>
@@ -136,7 +134,7 @@ export default {
 						{
 							this.preferences = dato.preferences;		
 							this.preferenceDest = dato.id;
-							this.openNotifications = dato.isEnabled ? true : false;	
+							this.openNotifications = dato.isEnabled == "1" ? true : false;	
 						}
 					})
 			})
@@ -150,6 +148,7 @@ export default {
 
 		// https://phidias.api.phidias.co/people/{id_people}/notification/destinations/{idDestination}
 		markNotification(preferenceEnable, preferenceDestination, preferenceType) {
+			console.log(preferenceEnable);
 
 			let tempPreferences = [];
 			this.preferences.forEach( dato => {
@@ -158,7 +157,7 @@ export default {
 					tempPreferences.push({
 						destination: preferenceDestination,
 						type: preferenceType,
-						isEnabled: preferenceEnable ? 1 : 0,
+						isEnabled: preferenceEnable,
 						schedule: null
 					});
 				}
