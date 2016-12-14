@@ -226,7 +226,6 @@ export default {
 		border: 1px solid #ccc;
 		border-radius: 3px;
 		z-index: 2;
-		overflow: scroll;
 	}
 	
 </style>
