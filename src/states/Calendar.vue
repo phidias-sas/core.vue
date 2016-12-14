@@ -7,15 +7,17 @@
                 <h1>Calendario</h1>
             </div>            
         </div>
+		
 		<ons-progress-bar indeterminate v-show="loadingEvents"></ons-progress-bar>
-        <div class="phi-page-contents">
-                <phi-full-calendar 
-				:person="app.user.id" 
-				:defaultView="defaultView"
-				></phi-full-calendar>
+        
+		<div class="phi-page-contents">
+			<phi-full-calendar 
+			:person="app.user.id" 
+			:defaultView="defaultView"
+			></phi-full-calendar>
         </div>
-
     </div>
+	
 </template>
 
 <script>
@@ -32,7 +34,6 @@ export default {
 	}
 }
 </script>
-
 
 <style>
 

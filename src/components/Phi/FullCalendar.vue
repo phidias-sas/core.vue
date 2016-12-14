@@ -1,13 +1,14 @@
 <template>
 	<div>
-		<ons-popover direction="down" data-id="calendar-views" cancelable>
+		<div class="views-list-menu" v-show="displayViewsMenu">
 			<ul class="phi-menu">
 				<li @click="changeView('month')" data-vname="month">Mes</li>
 				<li @click="changeView('agendaDay')" data-vname="agendaDay">Día</li>
 				<li @click="changeView('agendaWeek')" data-vname="agendaWeek">Semana</li>
 				<li @click="changeView('listMonth')" data-vname="listMonth">Agenda</li>
 			</ul>
-		</ons-popover>
+		</div>
+
 		<div class="calendar-container" :person="person"></div>
 	</div>
 </template>
@@ -36,7 +37,9 @@ export default {
 					viewSwitcher: {
 						text: 'Ver',
 						click: function(evt) {
-							that.$el.querySelector("ons-popover[data-id='calendar-views']").show(this);
+							evt.stopPropagation();
+							that.positionViewMenu();
+							that.displayViewsMenu = !that.displayViewsMenu;
 						}
 					}
 				},
@@ -70,22 +73,22 @@ export default {
 
 				eventAfterAllRender: function(view){
 					that.$parent.loadingEvents = false;
+				},
+
+				viewRender: function(view, element) {
+					that.positionViewMenu();	
 				}
 			},
 
 			calendarViews: [
 				{name: "month", "es": "Mes"}, 
-				//{name: "basicWeek", "es": "semana"}, 
-				//{name: "basicDay", "es": "día"},
 				{name: "agendaDay", "es": "Día"}, 
 				{name: "agendaWeek", "es": "Semana"}, 
-				//{name: "listYear", "es": "lista anual"}, 
 				{name: "listMonth", "es": "Agenda"}, 
-				//{name: "listWeek", "es": "lista semanal"}, 
-				//{name: "listDay", "es": "lista diaria"}
 			],
 			currentView: null,
-			calendarContainer: null
+			calendarContainer: null,
+			displayViewsMenu: false
 		}
 	},
 
@@ -117,51 +120,6 @@ export default {
 			
 		},
 
-		createToolbar (){
-			let viewListButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-views']");
-			let viewsPopover = this.$el.querySelector("ons-popover[data-action='calendar-views']");
-			let filtersPopover = this.$el.querySelector("ons-popover[data-action='calendar-filters']");
-
-			let viewOptions = this.$el.querySelectorAll("ons-input[name='available-calendar-views']");
-			for (var viewOption of viewOptions) {
-				viewOption.addEventListener("change", evt => {
-
-					viewsPopover.hide();
-					let selectedView = evt.srcElement.getAttribute("id");
-					$(this.calendarContainer).fullCalendar('changeView', selectedView);
-					this.currentView = selectedView;
-
-				});
-			}
-
-			let headerLeft = this.$el.querySelector("div.fc-toolbar.fc-header-toolbar > div.fc-left");
-			let headerRight = this.$el.querySelector("div.fc-toolbar.fc-header-toolbar > div.fc-right");
-
-			let customLeftButton = document.createElement("ons-button");
-			customLeftButton.addEventListener("click", () => $(this.calendarContainer).fullCalendar('prev'));
-			let customLeftButtonIcon = document.createElement("ons-icon");
-			customLeftButtonIcon.setAttribute("icon", "fa-chevron-left");
-			customLeftButton.appendChild(customLeftButtonIcon);
-			headerLeft.appendChild(customLeftButton);
-
-			let customRightButton = document.createElement("ons-button");
-			customRightButton.addEventListener("click", () => $(this.calendarContainer).fullCalendar('next'));
-			let customRightButtonIcon = document.createElement("ons-icon");
-			customRightButtonIcon.setAttribute("icon", "fa-chevron-right");
-			customRightButton.appendChild(customRightButtonIcon);
-			headerRight.appendChild(customRightButton);
-
-			let todayButton = this.$el.querySelector("ons-toolbar-button[data-action='calendar-today']");
-
-			let filtersButton = this.$el.querySelector("ons-toolbar-button[data-action='filters-pannel']");
-
-			todayButton.addEventListener("click", () => $(this.calendarContainer).fullCalendar('today'));
-
-			viewListButton.addEventListener("click", () => viewsPopover.show(viewListButton));
-			
-			filtersButton.addEventListener("click", () => filtersPopover.show(filtersButton));
-		},
-
 		changeView (viewName){
 			let previousView = this.currentView;
 			$(this.calendarContainer).fullCalendar('changeView', viewName);
@@ -170,12 +128,40 @@ export default {
 			let previousItem = this.$el.querySelector("li[data-vname='"+previousView+"']");
 			previousItem.classList.remove("phi-menu-selected");
 
-			this.$el.querySelector("ons-popover[data-id='calendar-views']").hide();
+			this.displayViewsMenu = false;
+		},
+
+		positionViewMenu (){
+			let viewChangerButton = this.$el.querySelector("button.fc-viewSwitcher-button");
+			let viewChangerMenu = this.$el.querySelector("div.views-list-menu");
+			let buttonHeight = parseInt(window.getComputedStyle(viewChangerButton).getPropertyValue('height'));
+
+			let xPos = 0;
+  			let yPos = 0;
+
+			xPos += (viewChangerButton.getBoundingClientRect().left - viewChangerButton.scrollLeft + viewChangerButton.clientLeft);
+      		yPos += (viewChangerButton.getBoundingClientRect().top - viewChangerButton.scrollTop + viewChangerButton.clientTop);
+
+			viewChangerMenu.style.left = xPos + "px";
+			viewChangerMenu.style.top = yPos + buttonHeight + 3 + "px";
+		},
+
+		addMenuEvents (){
+			window.addEventListener("resize", () => {
+				this.positionViewMenu();
+			});
+
+			document.body.addEventListener("click", evt => {
+				if(this.displayViewsMenu){
+					this.displayViewsMenu = false;
+				}
+			});
 		}
 	},
 
 	mounted() {
 		this.initializeCalendar();
+		this.addMenuEvents();
 	}
 }
 
@@ -210,6 +196,15 @@ export default {
 	.phi-menu-selected{
 		 background-color: rgba(0, 0, 0, 0.1);
 		 font-weight: bold;
+	}
+
+	.views-list-menu{
+		width:200px;
+		position: fixed;
+		background-color: #eee;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		z-index: 2;
 	}
 	
 </style>
