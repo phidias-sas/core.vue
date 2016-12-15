@@ -17,24 +17,18 @@
 				<div class="phi-media">
 					<div class="phi-media-figure fa fa-bell-o"></div>
 					<div class="phi-media-body">Notificaciones</div>
-					<div class="phi-media-right">
-						<ons-switch
-							:checked="openNotifications"
-							@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
-						</ons-switch>
-					</div>
+					<ons-switch class="phi-media-right"
+						:checked="openNotifications"
+						@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
+					</ons-switch>
 				</div>
 				<phi-drawer :open="openNotifications">
-					<div id="panel_Notifications">
-						<div class="phi-media" v-for="preference in preferences">
-							<div class="phi-media-body">{{ preference.type }}</div>
-							<div class="phi-media-right">
-								<ons-switch
-									:checked="preference.isEnabled == '1'"
-									@change="markNotification(preference.isEnabled = !preference.isEnabled, preference.destination, preference.type)">
-								</ons-switch>
-							</div>
-						</div>
+					<div class="phi-media" v-for="preference in preferences">
+						<div class="phi-media-body">{{ preference.type }}</div>
+						<ons-switch class="phi-media-right"
+							:checked="preference.isEnabled == '1'"
+							@change="togglePreference(preference)">
+						</ons-switch>
 					</div>
 				</phi-drawer>
 			</div>
@@ -90,22 +84,20 @@ export default {
 		getPreferences() {
 
 			/* Load post types */
-			fetch(this.getPostTypes())
-			 	.then(response => response.json())
-			 	.then(datos => {
-			 		datos.forEach(dato => {
-			 			this.postTypes.push({
-			 				type: dato.singular,
-			 				isEnabled: 1
-			 			})
-			 		})
-			 	})
+			app.api.get('types/post')
+				.then(datos => {
+					datos.forEach(dato => {
+						this.postTypes.push({
+							type: dato.singular,
+							isEnabled: 1
+						})
+					})
+				});
 
 			/* Load preferences from gcm transport type*/
-			fetch(this.getEndPointNotifications())
-				.then(response => response.json())
+			app.api.get(`people/${app.user.id}/notification/destinations`)
 				.then(data => {
-					data.forEach( dato => {
+					data.forEach(dato => {
 						if (dato.transport == 'gcm') {
 							if (dato.preferences.length == 0) {
 								this.preferences = this.postTypes;
@@ -116,52 +108,28 @@ export default {
 							this.openNotifications = dato.isEnabled == "1";
 						}
 					})
-			})
-		},
-
-		getEndPointNotifications() {
-			// {endPoint}/people/{id_people}/notifications/destinations
-			return this.app.data.endpoint+'/people/'+this.app.user.id+'/notification/destinations';
-
-		},
-
-		getPostTypes() {
-			return this.app.data.endpoint+'/types/post';
+			});
 		},
 
 		// {endPoint}/people/{id_people}/notification/destinations/{idDestination}
-		markNotification(preferenceEnable, preferenceType) {
+		togglePreference(preference) {
 
-			let tempPreferences = [];
-			this.preferences.forEach( dato => {
-				if (dato.type == preferenceType) {
-					tempPreferences.push({
-						destination: this.preferenceDest,
-						type: preferenceType,
-						isEnabled: preferenceEnable,
-						schedule: null
-					});
-				} else {
-					tempPreferences.push(dato);
-				}
-			});
-			this.preferences = tempPreferences;
+			preference.isEnabled = preference.isEnabled == "1" ? "0" : "1";
 
-			this.app.api
-			  	.put('people/'+this.app.user.id+'/notification/destinations/'+this.preferenceDest, {
-			   		person: this.app.user.id,
-			   		preferences: this.preferences
-			  	})
-			  	.then(response => console.log(response));
+			app.api.put(`people/${app.user.id}/notification/destinations/${this.preferenceDest}`, {
+				preferences: this.preferences
+			})
+			// .then(response => console.log(response))
+			.then(() => app.api.clear(`people/${app.user.id}/notification/destinations`));  //limpiar cache
 		},
 
 		markGeneralNotification(preferenceDestination, preferenceEnable) {
-			this.app.api
-			 	.put('people/'+this.app.user.id+'/notification/destinations/'+preferenceDestination,{
-			 		id: preferenceDestination,
-			 		isEnabled: preferenceEnable ? 1 : 0
-			 	})
-			 	.then(response => console.log(response));
+			app.api.put(`people/${app.user.id}/notification/destinations/${preferenceDestination}`, {
+				id: preferenceDestination,
+				isEnabled: preferenceEnable ? 1 : 0
+			})
+			// .then(response => console.log(response))
+			.then(() => app.api.clear(`people/${app.user.id}/notification/destinations`));  //limpiar cache
 		}
 
 	}
