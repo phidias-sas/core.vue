@@ -2,7 +2,7 @@
 	<div class="phi-page">
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> 
+				<button class="phi-button" @click="$parent.$el.left.toggle()">
 					<i class="fa fa-bars"></i>
 				</button>
 				<h1>Preferencias</h1>
@@ -12,55 +12,49 @@
 		<ons-progress-bar indeterminate v-show="loadingEvents"></ons-progress-bar>
 
 		<div class="phi-page-contents">
-			
-			<ons-list-item > 
-				<div class="left"><i class="fa fa-bell-o"></i></div> 
-				<div class="center"> <h4> Notificaciones Android </h1> </div>
-				<div class="right"> 
-					<ons-switch 
-							:checked="openNotifications" 
-							@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
-					</ons-switch> 
-				</div>
-			</ons-list-item>		
 
-			<phi-drawer :open="openNotifications"> 
-			<div id="panel_Notifications">
-				<ons-list-item v-for="preference in preferences">
-					<div class="left">{{ preference.type }}</div>
-					<div class="right">
-						<ons-switch 
-								:checked="preference.isEnabled == '1' ? true: false" 
-								@change="markNotification(preference.isEnabled = !preference.isEnabled, preference.destination, preference.type)">
+			<div class="phi-card">
+				<div class="phi-media">
+					<div class="phi-media-figure fa fa-bell-o"></div>
+					<div class="phi-media-body">Notificaciones</div>
+					<div class="phi-media-right">
+						<ons-switch
+							:checked="openNotifications"
+							@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
 						</ons-switch>
 					</div>
-				</ons-list-item>
-			</div>
-			</phi-drawer>	
-
-			<ons-list-item > 
-				<div class="left"><i class="fa fa fa-cog"></i></div> 
-				<div class="center"> <h4> General </h1> </div>
-				<div class="right"> 
-					<ons-switch 
-							:checked="openGeneral" 
-							@change="openGeneral = !openGeneral">
-					</ons-switch> 
 				</div>
-			</ons-list-item>
+				<phi-drawer :open="openNotifications">
+					<div id="panel_Notifications">
+						<div class="phi-media" v-for="preference in preferences">
+							<div class="phi-media-body">{{ preference.type }}</div>
+							<div class="phi-media-right">
+								<ons-switch
+									:checked="preference.isEnabled == '1'"
+									@change="markNotification(preference.isEnabled = !preference.isEnabled, preference.destination, preference.type)">
+								</ons-switch>
+							</div>
+						</div>
+					</div>
+				</phi-drawer>
+			</div>
 
-			<phi-drawer :open="openGeneral"> 
-			<div id="panel_General">
-				<ons-list-item>
-					<div clas="center">
+			<div class="phi-card">
+				<div class="phi-media" @click="openGeneral = !openGeneral">
+					<div class="phi-media-figure fa fa-cog"></div>
+					<div class="phi-media-body">General</div>
+					<div class="phi-media-right fa" :class="openGeneral ? 'fa-chevron-down' : 'fa-chevron-right'"></div>
+				</div>
+				<phi-drawer :open="openGeneral">
+					<div class="phi-media">
 						<button class="phi-button" @click="cacheDelete()">
 							<i class="fa fa-trash-o" aria-hidden="true"></i>
-							<span>Elimniar cache</span>
+							<span>Limpiar cache</span>
 						</button>
 					</div>
-				</ons-list-item>
+				</phi-drawer>
 			</div>
-			</phi-drawer>
+
 		</div>
 	</div>
 </template>
@@ -70,8 +64,8 @@ import app from '../store/app.js'
 
 export default {
 	name: "settings",
-	
-	data () {
+
+	data() {
 		return {
 			app,
 			preferences: [],
@@ -83,8 +77,8 @@ export default {
 		}
 	},
 
-	mounted(){
-		this.getPreferences();		
+	mounted() {
+		this.getPreferences();
 	},
 
 	methods: {
@@ -93,13 +87,13 @@ export default {
 			this.app.api.cache.empty().then(() => { alert("Cache borrado") });
 		},
 
-		getPreferences(){
-			
+		getPreferences() {
+
 			/* Load post types */
 			fetch(this.getPostTypes())
 			 	.then(response => response.json())
 			 	.then(datos => {
-			 		datos.forEach( dato => {
+			 		datos.forEach(dato => {
 			 			this.postTypes.push({
 			 				type: dato.singular,
 			 				isEnabled: 1
@@ -112,25 +106,21 @@ export default {
 				.then(response => response.json())
 				.then(data => {
 					data.forEach( dato => {
-						if (dato.transport == 'gcm')
-						{
-							if (dato.preferences.length == 0)
-							{
-								this.preferences = this.postTypes;										
+						if (dato.transport == 'gcm') {
+							if (dato.preferences.length == 0) {
+								this.preferences = this.postTypes;
+							} else {
+								this.preferences = dato.preferences;
 							}
-							else
-							{
-								this.preferences = dato.preferences;			
-							}							
-							this.preferenceDest = dato.id;
-							this.openNotifications = dato.isEnabled == "1" ? true : false;	
+							this.preferenceDest    = dato.id;
+							this.openNotifications = dato.isEnabled == "1";
 						}
 					})
 			})
-		},		
+		},
 
 		getEndPointNotifications() {
-			// {endPoint}/people/{id_people}/notifications/destinations  
+			// {endPoint}/people/{id_people}/notifications/destinations
 			return this.app.data.endpoint+'/people/'+this.app.user.id+'/notification/destinations';
 
 		},
@@ -144,17 +134,14 @@ export default {
 
 			let tempPreferences = [];
 			this.preferences.forEach( dato => {
-				if (dato.type == preferenceType)
-				{
+				if (dato.type == preferenceType) {
 					tempPreferences.push({
 						destination: this.preferenceDest,
 						type: preferenceType,
 						isEnabled: preferenceEnable,
 						schedule: null
 					});
-				}
-				else
-				{
+				} else {
 					tempPreferences.push(dato);
 				}
 			});
@@ -162,14 +149,13 @@ export default {
 
 			this.app.api
 			  	.put('people/'+this.app.user.id+'/notification/destinations/'+this.preferenceDest, {
-			   		person: this.app.user.id,					
+			   		person: this.app.user.id,
 			   		preferences: this.preferences
 			  	})
 			  	.then(response => console.log(response));
 		},
 
 		markGeneralNotification(preferenceDestination, preferenceEnable) {
-
 			this.app.api
 			 	.put('people/'+this.app.user.id+'/notification/destinations/'+preferenceDestination,{
 			 		id: preferenceDestination,
@@ -182,6 +168,12 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.phi-card {
+	margin-bottom: 1em;
+}
 
+.phi-media-figure {
+	text-align: center;
+}
 </style>

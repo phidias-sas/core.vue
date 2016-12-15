@@ -30,7 +30,7 @@ export default {
 		return {
 			app,
 			defaultView: 'listMonth',
-			eventSources: ['https://phidias.api.phidias.co/people/'+app.user.id+'/calendar/feed'], //only urls by now!!!
+			eventSources: [`${app.api.host}/people/${app.user.id}/calendar/feed`], //only urls by now!!!
 			isLoading: false
 		}
 	},
