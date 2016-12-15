@@ -29,7 +29,7 @@ export default {
 		let that = this;
 		return {
 			calendarConfig: {
-				lang: 'es',
+				locale: 'es',
 				defaultView: 'listMonth',
 				firstDay: 0,
 				height: 'parent',
