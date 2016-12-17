@@ -28,7 +28,7 @@
 			</header>
 			<div class="phi-menu" @click="toggleMenu">
 				<router-link to="/dashboard">Bandeja de entrada</router-link>
-				<router-link to="/folder/archive">Archivados</router-link>
+				<router-link to="/archive">Archivados</router-link>
 				<router-link to="/calendar">Calendario</router-link>
 				<router-link to="/map">Mapa</router-link>
 				<hr>

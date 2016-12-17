@@ -1,7 +1,5 @@
 <template>
 	<div class="phi-page scrollable">
-		<ons-progress-bar indeterminate v-show="collection.isLoading"></ons-progress-bar>
-
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar" :class="{_hidden: toolbarIsHidden}">
 				<button class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
@@ -72,14 +70,11 @@
 <script>
 import app from '../../store/app.js'
 
-var collection;
 var destroyListener;
 
 export default {
 	data () {
 		return {
-			app,
-			collection,
 			thread: null,
 			toolbarIsHidden: false,
 			replyBody: ""
@@ -181,10 +176,9 @@ export default {
 	// does NOT have access to `this` component instance,
 	// because it has not been created yet when this guard is called!
 	beforeRouteEnter (to, from, next) {
-		collection = app.api.collection(`/people/${app.user.id}/threads/inbox`);
-		collection.get(to.params.threadId)
+		app.api
+			.get(`/people/${app.user.id}/threads/inbox/${to.params.threadId}`)
 			.then(thread => {
-
 				// Additional properties to be tracked
 				thread.replies.forEach(post => {
 					post.isInfoLoaded = false;

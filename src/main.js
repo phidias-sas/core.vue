@@ -49,8 +49,9 @@ import Login from './states/Login.vue';
 
 import Deck from './states/Deck.vue';
 import Dashboard from './states/Dashboard.vue';
-import Folder from './states/Thread/Folder.vue';
-import Read from './states/Thread/Read.vue';
+import ThreadFolder from './states/Thread/Folder.vue';
+import ThreadRead from './states/Thread/Read.vue';
+import ThreadArchive from './states/Thread/Archive.vue';
 
 import Calendar from './states/Calendar.vue';
 import Settings from './states/Settings.vue';
@@ -85,7 +86,7 @@ const router = new VueRouter({
 		{ path: '/santiago', component: Santiago },
 		{ path: '/leo', component: Leo },
 		{ path: '/sebas', component: Sebas},
-	
+
 		{ path: '/', redirect: '/dashboard' },
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
@@ -93,8 +94,10 @@ const router = new VueRouter({
 		{ path: '/deck',  component: Deck,
 			children: [
 				{ path: '/dashboard', component: Dashboard, meta: {order: 1} },
-				{ path: '/folder/:folder', component: Folder, meta: {order: 2}, name: 'folder' },
-				{ path: '/read/:threadId', component: Read, meta: {order: 99}, name: 'read' },
+				{ path: '/folder/:folder', component: ThreadFolder, meta: {order: 2}, name: 'folder' },
+				{ path: '/read/:threadId', component: ThreadRead, meta: {order: 99}, name: 'read' },
+				{ path: '/archive', component: ThreadArchive, meta: {order: 3}, name: 'archive' },
+
 				{ path: '/people', component: People, meta: {order: 10}, name: 'people' },
 				{ path: '/person/:personId', component: Person, meta: {order: 11}, name: 'person' },
 
@@ -115,7 +118,7 @@ const router = new VueRouter({
 				},
 
 				{ path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: {order: 20}, name: 'node-compose' },
-				
+
 				{ path: '/test', component: Test },
 				{ path: '/sanchez', component: Sanchez },
 				{ path: '/felipe', component: Felipe },

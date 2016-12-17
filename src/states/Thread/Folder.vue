@@ -1,21 +1,15 @@
 <template>
 	<div class="phi-page scrollable">
 		<div class="phi-page-cover">
-			<div class="phi-page-toolbar" :class="{_hidden: toolbarIsHidden}">
+			<div class="phi-page-toolbar" :class="{_hidden: tpl.toolbarIsHidden}">
 
-				<button v-if="$route.params.folder == 'archive'" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<button v-if="$route.params.folder != 'archive'" class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
+				<button class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
 
-				<h1 v-text="$route.params.folder == 'archive' ? 'archivados' : type.plural"></h1>
+				<h1 v-text="$route.query.type"></h1>
 
-				<button v-if="$route.params.folder != 'archive'" @click="moveTo('archive')" class="phi-button selection-count" v-show="selection.length > 0">
-					<span v-text="selection.length"></span>
+				<button @click="folder.move('archive')" class="phi-button selection-count" v-show="folder.selectionCount > 0">
+					<span v-text="folder.selectionCount"></span>
 					<i class="fa fa-archive"></i>
-				</button>
-
-				<button v-if="$route.params.folder == 'archive'" @click="moveTo('inbox')" class="phi-button selection-count" v-show="selection.length > 0">
-					<span v-text="selection.length"></span>
-					<i class="fa fa-inbox"></i>
 				</button>
 
 				<div class="phi-tooltip">
@@ -25,18 +19,16 @@
 							<span>seleccionar</span>
 							<phi-drawer :open="tpl.drawerIsOpen">
 								<ul class="phi-menu">
-									<li @click="select('all')">todos</li>
-									<li @click="select('read')">leídos</li>
-									<li @click="select('unread')">no leídos</li>
-									<li @click="select('none')">ninguno</li>
+									<li @click="folder.select('all')">todos</li>
+									<li @click="folder.select('read')">leídos</li>
+									<li @click="folder.select('unread')">no leídos</li>
+									<li @click="folder.select('none')">ninguno</li>
 								</ul>
 							</phi-drawer>
 						</li>
-						<li @click="moveTo('archive')" :disabled="!selection.length">archivar</li>
-						<li @click="moveTo('read')" :disabled="!selection.length">marcar leído</li>
-						<li @click="moveTo('unread')" :disabled="!selection.length">marcar no leído</li>
-						<hr>
-						<li @click="refresh()">actualizar</li>
+						<li @click="folder.move('archive')" :disabled="!folder.selectionCount">archivar</li>
+						<li @click="folder.move('read')" :disabled="!folder.selectionCount">marcar leído</li>
+						<li @click="folder.move('unread')" :disabled="!folder.selectionCount">marcar no leído</li>
 					</ul>
 				</div>
 			</div>
@@ -45,13 +37,16 @@
 		<ons-progress-bar indeterminate v-show="folder.isLoading"></ons-progress-bar>
 
 		<div class="phi-page-contents">
-			<div class="empty" v-show="!folder.threads.length && !folder.isLoading">
+			<div class="empty" v-show="folder.isEmpty">
 				<p>no hay nada aquí</p>
 			</div>
 
 			<div class="phi-card">
-				<div class="thread phi-media" v-for="thread in folder.threads" :class="{selected: isSelected(thread), read: !!thread.stub.readDate, unread: !thread.stub.readDate}">
-					<div class="phi-media-figure phi-avatar" @click="toggle(thread)">
+				<div v-for="thread in folder.threads"
+					class="thread phi-media"
+					:class="{selected: folder.isSelected(thread), read: !!thread.stub.readDate, unread: !thread.stub.readDate}"
+				>
+					<div class="phi-media-figure phi-avatar" @click="folder.toggle(thread)">
 						<img :src="thread.author.avatar" :alt="thread.author.firstName">
 						<i class="fa fa-check"></i>
 					</div>
@@ -63,13 +58,18 @@
 				</div>
 			</div>
 
-			<button @click="fetch(page+1)" v-show="hasNextPage" class="loadNext">{{ app.api.isLoading ? 'cargando ...' : 'cargar más' }}</button>
+			<button
+				class="loadNext"
+				v-show="folder.hasNext"
+				@click="folder.next()"
+				v-text="folder.isLoading ? 'cargando ...' : 'cargar más'"
+			></button>
 		</div>
 
-		<div class="phi-toast" :class="{shown: lastAction}">
-			<div v-if="lastAction">
-				<p class="phi-media-body" v-text="folder.redact(lastAction, type)"></p>
-				<a @click="undo()">deshacer</a>
+		<div class="phi-toast" :class="{shown: tpl.toastIsShown}">
+			<div v-if="folder.lastAction">
+				<p class="phi-media-body" v-text="folder.lastAction.text"></p>
+				<a @click="folder.undo()">deshacer</a>
 			</div>
 		</div>
 
@@ -77,56 +77,43 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
-import Folder from '../../libraries/Folder.js'
-import Selection from '../../libraries/Selection.js'
+import app from '../../store/app.js';
+import Folder from '../../libraries/Folder.js';
 
 export default {
 
-	data () {
-
+	data() {
 		return {
-			app,
-
-			type: {
-				singular: this.$route.query.type || null,
-				plural:   this.$route.query.type || null,
-				gender:   1
-			},
-
-			folder:     new Folder(app, this.$route.params.folder),
-			selection:  new Selection,
-
-			page:        1,
-			hasNextPage: false,
-			search:      null,
-
-			lastAction: null,
-
-			toolbarIsHidden: false,
-
+			folder: new Folder(app, this.$route.params.folder),
 			tpl: {
-				drawerIsOpen: false
+				toolbarIsHidden: false,
+				drawerIsOpen: false,
+				toastIsShown: false
 			}
 		}
 	},
 
-	created () {
-		this.fetch();
-	},
+	mounted() {
 
-	mounted () {
+		this.$watch("folder.lastAction", action => {
+			if (!action) {
+				this.tpl.toastIsShown = false;
+				return;
+			}
+
+			this.tpl.toastIsShown = true;
+			setTimeout(() => this.tpl.toastIsShown = false, 3000);
+		});
+
 		// https://codepen.io/IliaSky/pen/VjgBqQ?editors=0110
 		var page        = this.$el;
 		var scrollValue = 0;
-
-		var toolbar = this.$el.querySelector(".phi-page-toolbar");
-
+		var toolbar     = this.$el.querySelector(".phi-page-toolbar");
 		['scroll', 'touchmove'].forEach((eventName) => {   // apparently 'touchmove' event is also needed for iOS
 			page.addEventListener(eventName, () => {
 				var delta = page.scrollTop - scrollValue;
 				if (Math.abs(delta) > 8) {
-					this.toolbarIsHidden = delta > 0  && scrollValue > toolbar.clientHeight;
+					this.tpl.toolbarIsHidden = delta > 0  && scrollValue > toolbar.clientHeight;
 					scrollValue = page.scrollTop;
 				}
 			});
@@ -134,93 +121,14 @@ export default {
 
 	},
 
-	methods: {
-
-		fetch (page) {
-
-			this.page = Math.max(page == undefined ? 1 : page, 0);
-
-			return this.folder.fetch({
-				type: this.$route.query.type || null,
-				page: this.page,
-				q:    this.search == undefined ? null : this.search
-			})
-			.then((results) => {
-				this.hasNextPage = results.length >= 20;
-
-				// get type from first result
-				if (results.length) {
-					this.type = results[0].type;
-				}
-			});
-		},
-
-		refresh () {
-			return this.app.api.clear(this.folder.url)
-				.then(() => {
-					this.folder.collection.items = []; // !!! implement a folder.clear() and/or collection.clear() instead
-					return this.fetch()
-				});
-		},
-
-		moveTo (targetFolder) {
-			this.folder.move(this.selection.items, targetFolder)
-				.then(action => {
-					this.lastAction = action;
-
-					setTimeout(() => {
-						this.lastAction = null
-					}, 3000);
-				});
-		},
-
-		undo () {
-			if (!this.lastAction) {
-				return;
-			}
-			this.folder.undo(this.lastAction);
-		},
-
-		select (query) {
-			this.selection.clear();
-			if (query == "none") {
-				return;
-			}
-			this.folder.threads.forEach((thread) => {
-				switch (query) {
-					case "all":
-						this.selection.add(thread.id);
-					break;
-
-					case "read":
-						!!thread.stub.readDate && this.selection.add(thread.id);
-					break;
-
-					case "unread":
-						!thread.stub.readDate && this.selection.add(thread.id);
-					break;
-				}
-			});
-		},
-
-		isSelected (thread) {
-			return this.selection.has(thread.id);
-		},
-
-		toggle (thread) {
-			this.selection.toggle(thread.id);
-		}
-	},
-
-	beforeRouteEnter (to, from, next) {
-
+	beforeRouteEnter(to, from, next) {
 		var folder = new Folder(app, to.params.folder);
-		folder.fetch({
-			type: to.query.type || null,
-			page: 1,
-			q:    null
-		})
-		.then(() => next());
+		folder.fetch({type: to.query.type})
+			.then(() => {
+				next(vm => {
+					vm.folder = folder;
+				});
+			});
 	}
 
 }
@@ -276,6 +184,7 @@ export default {
 		a {
 			color: #b2cfff;
 			text-transform: uppercase;
+			cursor: pointer;
 		}
 
 	}
@@ -362,7 +271,6 @@ export default {
 		font-weight: 300;
 		color: #222;
 	}
-
 
 	&.unread {
 		h1, p {

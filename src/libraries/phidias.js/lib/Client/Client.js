@@ -12,8 +12,8 @@ export default class Client {
 		this.cacheIsEnabled = true;
 	}
 
-	collection(url) {
-		return new Collection(this, url);
+	collection(url, parameters) {
+		return new Collection(this, url, parameters);
 	}
 
 	setCaching(value) {
@@ -47,23 +47,28 @@ export default class Client {
 		}
 
 		var promise;
-		this.isLoading = true;
+
 		if (method == "get" && this.cacheIsEnabled) {
 			promise = this.cache.fetch(request)
-				.then((response) => response != undefined ? response : fetch(request))
-				.then((response) => this.cache.store(request, response));
+				.then(response => response != undefined ? response : fetch(request))
+				.then(response => this.cache.store(request, response));
 		} else {
 			this.cache.clear(url);
 			promise = fetch(request);
 		}
 
+		var timer = setTimeout(() => {
+			this.isLoading = true;
+		}, 100);
+
 		return promise
 			.then(response => {
+				clearTimeout(timer);
 				this.isLoading = false;
 				if (!response.ok) {
 					throw Error(response.statusText);
 				}
-				return response.json();
+				return response;
 			});
 	}
 
@@ -77,42 +82,48 @@ export default class Client {
 		return this.fetch(url, {
 			method: "GET",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	post(url, data) {
 		return this.fetch(url, {
 			method: "POST",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	put(url, data) {
 		return this.fetch(url, {
 			method: "PUT",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	delete(url, data) {
 		return this.fetch(url, {
 			method: "DELETE",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	patch(url, data) {
 		return this.fetch(url, {
 			method: "PATCH",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	options(url, data) {
 		return this.fetch(url, {
 			method: "OPTIONS",
 			body:   data
-		});
+		})
+		.then(response => response.json());
 	}
 
 	static serialize(obj, prefix) {

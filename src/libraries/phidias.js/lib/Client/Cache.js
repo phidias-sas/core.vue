@@ -1,28 +1,28 @@
-import Dexie from 'dexie'
+import Dexie from 'dexie';
 
 export default class Cache {
 
-	constructor (id) {
-		this.id = id ? id : "phidias.cache-2";
+	constructor(id) {
+		this.id = id ? id : "phidias.cache";
 		this.createDB();
 	}
 
-	createDB () {
+	createDB() {
 		this.db = new Dexie(this.id);
 		this.db.version(1).stores({
 			request: "hash, url, timestamp"
 		});
 	}
 
-	empty () {
+	empty() {
 		return this.db.delete().then(() => this.createDB());
 	}
 
-	destroy () {
+	destroy() {
 		return this.db.delete();
 	}
 
-	fetch (request) {
+	fetch(request) {
 
 		if (!this.db) {
 			return new Dexie.Promise(function(resolve, reject) {
@@ -31,12 +31,12 @@ export default class Cache {
 		}
 
         var hash = Cache.getHash(request);
-		return this.db.request.get(hash).then((result) => result ? Cache.parse(result.response) : undefined);
+		return this.db.request.get(hash).then(result => result ? Cache.parse(result.response) : undefined);
 	}
 
-	store (request, response) {
+	store(request, response) {
         var hash = Cache.getHash(request);
-		return Cache.stringify(response).then((responseString) => {
+		return Cache.stringify(response).then(responseString => {
 			this.db.request.put({
 				hash:      hash,
 				url:       request.url.split("?")[0],
@@ -48,18 +48,18 @@ export default class Cache {
 		});
 	}
 
-	clear (url) {
+	clear(url) {
 		return this.db.request.where("url").equals(url).delete();
 	}
 
-	static stringify (response) {
+	static stringify(response) {
 		var response = response.clone();
 		var allHeaders = {};
 		response.headers.forEach((value, headerName) => {
 			allHeaders[headerName] = value;
 		});
 
-		return response.text().then((text) =>
+		return response.text().then(text =>
 			JSON.stringify({
 				body: text,
 				options: {
@@ -71,7 +71,7 @@ export default class Cache {
 		);
 	}
 
-	static parse (responseString) {
+	static parse(responseString) {
 		if (!responseString) {
 			return responseString;
 		}
@@ -79,7 +79,7 @@ export default class Cache {
 		return new Response(responseData.body, responseData.options);
 	}
 
-    static getHash (request) {
+    static getHash(request) {
         return 'cache:' + request.url;
     }
 }
