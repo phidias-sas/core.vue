@@ -263,18 +263,22 @@ export default {
 	.thread-author {
 		display: block;
 		font-size: 0.85em;
-		font-weight: 300;
 	}
 
 	.thread-description {
 		display: block;
 		font-weight: 300;
 		color: #222;
+		font-size: 0.85em;
 	}
 
 	&.unread {
-		h1, p {
+		.thread-title {
 			font-weight: bold;
+		}
+
+		.thread-description {
+			font-weight: 500;
 		}
 	}
 

@@ -89,7 +89,7 @@ export default class App {
 		this.navigation = new Navigation;
 	}
 
-	set (data) {
+	set(data) {
 		if (!data) {
 			return;
 		}
@@ -98,7 +98,7 @@ export default class App {
 	}
 
 	/* If an enpoint is present initialize the API */
-	initialize () {
+	initialize() {
 		if (!this.data.endpoint) {
 			return;
 		}
@@ -108,37 +108,37 @@ export default class App {
 	}
 
 	/* Persistence */
-	store () {
+	store() {
 		return localforage.setItem('app:' + this.name, this.data);
 	}
 
-	retrieve () {
+	retrieve() {
 		return localforage.getItem('app:' + this.name)
-			.then(storedData => !!storedData ? storedData : {});
+			.then(stored => !!stored ? stored : {})
+			.then(data => Object.assign(data, this.getDataFromMetaTags()));
 	}
 
-	clear () {
+	clear() {
 		this.reset();
 		return localforage.removeItem('app:' + this.name);
 	}
 
 
 	/* Shorthand data getters */
-	get title () {
+	get title() {
 		return this.data.title;
 	}
 
-	get logo () {
+	get logo() {
 		return this.data.logo;
 	}
 
-	get user () {
+	get user() {
 		return this.data.user;
 	}
 
-
 	/* Event handling */
-	on (eventName, callback) {
+	on(eventName, callback) {
 		eventName = eventName.toLowerCase();
 		if (!this.listeners[eventName]) {
 			this.listeners[eventName] = [];
@@ -154,7 +154,7 @@ export default class App {
 		};
 	}
 
-	emit (eventName, args = []) {
+	emit(eventName, args = []) {
 		eventName = eventName.toLowerCase();
 		if (!this.listeners[eventName]) {
 			return;
@@ -165,7 +165,7 @@ export default class App {
 		});
 	}
 
-	loadCode (code, rackUrl = "https://phidias.io/") {
+	loadCode(code, rackUrl = "https://phidias.io/") {
 		return new Client(rackUrl)
 			.get("/code/" + code)
 			.then(response => {
@@ -179,11 +179,11 @@ export default class App {
 	}
 
 	/* Authentication */
-	get isAuthenticated () {
+	get isAuthenticated() {
 		return this.data.token != null;
 	}
 
-	setToken (tokenString) {
+	setToken(tokenString) {
 		this.data.user  = JWT.decode(tokenString);
 		this.data.token = tokenString;
 		this.store();
@@ -196,25 +196,26 @@ export default class App {
 		return this.data.user;
 	}
 
-	logout () {
+	logout() {
 		this.unregisterPushNotifications();
 		this.data.user  = null;
 		this.data.token = null;
 		this.api.setToken(null);
-		this.store();		
+		this.store();
 		this.emit("logout");
 	}
 
-	login (username, password) {
+	login(username, password) {
 		return this.api.fetch("oauth/token", {
 			method:  "post",
 			headers: {Authorization: 'Basic ' + btoa(username + ':' + password)},
 			body:    {grant_type: "client_credentials"}
 		})
+		.then(response => response.json())
 		.then(response => this.setToken(response.access_token));
 	}
 
-	googleLogin () {
+	googleLogin() {
 		return new Promise((resolve, reject) => {
 			this.getGoogleAuthorizationCode()
 				.then(googleCode => {
@@ -227,7 +228,7 @@ export default class App {
 		});
 	}
 
-	getGoogleAuthorizationCode () {
+	getGoogleAuthorizationCode() {
 		// https://developers.google.com/identity/protocols/OAuth2UserAgent#formingtheurl
 		var authUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + Client.serialize({
 			"redirect_uri":  "http://www.phidias.co/googlesignin.html",
@@ -282,7 +283,7 @@ export default class App {
 		});
 	}
 
-	getDataFromMetaTags () {
+	getDataFromMetaTags() {
 
 		var retval = {};
 
@@ -317,7 +318,7 @@ export default class App {
 
 
 	/* Display a notification. takes same arguments as registration.showNotification */
-	displayNotification (title, options) {
+	displayNotification(title, options) {
 		if (!'serviceWorker' in navigator) {
 			console.warn("serviceworker not supported");
 			return;

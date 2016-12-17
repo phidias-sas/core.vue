@@ -41,7 +41,7 @@ export default class Folder {
     }
 
     get selectionCount() {
-        return this.collection.count('selected');
+        return this.collection.count("selected");
     }
 
     get isEmpty() {
@@ -58,7 +58,7 @@ export default class Folder {
 
     select(query) {
 
-        this.collection.untag(this.collection.tagged('selected'), 'selected');
+        this.collection.untag(this.collection.tagged("selected"), "selected");
         if (query == "none") return;
 
         var selection = [];
@@ -78,20 +78,20 @@ export default class Folder {
             }
         });
 
-        this.collection.tag(selection, 'selected');
+        this.collection.tag(selection, "selected");
     }
 
     toggle(thread) {
-        return this.collection.toggleTag(thread, 'selected');
+        return this.collection.toggleTag(thread, "selected");
     }
 
     isSelected(thread) {
-        return this.collection.hasTag(thread, 'selected');
+        return this.collection.hasTag(thread, "selected");
     }
 
     move(target) {
 
-        var threads     = this.collection.tagged('selected')
+        var threads     = this.collection.tagged("selected")
         var selectedIds = threads.filter(item => item.id);
 
         this.lastAction = {
@@ -103,7 +103,10 @@ export default class Folder {
         if (target != "read" && target != "unread") {
             this.collection.hide(threads);
         } else {
-            this.collection.untag(threads, 'selected');
+            this.collection.untag(threads, "selected");
+            threads.forEach(thread => {
+                thread.stub.readDate = target == "unread" ? null : 123;
+            });
         }
 
         return this.app.api.post(this.getFolderUrl(target), selectedIds)
@@ -129,7 +132,10 @@ export default class Folder {
         if (targetFolder != "read" && targetFolder != "unread") {
             this.collection.show(this.lastAction.threads);
         } else {
-            this.collection.tag(this.lastAction.threads, 'selected');
+            this.collection.tag(this.lastAction.threads, "selected");
+            this.lastAction.threads.forEach(thread => {
+                thread.stub.readDate = targetFolder == "unread" ? null : 123;
+            });
         }
 
         return this.app.api.post(this.getFolderUrl(targetFolder), selectedIds)

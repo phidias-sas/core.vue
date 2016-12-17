@@ -57,8 +57,9 @@ export default {
 				.then(() => {
 					this.redirect();
 				})
-				.catch((error) => {
+				.catch(error => {
 					this.error = "usuario o contraseña incorrectos";
+					console.log("app.login error", error);
 				});
 		},
 
