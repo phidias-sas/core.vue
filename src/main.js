@@ -57,7 +57,6 @@ const router = new VueRouter({
 	routes: [
 		{ path: '/santiago', component: Santiago },
 		{ path: '/leo', component: Leo },
-		{ path: '/sebas', component: Sebas},
 
 		{ path: '/', redirect: '/dashboard' },
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
@@ -93,6 +92,7 @@ const router = new VueRouter({
 
 				{ path: '/test', component: Test },
 				{ path: '/sanchez', component: Sanchez },
+				{ path: '/sebas', component: Sebas},
 				{ path: '/felipe', component: Felipe },
 
 			]

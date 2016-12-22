@@ -44,6 +44,7 @@
 				<router-link to="/root">Grupos</router-link>
 -->
 				<router-link to="/settings">Preferencias</router-link>
+				<!-- <router-link to="/sebas">Sebas</router-link> -->
 				<hr>
 				<div @click="logout()">Cerrar sesión</div>
 			</div>
