@@ -5,14 +5,14 @@
 			<div class="phi-page-cover">
 				<div class="phi-page-toolbar">
 					<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-					<h1>Sebastian</h1>
+					<h1>Transporte</h1>
 				</div>
 			</div>
 				
 			<div class="phi-page-contents">
 				<div class="phi-card">
 					<div class="phi-media">
-						<button @click="buscar" class="phi-button">Mi ubicacion</button>
+						<button @click="buscar" class="phi-button btn"><i class="fa fa-map-marker" aria-hidden="true" ></i> Localizar</button>
 					</div>
 				</div>
 				<br>
@@ -48,11 +48,13 @@ export default{
 			this.longitud = position.coords.longitude;
 			var latlon    = new google.maps.LatLng(this.latitud, this.longitud);
 
-			var mapa = new google.maps.Map(document.getElementById("mapa"),{
+			var MapOptions = {
 				center: latlon,
 				zoom: 17,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
-			});
+			};
+
+			var mapa = new google.maps.Map(document.getElementById("mapa"), MapOptions);
 
 			var marker = new google.maps.Marker({
 				position: latlon,
@@ -71,14 +73,14 @@ export default{
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	#state-sebas{
 		#mapa{
 			width: 100%;
 			height: 400px;
 		}
 
-		button .phi-button{
+		.btn{
 			background-color: #FFC107;
 		}
 	}
