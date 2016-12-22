@@ -1,45 +1,26 @@
 <template>
 	<div id="state-sebas">
-		<button @click="listarPersonas">Listar personas</button>
-		
-		<ons-page>
-			<ons-toolbar>
-				<div class="left">
-					<router-link to="dashboard"><ons-back-button>Back</ons-back-button></router-link>
-				</div>
-				<div class="center">{{ state }}</div>
-				<div class="right">
-					<ons-toolbar-button @click="refresh()" title="Recargar pagina"><i class="fa fa-refresh"></i></ons-toolbar-button>
-					<ons-toolbar-button @click="borrarCache()" title="Borrar Cache"><i class="fa fa-trash"></i></ons-toolbar-button>
-				</div>
-			</ons-toolbar>
+		<div class="phi-page">
 
-			<div class="contenido">
-				<ons-row>
-					<ons-col width="20%">
-						<button class="button button--material" @click="listarPersonas()">Listar personas</button>
-					</ons-col>
-					<ons-col>
-						<div v-show="loader">
-							<ons-progress-circular indeterminate></ons-progress-circular>
-						</div>
-					</ons-col>
-				</ons-row>
-				<br>
-				
-				<div class="lista">
-					<ons-list-item v-for="persona in personas">
-						<div class="left">
-							<img class="list__item__thumbnail" :src="persona.avatar">
-						</div>
-						<div class="center">
-							<span class="list__item__title">{{ persona.firstName }}</span><span class="list__item__subtitle">{{ persona.email }}</span>
-						</div>
-					</ons-list-item>
+			<div class="phi-page-cover">
+				<div class="phi-page-toolbar">
+					<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+					<h1>Sebastian</h1>
 				</div>
 			</div>
-		</ons-page>
-		
+				
+			<div class="phi-page-contents">
+				<div class="phi-card">
+					<div class="phi-media">
+						<button @click="buscar" class="phi-button">Mi ubicacion</button>
+					</div>
+				</div>
+				<br>
+				
+				<div id="mapa" v-show="latitud"></div>
+			</div>
+			
+		</div>
 	</div>
 </template>
 
@@ -50,52 +31,55 @@ export default{
 	data() {
 		return {
 			app,
-			state: 'Sebastian',
-			personas: [],
-			loader: false,
+			latitud: '',
+			longitud: ''
 		}
 	},
 	methods:{
-		listarPersonas () {
-			this.loader = true,
-			fetch('https://phidias.api.phidias.co/people')
-			.then(response => response.json())
-			.then(datos => {
-				this.personas = datos;
-				this.loader = false;
+		buscar(){
+			if(navigator.geolocation){
+				navigator.geolocation.getCurrentPosition(this.showPosition,this.showErrors);
+			}else{
+				alert("EL navigator no lo soporta");
+			}
+		},
+		showPosition(position){
+			this.latitud  = position.coords.latitude;
+			this.longitud = position.coords.longitude;
+			var latlon    = new google.maps.LatLng(this.latitud, this.longitud);
+
+			var mapa = new google.maps.Map(document.getElementById("mapa"),{
+				center: latlon,
+				zoom: 17,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			});
+
+			var marker = new google.maps.Marker({
+				position: latlon,
+				map: mapa,
+				title: this.app.user.firstName,
+				// draggable: true,
+				animation: google.maps.Animation.DROP
 			});
 		},
-
-		refresh () {
-			location.reload();
-		},
-
-		borrarCache () {
-			this.app.api.cache.empty().then(() => { alert("Se borró el cache") });
+		showErrors(error){
+			if(error.code == error.PERMISSION_DENIED){
+				alert("ADVRETENCIA: Aceptar el permiso...");
+			}
 		}
-
 	}
 }
 </script>
 
 <style lang="scss">
 	#state-sebas{
-		.navigation-bar--material{
-			background: #673AB7;
-		}
-		.contenido{
-			padding: 15px;
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-		.button{
-			background: red;
-		}
-		.lista{
+		#mapa{
 			width: 100%;
-			height: 480px;
-			overflow-y: scroll; 
+			height: 400px;
+		}
+
+		button .phi-button{
+			background-color: #FFC107;
 		}
 	}
 </style>
