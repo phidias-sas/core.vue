@@ -11,6 +11,7 @@
 						<li>do B</li>
 					</ul>
 				</div>-->
+				<a :href="`${app.api.host}/calendar/events/${thread.event.id}/ics`" v-if="thread && thread.event"><i class="fa fa-calendar-plus-o"></i></a>
 			</div>
 			<div class="phi-page-header">
 				<h1 v-if="thread" v-text="thread.title"></h1>
@@ -79,6 +80,7 @@ export default {
 
 	data() {
 		return {
+			app,
 			thread: null,
 			toolbarIsHidden: false,
 			replyBody: ""
