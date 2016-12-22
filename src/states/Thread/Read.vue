@@ -68,12 +68,16 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
+import PhiDrawer from '../../components/Phi/Drawer.vue';
+import PhiBlock from '../../components/Phi/Block.vue';
+import app from '../../store/app.js';
 
 var destroyListener;
 
 export default {
-	data () {
+	components: {PhiDrawer, PhiBlock},
+
+	data() {
 		return {
 			thread: null,
 			toolbarIsHidden: false,
@@ -82,7 +86,7 @@ export default {
 	},
 
 	computed: {
-		canReply () {
+		canReply() {
             if (!this.thread || !this.thread.tags) {
                 return false;
             }
@@ -92,7 +96,7 @@ export default {
 
 	methods: {
 
-		toggleUserInfo (post) {
+		toggleUserInfo(post) {
 			if (!post.isInfoLoaded) {
 				post.isInfoLoaded = true;
 				return;
@@ -100,13 +104,13 @@ export default {
 			post.isExpanded = !post.isExpanded;
 		},
 
-		scrollToBottom () {
+		scrollToBottom() {
 			setTimeout(() => {
 				this.$el.scrollTop = this.$el.scrollHeight;
 			}, 200);
 		},
 
-		sendReply () {
+		sendReply() {
 			var outgoing = {
 				author: this.app.user,
 				description: this.replyBody
@@ -123,7 +127,7 @@ export default {
 				});
 		},
 
-		appendReply (post) {
+		appendReply(post) {
             if (!post || !post.id) {
                 return;
             }
@@ -144,8 +148,7 @@ export default {
 
 	},
 
-	mounted () {
-
+	mounted() {
 		destroyListener = app.on("notification", stub => {
 			this.appendReply(stub.post);
 		});

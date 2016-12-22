@@ -22,10 +22,12 @@
 </template>
 
 <script>
+import Dropzone from '../../Dropzone/Dropzone.vue';
 import app from '../../../store/app.js';
 
 export default {
     name: "phi-block-files",
+    components: {Dropzone},
     props: ["post", "block", "action"],
 
     'phi-actions': {

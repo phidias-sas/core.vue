@@ -13,10 +13,12 @@
 </template>
 
 <script>
+import PhiInput from '../Input.vue';
 import app from '../../../store/app.js';
 
 export default {
     name: "phi-person-picker",
+    components: {PhiInput},
 	props: ["label"],
 
     data () {

@@ -31,9 +31,11 @@
 </template>
 
 <script>
-export default {
+import PhiInput from '../Input.vue';
 
+export default {
     name: "phi-block-youtube",
+    components: {PhiInput},
     props: ["block", "action"],
 
     'phi-actions': {

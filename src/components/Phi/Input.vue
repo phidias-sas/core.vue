@@ -7,13 +7,14 @@
 
 <script>
 export default {
+	name: "phi-input",
 
 	props: {
 		value: null,
 		label: String
 	},
 
-	data () {
+	data() {
 		return {
 			focused: false
 		}
@@ -25,7 +26,7 @@ export default {
 		}
 	},
 
-	mounted () {
+	mounted() {
 		var input = this.$el.querySelector("input");
 
 		/* Copy all attributes into <input> element */
@@ -37,7 +38,6 @@ export default {
 				input.setAttribute(this.$el.attributes[i].name, this.$el.attributes[i].value);
 			}
 		}
-
 	}
 }
 

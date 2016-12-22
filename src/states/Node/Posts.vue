@@ -58,13 +58,12 @@ export default {
 
 	methods: {
 
-		initialize (type) {
+		initialize(type) {
 			this.type = type;
-			this.posts.items = [];
 			this.fetch();
 		},
 
-		fetch () {
+		fetch() {
 			this.posts.fetch({
 				type: this.type,
 				page: this.page,
@@ -77,7 +76,7 @@ export default {
 			});			
 		},
 
-		compose () {
+		compose() {
 			this.app.api.post(`nodes/${this.$parent.nodeId}/posts/drafts`, {type: this.type})
 				.then(draft => {
 					this.$router.push({name: 'node-compose', params:{nodeId: this.$parent.nodeId, postId: draft.id}});
@@ -85,7 +84,7 @@ export default {
 		}
 	},
 
-	mounted () {
+	mounted() {
 		this.initialize(this.$route.params.type);
 	},
 

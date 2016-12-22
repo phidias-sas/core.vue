@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import PhiInput from '../components/Phi/Input.vue';
+
 import app from '../store/app.js';
 
 export default {
@@ -73,6 +75,10 @@ export default {
 		hideDialog () {
 			this.$el.querySelector("#dialog").hide();
 		}
+	},
+
+	components: {
+		PhiInput
 	}
 }
 </script>

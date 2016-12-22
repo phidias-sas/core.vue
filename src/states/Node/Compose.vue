@@ -19,10 +19,13 @@
 </template>
 
 <script>
+import PhiInput from '../../components/Phi/Input.vue';
+import PhiPostEditor from '../../components/Phi/Post/Editor.vue';
 import app from '../../store/app.js';
 
 export default {
-	data () {
+	components: {PhiInput, PhiPostEditor},
+	data() {
 		return {
 			nodeId: this.$route.params.nodeId,
 			postId: this.$route.params.postId,
@@ -35,12 +38,12 @@ export default {
 	},
 
 	methods: {
-		fetch () {
+		fetch() {
 			return app.api.get(`posts/${this.postId}`)
 				.then(post => this.post = post);
 		},
 
-		save () {
+		save() {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => {
 				app.api.put(`posts/${this.postId}`, this.post);
@@ -49,12 +52,13 @@ export default {
 		}
 	},
 
-	mounted () {
-		this.fetch().then(() => {
-			if (!this.post.title) {
-				this.$el.querySelector("input").focus();
-			}
-		});
+	mounted() {
+		this.fetch()
+			.then(() => {
+				if (!this.post.title) {
+					this.$el.querySelector("input").focus();
+				}
+			});
 	}
 }
 </script>
@@ -67,9 +71,7 @@ textarea {
 </style>
 
 <style lang="scss">
-
 #compose {
-
 	.phi-page-toolbar {
 		color: #fff;
 	}
@@ -113,5 +115,4 @@ textarea {
 		font-weight: 300;
 	}
 }
-
 </style>

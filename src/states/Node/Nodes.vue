@@ -40,12 +40,16 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
+import PhiInput from '../../components/Phi/Input.vue';
+import PhiDrawer from '../../components/Phi/Drawer.vue';
+import PhiTypePicker from '../../components/Phi/Type/Picker.vue';
+import app from '../../store/app.js';
 
 export default {
 	name: "node-nodes",
+    components: {PhiInput, PhiDrawer, PhiTypePicker},
 
-	data () {
+	data() {
 		return {
 			app,
             nodes: app.api.collection(`nodes/${this.$parent.nodeId}/nodes`),
@@ -60,7 +64,7 @@ export default {
 	},
 
     computed: {
-        types () {
+        types() {
             var retval = {};
             for (var i = 0; i < this.nodes.items.length; i++) {
                 var node = this.nodes.items[i];
@@ -78,17 +82,17 @@ export default {
     },
 
     methods: {
-        fetch (clear) {
+        fetch(clear) {
             clear && (this.nodes.items = []);
             this.nodes.fetch();
         },
 
-        debounce () {
+        debounce() {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => this.fetch(true), 500);
         },
 
-        createGroup () {
+        createGroup() {
             this.app.api.post(`nodes/${this.$parent.nodeId}/nodes`, this.newGroup)
                 .then(newGroup => {
                     newGroup.type = {singular: newGroup.type};
@@ -99,7 +103,7 @@ export default {
         }
     },
 
-	created () {
+	created() {
 		this.fetch();
 	}/*,
 

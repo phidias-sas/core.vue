@@ -22,10 +22,12 @@
 </template>
 
 <script>
+import PhiFullCalendar from '../components/Phi/FullCalendar.vue';
 import app from '../store/app.js';
 
 export default {
 	name: "calendar",
+    components: {PhiFullCalendar},
 	data () {
 		return {
 			app,

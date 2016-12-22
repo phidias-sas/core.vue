@@ -24,10 +24,13 @@
 </template>
 
 <script>
+import PhiInput from '../Input.vue';
+import PhiDrawer from '../Drawer.vue';
 import app from '../../../store/app.js';
 
 export default {
     name: "phi-type-picker",
+    components: {PhiInput, PhiDrawer},
 	props: ["label", "value", "context"],
 
     data () {

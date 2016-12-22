@@ -70,8 +70,11 @@ import app from '../../../store/app.js';
 
 
 export default {
-
 	name: "phi-post-editor",
+
+	components: {
+		'phi-block': Block
+	},
 
 	props: {
 		post: {

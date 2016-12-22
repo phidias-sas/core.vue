@@ -45,7 +45,7 @@
                 </router-link>
                 <div class="phi-media-body">
                     <h1 v-text="person.firstName + ' ' + person.lastName"></h1>
-                    <phi-role-picker 
+                    <phi-role-picker
                         label="agregar rol"
                         v-model="person.roles"
                         :gender="person.gender"
@@ -63,12 +63,17 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
+import PhiInput from '../../components/Phi/Input.vue';
+import PhiDrawer from '../../components/Phi/Drawer.vue';
+import PhiPersonPicker from '../../components/Phi/Person/Picker.vue';
+import PhiRolePicker from '../../components/Phi/Role/Picker.vue';
+import app from '../../store/app.js';
 
 export default {
 	name: "node-people",
+    components: {PhiInput, PhiDrawer, PhiPersonPicker, PhiRolePicker},
 
-	data () {
+    data() {
 		return {
 			app,
             people: app.api.collection(`nodes/${this.$parent.nodeId}/people`),
@@ -82,46 +87,45 @@ export default {
 	},
 
     methods: {
-        fetch (clear) {
-            clear && (this.people.items = []);
+        fetch(clear) {
+            clear &&(this.people.items = []);
             this.people.fetch({q: this.search, order: 'lastName'});
         },
 
-        debounce () {
+        debounce() {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => this.fetch(true), 500);
         },
 
-        appendPerson (person) {
+        appendPerson(person) {
             person.roles = [];
             this.inscriptions.push(person);
         },
 
-        saveInscriptions () {
+        saveInscriptions() {
             if (!this.inscriptions.length) {
                 return;
             }
 
             app.api.post(`nodes/${this.$parent.nodeId}/people`, this.inscriptions)
-                .then( addedPeople => {
-                    addedPeople.forEach(person => this.people.add(person));
+                .then(addedPeople => {
                     this.isOpen       = false;
                     this.inscriptions = [];
+                    this.people.appendItems(addedPeople);
                 });
         },
 
-        addRole (person, role) {
+        addRole(person, role) {
             app.api.put(`nodes/${this.$parent.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
                 .then(() => app.api.clear(`nodes/${this.$parent.nodeId}/people`));
         },
 
-        removeRole (person, role) {
+        removeRole(person, role) {
             app.api.delete(`nodes/${this.$parent.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
                 .then(() => app.api.clear(`nodes/${this.$parent.nodeId}/people`));
         },
 
-        deleteInscription (person) {
-
+        deleteInscription(person) {
             if (!confirm(`Retirar a ${person.firstName} ${this.$parent.node.type.gender == 1 ? 'del' : 'de la'} ${this.$parent.node.type.singular} ?`)) {
                 return;
             }
@@ -135,12 +139,12 @@ export default {
     },
 
     watch: {
-        isOpen (value) {
+        isOpen(value) {
             value && setTimeout(() => this.$el.querySelector(".inscription-adder input").focus(), 140);
         }
     },
 
-	created () {
+	created() {
 		this.fetch();
 	}
 }

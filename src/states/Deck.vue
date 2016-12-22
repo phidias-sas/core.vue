@@ -32,11 +32,11 @@
 				<router-link to="/calendar">Calendario</router-link>
 				<router-link to="/map">Mapa</router-link>
 				<hr>
-<!--
+
 				<label class="phi-menu-label">años lectivos</label>
 				<router-link v-for="node in nodes.items" :to="{name:'node', params:{nodeId:node.id}}" v-text="node.name" @click.native="app.navigation.clear()"></router-link>
 				<hr>
- -->
+ 
 
 <!--
 				<label class="phi-menu-label">pruebas</label>

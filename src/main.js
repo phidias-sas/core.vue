@@ -6,40 +6,12 @@ Fastclick.attach(document.body);
 import moment from 'moment';
 moment.locale("es");
 
-/* Vue :) */
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
 /* Import filters */
 import './filters/filters.js';
 
-/* Import custom vue components */
-import Quill from './components/Quill.vue';
-import Dropzone from './components/Dropzone/Dropzone.vue';
-
-import PhiDrawer from './components/Phi/Drawer.vue';
-import PhiInput from './components/Phi/Input.vue';
-import PhiBlock from './components/Phi/Block.vue';
-import PhiPostEditor from './components/Phi/Post/Editor.vue';
-import PhiPersonPicker from './components/Phi/Person/Picker.vue';
-import PhiPersonInscriptions from './components/Phi/Person/Inscriptions.vue';
-import PhiTypePicker from './components/Phi/Type/Picker.vue';
-import PhiRolePicker from './components/Phi/Role/Picker.vue';
-
-import PhiFullCalendar from './components/Phi/FullCalendar.vue';
-
-Vue.component("quill", Quill);
-Vue.component("dropzone", Dropzone);
-Vue.component("phi-drawer", PhiDrawer);
-Vue.component("phi-input", PhiInput);
-Vue.component("phi-block", PhiBlock);
-Vue.component("phi-post-editor", PhiPostEditor);
-Vue.component("phi-person-picker", PhiPersonPicker);
-Vue.component("phi-person-inscriptions", PhiPersonInscriptions);
-Vue.component("phi-type-picker", PhiTypePicker);
-Vue.component("phi-role-picker", PhiRolePicker);
-
-Vue.component("phi-full-calendar", PhiFullCalendar);
+/* Vue :) */
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
 /* Set up routes */
 import Index from './states/Index.vue';
@@ -128,7 +100,6 @@ const router = new VueRouter({
 
 	]
 });
-
 
 import app from './store/app.js';
 

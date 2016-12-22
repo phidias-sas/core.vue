@@ -73,10 +73,15 @@
 </template>
 
 <script>
-import app from '../../store/app.js';
+import PhiDrawer from '../../components/Phi/Drawer.vue';
 import Folder from '../../libraries/Folder.js';
+import app from '../../store/app.js';
 
 export default {
+
+	components: {
+		PhiDrawer
+	},
 
 	data() {
 		return {

@@ -33,13 +33,16 @@
 </template>
 
 <script>
+import PhiInput from '../Input.vue';
+import PhiDrawer from '../Drawer.vue';
 import app from '../../../store/app.js';
 
 export default {
     name: "phi-role-picker",
+    components: {PhiInput, PhiDrawer},
 	props: ["label", "value", "gender"],
 
-    data () {
+    data() {
         return {
             roles: app.api.collection(`roles`),
             selection: [],
@@ -60,7 +63,7 @@ export default {
     computed: {
 
         // all roles in this.roles.items that are not added to the selection
-        availableRoles () {
+        availableRoles() {
             return this.roles.items.filter((element, index, array) => {
                 for (var i = 0; i < this.selection.length; i++) {
                     if (this.selection[i].maleNoun.singular == element.maleNoun.singular) {
@@ -73,7 +76,7 @@ export default {
     },
 
     methods: {
-        select (event) {
+        select(event) {
             var role = event.target.value;
 
             if (!role) {
@@ -92,13 +95,13 @@ export default {
             this.$emit("select", this.getRole(role));
         },
 
-        deselect (role) {
+        deselect(role) {
             this.selection.splice(this.selection.indexOf(role), 1);
             this.$emit("input", this.selection);
             this.$emit("deselect", role);
         },
 
-        createRole () {
+        createRole() {
             app.api.post('roles', this.newRole)
                 .then(createdRole => {
                     this.isCreating = false;
@@ -109,7 +112,7 @@ export default {
                 });
         },
 
-        getRole (maleNoun) {
+        getRole(maleNoun) {
             for (var i = 0; i < this.roles.items.length; i++) {
                 if (this.roles.items[i].maleNoun.singular == maleNoun) {
                     return this.roles.items[i];
@@ -118,28 +121,26 @@ export default {
             return null;
         },
 
-        toString (role) {
+        toString(role) {
             return this.gender == 1 ? role.maleNoun.singular : role.femaleNoun.singular;
         }
     },
 
-    mounted () {
+    mounted() {
         this.roles.fetch();
         this.selection = this.value;
     },
 
     watch: {
-		value (newValue) {
+		value(newValue) {
             this.selection = newValue;
 		}
     }
 }
-
 </script>
 
 <style scoped lang="scss">
 .phi-role-picker {
-
     select {
         font-size: inherit;
         border: 0;
@@ -161,7 +162,7 @@ export default {
         select {
             border-radius: 4px;
             background: rgba(0, 0, 0, 0.1);
-            
+
             margin: 0.25em;
 
             & > * {
@@ -180,6 +181,5 @@ export default {
             }
         }
     }
-
 }
 </style>

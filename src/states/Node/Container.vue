@@ -39,7 +39,8 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
+import PhiDrawer from '../../components/Phi/Drawer.vue';
+import app from '../../store/app.js';
 
 function base_convert(number, initial_base, change_base) {
 	if ((initial_base && change_base) <2 || (initial_base && change_base)>36) {
@@ -50,9 +51,16 @@ function base_convert(number, initial_base, change_base) {
 
 export default {
 	name: "node-container",
+	components: {PhiDrawer},
 
-	data () {
+	created() {
+		this.fetch()
+			.then(node => {
+				app.navigation.push(node);
+			});
+	},
 
+	data() {
 		var nodeId    = this.$route.params.nodeId;
 		var nodeNum   = base_convert(nodeId, 36, 10).toString();
 		var lastDigit = nodeNum.substring(nodeNum.length-1);
@@ -68,7 +76,7 @@ export default {
 			},
 
 			pageIsCollapsed: this.$route.name != 'node',
-			coverImage: '/static/covers/' + lastDigit + '.jpg'
+			coverImage: 'static/covers/' + lastDigit + '.jpg'
 		}
 	},
 
@@ -78,13 +86,6 @@ export default {
             return app.api.get("nodes/" + this.nodeId).then(node => this.node = node);
         }
     },
-
-	created () {
-		this.fetch()
-			.then(node => {
-				app.navigation.push(node);
-			});
-	},
 
 	watch: {
 		'$route' (to, from) {
@@ -97,7 +98,7 @@ export default {
 		}
 	},
 
-	beforeRouteEnter (to, from, next) {
+	beforeRouteEnter(to, from, next) {
 		app.api.get("types/bulletin").then(types => {
 			app.api.get("nodes/" + to.params.nodeId).then(node => {
 				next(vm => {
@@ -112,7 +113,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .phi-page-cover {
 	background: #f9f9f9 url('../../../static/covers/9.jpg') no-repeat 0 0;
 	background-size: cover;
@@ -133,7 +133,6 @@ ons-progress-bar {
 	right: 0;
 }
 
-
 .phi-page-navigation {
 	text-transform: uppercase;
 	& > * {
@@ -151,7 +150,6 @@ ons-progress-bar {
 /* Transition between tabs */
 $transition-duration:     .420s;
 $transition-displacement: 210px;
-
 
 .slidetab-enter-active,
 .slidetab-leave-active {
@@ -189,6 +187,4 @@ $transition-displacement: 210px;
 		transform: translate3d($transition-displacement, 0, 0);
 	}
 }
-
-
 </style>

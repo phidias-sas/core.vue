@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import PhiInput from '../components/Phi/Input.vue';
 import app from '../store/app.js';
 
 export default {
@@ -78,6 +79,10 @@ export default {
 			this.$router.push('code');
 		}
 	},
+
+	components: {
+		PhiInput
+	}
 
 	/*
 	Autofocus is REALLY anoying on mobile because it opens the keyboard unexpectedly

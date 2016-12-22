@@ -9,126 +9,128 @@
 			</div>
 		</div>
 
-		<ons-progress-bar indeterminate v-show="loadingEvents"></ons-progress-bar>
+		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
 
 		<div class="phi-page-contents">
 
-			<div class="phi-card">
-				<div class="phi-media">
-					<div class="phi-media-figure fa fa-bell-o"></div>
-					<div class="phi-media-body">Notificaciones</div>
-					<ons-switch class="phi-media-right"
-						:checked="openNotifications"
-						@change="markGeneralNotification(preferenceDest, openNotifications = !openNotifications)">
-					</ons-switch>
-				</div>
-				<phi-drawer :open="openNotifications">
-					<div class="phi-media" v-for="preference in preferences">
-						<div class="phi-media-body">{{ preference.type }}</div>
-						<ons-switch class="phi-media-right"
-							:checked="preference.isEnabled == '1'"
-							@change="togglePreference(preference)">
-						</ons-switch>
+			<section v-if="destinations.length">
+				<h2>Notificaciones</h2>
+				<div class="phi-card">
+					<div
+						v-for="destination in destinations" 
+						v-if="destination.transport == 'gcm' || destination.transport == 'email'"
+					>
+						<div class="phi-media">
+							<div
+								@click="destination.drawerIsOpen = !destination.drawerIsOpen"
+								class="phi-media-figure fa"
+								:class="destination.drawerIsOpen ? 'fa-chevron-down' : 'fa-chevron-right'"
+							></div>
+							<div
+								class="phi-media-body"
+								@click="destination.drawerIsOpen = !destination.drawerIsOpen"
+							>
+								{{destination.transport == 'gcm' ? 'Aplicación móvil' : 'E-mail'}}
+							</div>
+							<div class="phi-media-right">
+								<ons-switch
+									:checked="destination.isEnabled == '1'"
+									@change="toggleDestination(destination)">
+								</ons-switch>
+							</div>
+						</div>
+						<phi-drawer :open="destination.drawerIsOpen">
+							<div v-for="preference in destination.preferences" class="phi-media" >
+								<div class="phi-media-body">{{preference.type}}</div>
+								<ons-switch class="phi-media-right"
+									:checked="preference.isEnabled == '1'"
+									@change="togglePreference(preference, destination)">
+								</ons-switch>
+							</div>
+						</phi-drawer>
 					</div>
-				</phi-drawer>
-			</div>
+					
+				</div>
+			</section>
 
-			<div class="phi-card">
-				<div class="phi-media" @click="openGeneral = !openGeneral">
-					<div class="phi-media-figure fa fa-cog"></div>
-					<div class="phi-media-body">General</div>
-					<div class="phi-media-right fa" :class="openGeneral ? 'fa-chevron-down' : 'fa-chevron-right'"></div>
-				</div>
-				<phi-drawer :open="openGeneral">
-					<div class="phi-media">
-						<button class="phi-button" @click="cacheDelete()">
-							<i class="fa fa-trash-o" aria-hidden="true"></i>
-							<span>Limpiar cache</span>
-						</button>
+			<section>
+				<h2>General</h2>
+				<div class="phi-card">
+					<div class="phi-media" @click="clearCache">
+						<div class="phi-media-figure fa fa-trash-o"></div>
+						<div class="phi-media-body">Limpiar cache</div>
 					</div>
-				</phi-drawer>
-			</div>
+				</div>
+			</section>
+
 
 		</div>
 	</div>
 </template>
 
 <script>
-import app from '../store/app.js'
+import PhiDrawer from '../components/Phi/Drawer.vue';
+import app from '../store/app.js';
 
 export default {
 	name: "settings",
-
+	components: {PhiDrawer},
 	data() {
 		return {
 			app,
-			preferences: [],
-			postTypes: [],
-			loadingEvents: false,
-			openNotifications: false,
-			openGeneral: false,
-			preferenceDest: null
+			destinations: []
 		}
 	},
 
 	mounted() {
-		this.getPreferences();
+
+		app.api
+			.get('types/post')
+			.then(types => {
+				app.api
+					.collection(`people/${app.user.id}/notification/destinations`)
+					.fetch()
+					.then(destinations => {
+						this.destinations = destinations.map(destination => {
+							if (destination.preferences.length == 0) {
+								destinations.preferences = [];
+								types.forEach(type => {
+									destination.preferences.push({
+										destination: destination.id,
+										type:        type.singular,
+										isEnabled:   "1",
+										schedule:    null
+									});
+								});
+							}
+
+							destination.drawerIsOpen = false;
+							return destination;
+						});
+					});
+			});
 	},
 
 	methods: {
-
-		cacheDelete() {
-			this.app.api.cache.empty().then(() => { alert("Cache borrado") });
+		clearCache() {
+			if (confirm('Se borraran todos los datos almacenados localmente\nDesea continuar ?')) {
+				this.app.api.cache.empty().then(() => { alert("Datos locales eliminados") });
+			}
 		},
 
-		getPreferences() {
-
-			/* Load post types */
-			app.api.get('types/post')
-				.then(datos => {
-					datos.forEach(dato => {
-						this.postTypes.push({
-							type: dato.singular,
-							isEnabled: 1
-						})
-					})
-				});
-
-			/* Load preferences from gcm transport type*/
-			app.api.get(`people/${app.user.id}/notification/destinations`)
-				.then(data => {
-					data.forEach(dato => {
-						if (dato.transport == 'gcm') {
-							if (dato.preferences.length == 0) {
-								this.preferences = this.postTypes;
-							} else {
-								this.preferences = dato.preferences;
-							}
-							this.preferenceDest    = dato.id;
-							this.openNotifications = dato.isEnabled == "1";
-						}
-					})
-			});
-		},
-
-		// {endPoint}/people/{id_people}/notification/destinations/{idDestination}
-		togglePreference(preference) {
-
-			preference.isEnabled = preference.isEnabled == "1" ? "0" : "1";
-
-			app.api.put(`people/${app.user.id}/notification/destinations/${this.preferenceDest}`, {
-				preferences: this.preferences
+		toggleDestination(destination) {
+			destination.isEnabled = destination.isEnabled == "1" ? "0" : "1";
+			app.api.put(`people/${app.user.id}/notification/destinations/${destination.id}`, {
+				isEnabled: destination.isEnabled
 			})
-			// .then(response => console.log(response))
 			.then(() => app.api.clear(`people/${app.user.id}/notification/destinations`));  //limpiar cache
 		},
 
-		markGeneralNotification(preferenceDestination, preferenceEnable) {
-			app.api.put(`people/${app.user.id}/notification/destinations/${preferenceDestination}`, {
-				id: preferenceDestination,
-				isEnabled: preferenceEnable ? 1 : 0
+		togglePreference(preference, destination) {
+			preference.isEnabled = preference.isEnabled == "1" ? "0" : "1";
+			app.api.put(`people/${app.user.id}/notification/destinations/${destination.id}`, {
+				preferences: destination.preferences
 			})
-			// .then(response => console.log(response))
 			.then(() => app.api.clear(`people/${app.user.id}/notification/destinations`));  //limpiar cache
 		}
 
@@ -137,8 +139,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.phi-card {
-	margin-bottom: 1em;
+section {
+	margin-bottom: 2em;
+
+	h2 {
+		font-weight: 1em;
+		text-transform: uppercase;
+		color: #666;
+		margin-bottom: 0.5em;
+		font-size: 0.8em;
+	}
+
 }
 
 .phi-media-figure {

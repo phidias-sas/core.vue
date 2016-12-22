@@ -18,10 +18,16 @@
 
 <script>
 import Quill from 'quill';
+import QuillComponent from '../../Quill.vue';
 import app from '../../../store/app.js';
 
 export default {
     name: "phi-block-html",
+
+    components: {
+        quill: QuillComponent
+    },
+
     props: ["block", "action"],
 
     'phi-actions': {
