@@ -1,6 +1,8 @@
 <template>
     <div class="phi-container">
 
+        <phi-input class="search" v-model="search" label="buscar" style="display:block" @input="debounce()"></phi-input>
+
         <div class="phi-card inscription-adder">
             <phi-drawer :open="isOpen">
                 <form @submit.prevent="saveInscriptions()">
@@ -35,8 +37,6 @@
                 </div>
             </phi-drawer>
         </div>
-
-        <phi-input class="search" v-model="search" label="buscar" style="display:block" @input="debounce()"></phi-input>
 
         <div class="phi-card">
             <div class="person phi-media" v-for="person in people.items">

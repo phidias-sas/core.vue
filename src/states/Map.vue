@@ -19,22 +19,26 @@ export default {
 
 	mounted() {
 		loaded.then(() => {
-
 			// Create a map object and specify the DOM element for display.
 			this.map = new google.maps.Map(document.getElementById('main-map'), {
-				center: {lat: -34.397, lng: 150.644},
-				zoom: 9
+				// center: {lat: -34.397, lng: 150.644},
+				zoom: 18
 			});
 
 			this.myLocation = new google.maps.InfoWindow({
-				content: `<div class="myPosition">
+				content:
+					`<div class="myPosition">
 						<img src="${app.user.avatar}">
 					</div>`
 			});
 
+			/* Trigger a resize after 800ms.  This redraws the element correctly ¯\_(ツ)_/¯ */
 			setTimeout(() => {
 				google.maps.event.trigger(this.map, "resize");
-			}, 1000);
+
+				this.locate();
+			}, 800);
+
 		});
 	},
 
@@ -56,11 +60,13 @@ export default {
 					lat: position.coords.latitude,
 					lng: position.coords.longitude
 				};
+
 				this.myLocation.setPosition(coords);
 				this.myLocation.open(this.map);
 
 				this.map.setZoom(18);
 				this.map.panTo(coords);
+
 			}, error => {
 				console.log("error getting location", error);
 				alert("Oops! No fue posible detectar tu ubicacion")
