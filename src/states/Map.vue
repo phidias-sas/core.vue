@@ -1,6 +1,9 @@
 <template>
 	<div>
-		<button class="phi-button" @click="locate()">Mi ubicacion</button>
+		<div class="controls">
+			<button id="menu" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<button id="myLocation" @click="locate()">Mi ubicacion</button>
+		</div>
 		<div id="main-map"></div>
 	</div>
 </template>
@@ -22,6 +25,11 @@ export default {
 			// Create a map object and specify the DOM element for display.
 			this.map = new google.maps.Map(document.getElementById('main-map'), {
 				// center: {lat: -34.397, lng: 150.644},
+				mapTypeControl: true,
+				mapTypeControlOptions: {
+					style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+					position: google.maps.ControlPosition.TOP_CENTER
+				},
 				zoom: 18
 			});
 
@@ -97,13 +105,55 @@ export default {
 		width: 100%;
 	}
 }
-</style>
 
-<style lang="scss" scoped>
-.phi-button {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	z-index: 2;
+.controls {
+
+	#menu {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 2;
+
+		border: 0;
+		cursor: pointer;
+		border-radius: 2px;
+
+		/* copy google maps control styles */
+		color: rgb(0, 0, 0);
+		font-family: Roboto, Arial, sans-serif;
+		user-select: none;
+		font-size: 16px;
+		background-color: rgb(255, 255, 255);
+		padding: 8px;
+		-webkit-background-clip: padding-box;
+		background-clip: padding-box;
+		box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+		font-weight: 500;
+	}
+
+	#myLocation {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 2;
+		border-radius: 2px;
+
+		border: 0;
+		cursor: pointer;
+
+		/* copy google maps control styles */
+		color: rgb(0, 0, 0);
+		font-family: Roboto, Arial, sans-serif;
+		user-select: none;
+		font-size: 11px;
+		background-color: rgb(255, 255, 255);
+		/*padding: 8px;*/
+		padding: 11px;
+		-webkit-background-clip: padding-box;
+		background-clip: padding-box;
+		box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+		font-weight: 500;
+	}
 }
+
 </style>

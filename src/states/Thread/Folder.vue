@@ -153,16 +153,17 @@ export default {
 	cursor: pointer;
 }
 
-.phi-toast {
+@media (min-width: 823px) {
+	.phi-toast {
+		left: 280px;
+	}
+}
 
+.phi-toast {
 	position: fixed;
 	bottom: 16px;
 	left: 16px;
-
 	max-width: 420px;
-
-	/* !!! */
-	left: 280px;
 
 	transition: transform 180ms ease-in-out;
 	transform: translate3d(0, 200%, 0);
