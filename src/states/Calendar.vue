@@ -5,6 +5,7 @@
             <div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
                 <h1>Calendario</h1>
+                <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics`"><i class="fa fa-calendar-plus-o"></i></a>
             </div>            
         </div>
 		
