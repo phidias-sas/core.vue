@@ -14,39 +14,72 @@
 		</ons-splitter-content>
 
 		<ons-splitter-side
+			id="sidemenu"
+
 			swipe-target-width="64"
 			side="left"
 			width="260px"
 			collapse="portrait"
 			swipeable
 			>
-			<header class="phi-media" v-if="app.user">
-				<div class="phi-media-figure phi-avatar">
-					<img :src="app.user.avatar" :alt="app.user.firstName">
+
+			<header>
+				<div class="school">
+					<div @click.stop="isOpen.school = !isOpen.school; isOpen.user = false;" class="phi-media">
+						<h1 class="phi-media-body" v-text="app.title"></h1>
+						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.school, 'fa-caret-down': isOpen.school}"></i>
+					</div>
+					<phi-drawer :open="isOpen.school">
+						<div class="phi-menu" @click="isOpen.school = false">
+							<a href="http://phidias.co" target="_blank">
+								<i class="fa fa-laptop"></i>
+								<span class="phi-media-body">Página web</span>
+							</a>
+							<a href="tel:7531147">
+								<i class="fa fa-phone"></i>
+								<span class="phi-media-body">Llamar</span>
+							</a>
+							<a href="geo:37.786971,-122.399677">
+								<i class="fa fa-map-marker"></i>
+								<span class="phi-media-body">Ubicación</span>
+							</a>
+						</div>
+					</phi-drawer>
 				</div>
-				<h1 class="phi-media-body" v-text="app.user.firstName + ' ' + app.user.lastName"></h1>
+
+				<div class="user" v-if="app.user">
+					<div class="phi-media" @click="isOpen.user = !isOpen.user; isOpen.school = false">
+						<div class="phi-media-figure phi-avatar">
+							<img :src="app.user.avatar" :alt="app.user.firstName">
+						</div>
+						<h1 class="phi-media-body" v-text="app.user.firstName + ' ' + app.user.lastName"></h1>
+						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.user, 'fa-caret-down': isOpen.user}"></i>
+					</div>
+					<phi-drawer :open="isOpen.user">
+						<div class="phi-menu" @click="toggleMenu">
+							<router-link to="/settings">Preferencias</router-link>
+							<div @click="logout()">Cerrar sesión</div>
+						</div>
+					</phi-drawer>
+				</div>
 			</header>
-			<div class="phi-menu" @click="toggleMenu">
+
+
+			<div class="phi-menu main-options" @click="toggleMenu">
 				<router-link to="/dashboard">Bandeja de entrada</router-link>
 				<router-link to="/archive">Archivados</router-link>
 				<router-link to="/calendar">Calendario</router-link>
 				<router-link to="/map">Mapa</router-link>
+
 				<hr>
 
 				<label class="phi-menu-label">años lectivos</label>
-				<router-link v-for="node in nodes.items" :to="{name:'node', params:{nodeId:node.id}}" v-text="node.name" @click.native="app.navigation.clear()"></router-link>
-				<hr>
- 
+				<router-link v-for="node in nodes.items"
+					:to="{name:'node', params:{nodeId:node.id}}"
+					v-text="node.name"
+					@click.native="app.navigation.clear()"
+				></router-link>
 
-<!--
-				<label class="phi-menu-label">pruebas</label>
-				<router-link to="/people">Personas</router-link>
-				<router-link to="/root">Grupos</router-link>
--->
-				<router-link to="/settings">Preferencias</router-link>
-				<!-- <router-link to="/sebas">Sebas</router-link> -->
-				<hr>
-				<div @click="logout()">Cerrar sesión</div>
 			</div>
 		</ons-splitter-side>
 
@@ -54,19 +87,25 @@
 </template>
 
 <script>
-import app from '../store/app.js'
+import PhiDrawer from '../components/Phi/Drawer.vue';
+import app from '../store/app.js';
 
 var incomingCover = null;
 var outgoingCover = null;
 
 export default {
 	name: "deck",
-
+	components: {PhiDrawer},
 	data () {
 		return {
 			app,
 			nodes: app.api.collection("nodes"),
-			transitionDirection: 'left'
+			transitionDirection: 'left',
+
+			isOpen: {
+				school: false,
+				user: false
+			}
 		}
 	},
 
@@ -76,20 +115,20 @@ export default {
 	},
 
 	methods: {
-		logout () {
+		logout() {
 			this.app.logout();
 			this.$router.push('login');
 		},
 
-		toggleMenu () {
+		toggleMenu() {
 			this.$el.left.toggle();
 		},
 
-		beforeEnter (el) {
+		beforeEnter(el) {
 			incomingCover = el.querySelector('.phi-page-cover');
 		},
 
-		beforeLeave (el) {
+		beforeLeave(el) {
 			outgoingCover = el.querySelector('.phi-page-cover');
 
 			setTimeout(() => {
@@ -110,7 +149,7 @@ export default {
 			}, 0);
 		},
 
-		enter (el) {
+		enter(el) {
 			setTimeout(() => {
 				var newCoverHeight = incomingCover ? incomingCover.initialHeight : 0;
 				incomingCover && (incomingCover.style.height = newCoverHeight + "px");
@@ -121,21 +160,19 @@ export default {
 			}, 0);
 		},
 
-		afterLeave (el) {
+		afterLeave(el) {
 			incomingCover && (incomingCover.style.height = "auto");
 			outgoingCover && (outgoingCover.style.height = "auto");
 		}
 	},
 
 	watch: {
-		$route (to, from) {
-
+		$route(to, from) {
 			if (to.params.nodeId) {
 				this.transitionDirection = from.params.nodeId < to.params.nodeId ? 'left' : 'right';
 			} else {
 				this.transitionDirection = (to.meta.order - from.meta.order) > 0 ? 'left' : 'right';
 			}
-
 		}
 	}
 
@@ -150,33 +187,89 @@ ons-splitter-mask {
 	background-color: rgba(0, 0, 0, 0.5);
 }
 
-ons-splitter-side {
-	background: #fff;
-	background: #4D5250; /* slack's */
-	background: #4D5050;
-	color: #eaeaea;
-
+#sidemenu {
 	overflow: hidden;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
+
+	background-color: #4D5250; /* slack's */
+	background-color: #4D5050;
+	background-color: rgb(48, 62, 77);
+	color: #eaeaea;
+
+	header {
+
+		h1 {
+			color: #fff;
+			// text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+			align-self: center;
+		}
+
+		i.phi-media-right {
+			align-self: center;
+			color: #fff;
+			opacity: 0.4;
+		}
+
+		.school {
+
+			.phi-media {
+				padding: 24px;
+				padding-bottom: 8px;
+			}
+
+			h1 {
+				// padding: 24px;
+				// padding-bottom: 12px;
+				font-size: 1.3em;
+				// text-align: center;
+			}
+
+			.phi-drawer {
+				padding-bottom: 32px;
+
+				i {
+					display: inline-block;
+					text-align: left;
+					width: 2em;
+				}
+			}
+		}
+
+		.user {
+			h1 {
+				opacity: 0.8;
+				font-size: 1em;
+			}
+
+			.phi-media {
+				padding: 8px 24px;
+			}
+
+			.phi-avatar {
+				width: 28px;
+				height: 28px;
+				min-width: 0;
+				min-height: 0;
+				margin-right: 12px;
+			}
+
+			.phi-drawer {
+				padding: 16px 0;
+			}
+		}
+
+	}
+
+	.main-options {
+		margin-top: 24px;
+	}
 
 	hr {
 		opacity: 0;
 	}
 
-	header {
-		text-align: left;
-		margin: 12px 0;
 
-		& > h1 {
-			color: #fff;
-			opacity: 0.8;
-			font-size: 1.2em;
-			text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-			align-self: center;
-		}
-
-	}
 
 }
 

@@ -20,6 +20,7 @@ import Code from './states/Code.vue';
 import Login from './states/Login.vue';
 
 import Deck from './states/Deck.vue';
+import About from './states/About.vue';
 import Dashboard from './states/Dashboard.vue';
 import ThreadFolder from './states/Thread/Folder.vue';
 import ThreadRead from './states/Thread/Read.vue';
@@ -59,22 +60,24 @@ const router = new VueRouter({
 		{ path: '/leo', component: Leo },
 
 		{ path: '/', redirect: '/dashboard' },
-		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true} },
+		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true, exitOnBack: true} },
 		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
 
 		{ path: '/deck',  component: Deck,
 			children: [
-				{ path: '/dashboard', component: Dashboard, meta: {order: 1} },
+				{ path: '/about', component: About, meta: {order: 1} },
+
+				{ path: '/dashboard', component: Dashboard, meta: {order: 1, exitOnBack: true} },
 				{ path: '/folder/:folder', component: ThreadFolder, meta: {order: 2}, name: 'folder' },
 				{ path: '/read/:threadId', component: ThreadRead, meta: {order: 99}, name: 'read' },
-				{ path: '/archive', component: ThreadArchive, meta: {order: 3}, name: 'archive' },
+				{ path: '/archive', component: ThreadArchive, meta: {order: 3, exitOnBack: true}, name: 'archive' },
 
 				{ path: '/people', component: People, meta: {order: 10}, name: 'people' },
 				{ path: '/person/:personId', component: Person, meta: {order: 11}, name: 'person' },
 
-				{ path: '/calendar', component: Calendar, meta: {order: 12}, name: 'calendar' },
-				{ path: '/settings', component: Settings, meta: {order: 12}, name: 'settings' },
-				{ path: '/map', component: Map, meta: {order: 12}, name: 'map' },
+				{ path: '/calendar', component: Calendar, meta: {order: 12, exitOnBack: true}, name: 'calendar' },
+				{ path: '/settings', component: Settings, meta: {order: 12, exitOnBack: true}, name: 'settings' },
+				{ path: '/map', component: Map, meta: {order: 12, exitOnBack: true}, name: 'map' },
 
 				{ path: '/root', component: Root,   meta: {order: 12}, name: 'root' },
 
@@ -144,6 +147,31 @@ app.on("notification", (data, notification) => {
 		router.push({name: 'read', params: {threadId: data.post.thread}});
 	}
 });
+
+/* Device back button */
+document.addEventListener("deviceready", () => {
+
+	/*
+	ASSHOLES!  I wasted HOURS on this!  Damn you ONSEN!
+
+	OnsenUI sets a default device backbutton handles.
+	ons.disableDeviceBackButtonHandler();  does NOTHING, so the
+	listener has to be set to an empty function call
+	*/
+	ons.setDefaultDeviceBackButtonListener(function(event) {
+	});
+
+	document.addEventListener("backbutton", (e) => {
+		if (router.currentRoute.meta.exitOnBack) {
+			navigator.app.exitApp();
+		} else {
+			router.go(-1);
+		}
+	}, false);
+
+}, false);
+
+
 
 /* serviceWoker registration */
 // if ('serviceWorker' in navigator) {
