@@ -36,7 +36,7 @@ export default {
 
 	name: "dashboard",
 
-	data () {
+	data() {
 		return {
 			app,
 			types: [],
@@ -47,12 +47,12 @@ export default {
 		}
 	},
 
-	created () {
+	created() {
 		this.fetch();
 	},
 
 	methods: {
-		fetch () {
+		fetch() {
 
 			var baseUrl      = `people/${app.user.id}/posts/types`;
 			var collection   = app.api.collection(baseUrl);
@@ -80,19 +80,22 @@ export default {
 		}
 	},
 
-	beforeRouteLeave (to, from, next) {
+	beforeRouteLeave(to, from, next) {
 		this.isLoading = true;
 		next();
-	}	
+	}
 }
 </script>
 
 
 <style lang="scss" scoped>
-
 .phi-page-cover {
 	background: transparent;
 	color: #444;
+}
+
+.phi-page-toolbar {
+	background-color: #f3f3f3;
 }
 
 .phi-media-body {
@@ -104,5 +107,4 @@ export default {
 		text-transform: capitalize;
 	}
 }
-
 </style>

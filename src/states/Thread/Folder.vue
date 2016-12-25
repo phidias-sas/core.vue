@@ -41,7 +41,7 @@
 				<p>no hay nada aquí</p>
 			</div>
 
-			<div class="phi-card">
+			<div class="phi-card _z-0">
 				<div v-for="thread in folder.threads"
 					class="thread phi-media"
 					:class="{selected: folder.isSelected(thread), read: !!thread.stub.readDate, unread: !thread.stub.readDate}"
@@ -155,7 +155,7 @@ export default {
 
 @media (min-width: 823px) {
 	.phi-toast {
-		left: 280px;
+		left: 314px + 20px;
 	}
 }
 

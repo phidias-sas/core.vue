@@ -3,7 +3,7 @@
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar" :class="{_hidden: tpl.toolbarIsHidden}">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<h1>archivados</h1>
+				<h1>Archivados</h1>
 				<button @click="folder.move('inbox')" class="phi-button selection-count" v-show="folder.selectionCount > 0">
 					<span v-text="folder.selectionCount"></span>
 					<i class="fa fa-inbox"></i>
@@ -142,7 +142,7 @@ export default {
 
 @media (min-width: 823px) {
 	.phi-toast {
-		left: 280px;
+		left: 314px + 20px;
 	}
 }
 

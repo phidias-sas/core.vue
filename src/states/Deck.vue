@@ -18,33 +18,14 @@
 
 			swipe-target-width="64"
 			side="left"
-			width="260px"
+			width="314px"
 			collapse="portrait"
 			swipeable
 			>
 
 			<header>
 				<div class="school">
-					<div @click.stop="isOpen.school = !isOpen.school; isOpen.user = false;" class="phi-media">
-						<h1 class="phi-media-body" v-text="app.title"></h1>
-						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.school, 'fa-caret-down': isOpen.school}"></i>
-					</div>
-					<phi-drawer :open="isOpen.school">
-						<div class="phi-menu" @click="isOpen.school = false">
-							<a href="http://phidias.co" target="_blank">
-								<i class="fa fa-laptop"></i>
-								<span class="phi-media-body">Página web</span>
-							</a>
-							<a href="tel:7531147">
-								<i class="fa fa-phone"></i>
-								<span class="phi-media-body">Llamar</span>
-							</a>
-							<a href="geo:37.786971,-122.399677">
-								<i class="fa fa-map-marker"></i>
-								<span class="phi-media-body">Ubicación</span>
-							</a>
-						</div>
-					</phi-drawer>
+					<h1 v-text="app.title"></h1>
 				</div>
 
 				<div class="user" v-if="app.user">
@@ -79,6 +60,32 @@
 					v-text="node.name"
 					@click.native="app.navigation.clear()"
 				></router-link>
+
+				<hr>
+
+				<div class="collapsable">
+					<div @click.stop="isOpen.school = !isOpen.school" class="phi-media">
+						<span class="phi-media-body">Contactar</span>
+						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.school, 'fa-caret-down': isOpen.school}"></i>
+					</div>
+
+					<phi-drawer :open="isOpen.school">
+						<div class="phi-menu" @click="isOpen.school = false">
+							<a href="http://phidias.co" target="_blank">
+								<i class="fa fa-laptop"></i>
+								<span class="phi-media-body">Página web</span>
+							</a>
+							<a href="tel:7531147">
+								<i class="fa fa-phone"></i>
+								<span class="phi-media-body">Llamar</span>
+							</a>
+							<a href="geo:37.786971,-122.399677">
+								<i class="fa fa-map-marker"></i>
+								<span class="phi-media-body">Ubicación</span>
+							</a>
+						</div>
+					</phi-drawer>
+				</div>
 
 			</div>
 		</ons-splitter-side>
@@ -121,6 +128,9 @@ export default {
 		},
 
 		toggleMenu() {
+			this.isOpen.school = false;
+			this.isOpen.user   = false;
+
 			this.$el.left.toggle();
 		},
 
@@ -201,7 +211,7 @@ ons-splitter-mask {
 
 		h1 {
 			color: #fff;
-			// text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+			text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
 			align-self: center;
 		}
 
@@ -212,31 +222,19 @@ ons-splitter-mask {
 		}
 
 		.school {
-
-			.phi-media {
-				padding: 24px;
-				padding-bottom: 8px;
-			}
-
 			h1 {
-				// padding: 24px;
-				// padding-bottom: 12px;
+				padding: 16px 24px 8px 24px;
 				font-size: 1.3em;
-				// text-align: center;
-			}
 
-			.phi-drawer {
-				padding-bottom: 32px;
-
-				i {
-					display: inline-block;
-					text-align: left;
-					width: 2em;
-				}
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;				
 			}
 		}
 
 		.user {
+			cursor: pointer;
+
 			h1 {
 				opacity: 0.8;
 				font-size: 1em;
@@ -255,10 +253,28 @@ ons-splitter-mask {
 			}
 
 			.phi-drawer {
-				padding: 16px 0;
+				padding: 12px 0;
 			}
 		}
 
+	}
+
+	.collapsable {
+		padding: 0 8px;
+
+		.phi-media {
+			color: #fff;
+		}
+
+		.phi-drawer {
+			padding: 12px 0;
+
+			i {
+				display: inline-block;
+				text-align: left;
+				width: 2em;
+			}
+		}
 	}
 
 	.main-options {
@@ -277,7 +293,6 @@ ons-splitter-mask {
 
 .slide-enter-active,
 .slide-leave-active {
-
 	position: absolute;
 	top: 0;
 	left: 0;
