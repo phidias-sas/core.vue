@@ -59,16 +59,17 @@ export default class Cache {
 			allHeaders[headerName] = value;
 		});
 
-		return response.text().then(text =>
-			JSON.stringify({
-				body: text,
-				options: {
-					status:     response.status,
-					statusText: response.statusText,
-					headers:    allHeaders
-				}
-			})
-		);
+		return response.text()
+			.then(text =>
+				JSON.stringify({
+					body: text,
+					options: {
+						status:     response.status,
+						statusText: response.statusText,
+						headers:    allHeaders
+					}
+				})
+			);
 	}
 
 	static parse(responseString) {

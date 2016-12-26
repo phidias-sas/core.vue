@@ -16,12 +16,14 @@
 			</section>
 			<section v-show="!!types">
 				<div class="phi-card _z-0">
-					<router-link class="phi-media" v-for="type in types" :to="{name: 'folder', params:{folder: 'inbox'}, query:{type: type.singular}}">
+					<router-link 
+						v-for="type in types"
+						:to="{name: 'folder', params:{folder: 'inbox'}, query:{type: type.singular}}"
+						class="phi-media"  
+					>
 						<img class="phi-media-figure" :src="type.icon || defaultIcon" :alt="type.plural"  >
-						<div class="phi-media-body">
-							<h1 v-text="type.plural"></h1>
-							<p v-show="!!type.unread">{{type.unread==1 ? 'uno' : type.unread}} nuevo{{type.unread==1 ? '' : 's'}}</p>
-						</div>
+						<h1 class="phi-media-body" v-text="type.plural"></h1>
+						<p v-show="!!type.unread" class="phi-media-right" v-text="type.unread"></p>
 					</router-link>
 				</div>
 			</section>
@@ -101,10 +103,20 @@ export default {
 .phi-media-body {
 	align-self: center;
 
-	h1 {
-		font-size: 1.6em;
-		font-weight: 400;
-		text-transform: capitalize;
-	}
+	font-size: 1.4em;
+	font-weight: 400;
+	text-transform: capitalize;
+}
+
+.phi-media-right {
+	align-self: center;
+
+	font-size: 12px;
+	font-weight: bold;
+	border-radius: 4px;
+	padding: 4px 8px;
+
+	background-color: #4c9689;
+	color: #fff;	
 }
 </style>

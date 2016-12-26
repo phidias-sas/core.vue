@@ -48,9 +48,9 @@
 
 			<div class="phi-menu main-options" @click="toggleMenu">
 				<router-link to="/dashboard">Bandeja de entrada</router-link>
-				<router-link to="/archive">Archivados</router-link>
 				<router-link to="/calendar">Calendario</router-link>
 				<router-link to="/map">Mapa</router-link>
+				<router-link to="/archive">Archivados</router-link>
 
 				<hr>
 
@@ -223,7 +223,7 @@ ons-splitter-mask {
 
 		.school {
 			h1 {
-				padding: 16px 24px 8px 24px;
+				padding: 24px;
 				font-size: 1.3em;
 
 				white-space: nowrap;
@@ -278,7 +278,7 @@ ons-splitter-mask {
 	}
 
 	.main-options {
-		margin-top: 24px;
+		margin-top: 12px;
 	}
 
 	hr {

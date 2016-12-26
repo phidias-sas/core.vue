@@ -24,7 +24,7 @@
 			</div>
 		</section>
 
-		<div class="phi-card">
+		<div class="phi-card _z-0">
 			<router-link :to="{name: 'read', params:{threadId: post.thread}}" v-for="post in posts.items" class="phi-media">
 				<div class="phi-media-figure">
 					<img :src="post.type.icon" :alt="post.type.singular">
@@ -73,7 +73,7 @@ export default {
 			this.drafts.fetch({
 				type: this.type,
 				order: "-creationDate"
-			});			
+			});
 		},
 
 		compose() {

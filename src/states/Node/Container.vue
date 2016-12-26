@@ -154,9 +154,9 @@ $transition-displacement: 210px;
 .slidetab-enter-active,
 .slidetab-leave-active {
 	position: absolute;
-	top: 16px; /* must be the same as .phi-page-contents padding */
-	left: 16px;
-	right: 16px;
+	top: 8px; /* must be the same as .phi-page-contents padding */
+	left: 8px;
+	right: 8px;
 
 	transition: transform $transition-duration, opacity $transition-duration;
 

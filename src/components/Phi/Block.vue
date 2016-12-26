@@ -17,12 +17,14 @@ import Youtube from './Block/Youtube.vue';
 import Html from './Block/Html.vue';
 import Image from './Block/Image.vue';
 import Files from './Block/Files.vue';
+import V3 from './Block/V3.vue';
 
 var types = {
 	html:    Html,
 	youtube: Youtube,
 	image:   Image,
-	files:   Files
+	files:   Files,
+	v3:      V3
 }
 
 var components = {};
@@ -49,26 +51,24 @@ export default {
 	},
 
 	methods: {
-		change () {
+		change() {
 			this.$emit("change", this.block);
 		},
 
-		destroy () {
+		destroy() {
 			this.$emit("destroy", this.block);
 		},
 
-		reset () {
+		reset() {
 			this.$emit("reset", this.block);
 		}
 	},
 
-	/* testing */
-	getActions (type) {
+	getActions(type) {
 		if ((typeof types[type] == "undefined") || (typeof types[type]['phi-actions'] == "undefined")) {
 			return {};
 		}
 		return types[type]['phi-actions'];	
 	}
 }
-
 </script>

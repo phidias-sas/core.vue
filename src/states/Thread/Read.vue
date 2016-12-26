@@ -32,28 +32,38 @@
 				</div>
 			</header>-->
 
-			<div v-for="post in thread.replies.slice().reverse()" class="post phi-media">
+			<div
+				v-for="post in thread.replies.slice().reverse()"
+				class="post"
+			>
 
-				<div class="phi-media-figure phi-avatar" @click="toggleUserInfo(post)">
-					<img :src="post.author.avatar" :alt="post.author.firstName">
-				</div>
-
-				<div class="phi-media-body">
-					<h1 class="post-author" v-text="post.author.firstName + ' ' + post.author.lastName"></h1>
-					<div class="post-date">
-						<span v-if="post.publishDate">{{ post.publishDate | date }}</span>
-						<span v-if="!post.publishDate">enviando ...</span>
+				<div class="phi-media">
+					<div class="phi-media-figure phi-avatar" @click="toggleUserInfo(post)">
+						<img :src="post.author.avatar" :alt="post.author.firstName">
 					</div>
 
-					<phi-drawer :open="post.isExpanded" v-if="thread.node">
-						<phi-person-inscriptions v-if="post.isInfoLoaded" :person="post.author" :node="thread.node" @ready="post.isExpanded = true"></phi-person-inscriptions>
-					</phi-drawer>
+					<div class="phi-media-body">
+						<h1 class="post-author" v-text="post.author.firstName + ' ' + post.author.lastName"></h1>
+						<div class="post-date">
+							<span v-if="post.publishDate">{{ moment.unix(post.publishDate).format('h:mm a') }}</span>
+							<span v-if="!post.publishDate">enviando ...</span>
+						</div>
 
-					<div class="post-body">
+						<phi-drawer :open="post.isExpanded" v-if="thread.node">
+							<phi-person-inscriptions v-if="post.isInfoLoaded" :person="post.author" :node="thread.node" @ready="post.isExpanded = true"></phi-person-inscriptions>
+						</phi-drawer>
+
 						<div class="post-description" v-text="post.description"></div>
-						<phi-block v-for="block in post.blocks" :block="block"></phi-block>
 					</div>
 				</div>
+
+				<div class="post-blocks">
+					<phi-block
+						v-for="block in post.blocks"
+						:block="block"
+					></phi-block>
+				</div>
+
 			</div>
 
 		</div>
@@ -72,6 +82,7 @@
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
 import app from '../../store/app.js';
+import moment from 'moment';
 
 var destroyListener;
 
@@ -81,6 +92,7 @@ export default {
 	data() {
 		return {
 			app,
+			moment,
 			thread: null,
 			toolbarIsHidden: false,
 			replyBody: ""
@@ -168,11 +180,13 @@ export default {
 			page.addEventListener(eventName, () => {
 				var delta = page.scrollTop - scrollValue;
 				if (Math.abs(delta) > 8) {
-					this.toolbarIsHidden = delta > 0  && scrollValue > toolbar.clientHeight;
+					this.toolbarIsHidden = delta > 0 && scrollValue > toolbar.clientHeight;
 					scrollValue = page.scrollTop;
 				}
 			});
 		});
+
+		/* Dip into the cache */
 	},
 
 
@@ -180,7 +194,7 @@ export default {
 	// called before the route that renders this component is confirmed.
 	// does NOT have access to `this` component instance,
 	// because it has not been created yet when this guard is called!
-	beforeRouteEnter (to, from, next) {
+	beforeRouteEnter(to, from, next) {
 		app.api
 			.get(`/people/${app.user.id}/threads/inbox/${to.params.threadId}`)
 			.then(thread => {
@@ -196,7 +210,7 @@ export default {
 			});
 	},
 
-	beforeRouteLeave (to, from, next) {
+	beforeRouteLeave(to, from, next) {
 		destroyListener();
 		next();
 	}
@@ -270,7 +284,10 @@ $phi-avatar-size: 32px;
 
 .post {
 	margin-bottom: 22px;
-	padding: 0;
+
+	.phi-media {
+		padding: 0;
+	}
 
 	.phi-media-body {
 		max-width: 100%;
@@ -293,6 +310,7 @@ $phi-avatar-size: 32px;
 
 	.post-author {
 		color: #444;
+		font-weight: bold;
 		margin: 0 0 3px 0;
 	}
 
@@ -305,10 +323,11 @@ $phi-avatar-size: 32px;
 
 	.post-description {
 		margin: 0;
-		font-weight: 300;
-
 		max-width: 100%;
 		overflow-x: hidden;
+		font-size: 15px;
+
+		white-space: pre-wrap;
 	}
 
 	.phi-block {

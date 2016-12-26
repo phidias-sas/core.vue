@@ -52,8 +52,9 @@
 					</div>
 					<router-link class="phi-media-body" :to="{name: 'read', params:{threadId: thread.id}}">
 						<h1 class="thread-title" v-text="thread.title"></h1>
-						<span class="thread-author" v-text="thread.author.firstName + ' ' + thread.author.lastName"></span>
 						<span class="thread-description" v-text="thread.description"></span>
+						<span class="thread-author" v-text="thread.author.firstName"></span>
+						<span class="thread-date">{{ moment.unix(thread.publishDate).format('h:mm a') }}</span>
 					</router-link>
 				</div>
 			</div>
@@ -80,6 +81,7 @@
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import Folder from '../../libraries/Folder.js';
 import app from '../../store/app.js';
+import moment from 'moment';
 
 export default {
 
@@ -89,6 +91,7 @@ export default {
 
 	data() {
 		return {
+			moment,
 			folder: new Folder(app, this.$route.params.folder),
 			tpl: {
 				toolbarIsHidden: false,
@@ -134,6 +137,34 @@ export default {
 					vm.folder = folder;
 				});
 			});
+	},
+
+	/* Mark as read in cache */
+	beforeRouteLeave(to, from, next) {
+		next();
+
+		if (to.name == "read") {
+			var thread = this.folder.collection.getItem(to.params.threadId);
+			if (!thread.stub.readDate) {
+				thread.stub.readDate = Math.floor(Date.now() / 1000);
+				this.folder.collection.override();
+
+				// override the cached dashboard count as well
+				var dashboardUrl        = `people/${app.user.id}/posts/types`;
+				var dashboardCollection = app.api.collection(dashboardUrl);
+				dashboardCollection.fetch()
+					.then(() => {
+						dashboardCollection._items.forEach(type => {
+							if (type.singular == thread.type.singular) {
+								type.unread = Math.max(parseInt(type.unread) - 1, 0);
+							}
+						});
+						dashboardCollection.override();
+					});
+			}
+
+		}
+
 	}
 
 }
@@ -251,6 +282,7 @@ export default {
 	.phi-media-figure {
 		display: flex;
 		align-items: center;
+		margin-top: 2px;
 	}
 
 	.phi-media-figure i {
@@ -266,16 +298,27 @@ export default {
 		font-size: 1.1em;
 	}
 
-	.thread-author {
-		display: block;
-		font-size: 0.85em;
+	.thread-author,
+	.thread-description {
+		font-size: 0.9em;
+	}
+
+	.thread-author,
+	.thread-date {
+		color: #999;
+	}
+
+	.thread-date {
+		font-size: 0.8em;
+		&::before {
+			content: ' - ';
+		}
 	}
 
 	.thread-description {
+		color: #555;
+		font-size: 0.9em;
 		display: block;
-		font-weight: 300;
-		color: #222;
-		font-size: 0.85em;
 	}
 
 	&.unread {
@@ -283,8 +326,17 @@ export default {
 			font-weight: bold;
 		}
 
+		.thread-author,
+		.thread-date {
+			// color: #999;
+			font-weight: bold;
+		}
+
+		.thread-date {
+		}
+
 		.thread-description {
-			font-weight: 500;
+			font-weight: bold;
 		}
 	}
 

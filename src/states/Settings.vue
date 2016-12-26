@@ -113,8 +113,8 @@ export default {
 
 	methods: {
 		clearCache() {
-			if (confirm('Se borraran todos los datos almacenados localmente\nDesea continuar ?')) {
-				this.app.api.cache.empty().then(() => { alert("Datos locales eliminados") });
+			if (confirm('Se limpiarán los datos del almacenamiento temporal.\n\nDesea continuar?')) {
+				this.app.api.cache.empty().then(() => { alert("Caché eliminado") });
 			}
 		},
 

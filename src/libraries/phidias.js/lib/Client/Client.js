@@ -25,7 +25,7 @@ export default class Client {
 		this.token = tokenString;
 	}
 
-	fetch (url, options) {
+	buildRequest(url, options) {
 		url        = this.host + "/" + url;
 		var method = options.method ? options.method.toLowerCase(): "get";
 
@@ -46,9 +46,15 @@ export default class Client {
 			request.headers.set("Authorization", "Bearer " + this.token);
 		}
 
+		return request;
+	}
+
+	fetch(url, options) {
+
+		var request = this.buildRequest(url, options);
 		var promise;
 
-		if (method == "get" && this.cacheIsEnabled) {
+		if (request.method == "GET" && this.cacheIsEnabled) {
 			promise = this.cache.fetch(request)
 				.then(response => response != undefined ? response : fetch(request))
 				.then(response => this.cache.store(request, response));

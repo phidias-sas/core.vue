@@ -5,6 +5,7 @@ export default class Collection {
         this.url        = url;
         this.parameters = parameters;
         this._items     = [];
+        this._response  = null;
 
         this.dummy = false;
         this.reset();
@@ -30,7 +31,8 @@ export default class Collection {
                 body: Object.assign({}, parameters, this.pagination)
             })
             .then(response => {
-                this.total = response.headers.get("x-phidias-collection-total");
+                this._response = response;
+                this.total     = response.headers.get("x-phidias-collection-total");
                 return response.json();
             })
             .then(items => {
@@ -80,6 +82,10 @@ export default class Collection {
         return -1;
     }
 
+    getItem(itemId) {
+        var index = this.indexOf(itemId);
+        return index == -1 ? null : this._items[index];
+    }
 
     /* Meta-data handling */
     setMeta(item, key, value) {
@@ -196,6 +202,28 @@ export default class Collection {
 
     get hasNext() {
         return this.pagination.hasNext;
+    }
+
+    /* Dig into the cache and overwrite the data :) */
+    override() {
+
+        var request = this.client.buildRequest(this.url, {
+            method: "get",
+            body: Object.assign({}, this.parameters, this.pagination)
+        });
+
+        var allHeaders = {};
+        this._response.headers.forEach((value, headerName) => {
+            allHeaders[headerName] = value;
+        });
+
+        var response = new Response(JSON.stringify(this._items), {
+            status:     this._response.status,
+            statusText: this._response.statusText,
+            headers:    allHeaders
+        });
+
+        this.client.cache.store(request, response);
     }
 
 }
