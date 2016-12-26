@@ -13,6 +13,15 @@
 
 		<div class="phi-page-contents">
 
+			<header>
+				<div class="phi-media">
+					<div class="phi-media-figure">
+						<img :src="app.user.avatar">
+					</div>
+					<h1 class="phi-media-body">{{app.user.firstName}} {{app.user.lastName}}</h1>
+				</div>
+			</header>
+
 			<section v-if="destinations.length">
 				<h2>Notificaciones</h2>
 				<div class="phi-card">
@@ -56,10 +65,14 @@
 			<section>
 				<h2>General</h2>
 				<div class="phi-card">
-					<div class="phi-media" @click="clearCache">
+					<div class="phi-media clear-cache" @click="clearCache">
 						<div class="phi-media-figure fa fa-trash-o"></div>
 						<div class="phi-media-body">Limpiar cache</div>
 					</div>
+					<div class="phi-media logout" @click="logout">
+						<div class="phi-media-figure fa fa-sign-out"></div>
+						<div class="phi-media-body">Cerrar sesión</div>
+					</div>					
 				</div>
 			</section>
 
@@ -83,7 +96,6 @@ export default {
 	},
 
 	mounted() {
-
 		app.api
 			.get('types/post')
 			.then(types => {
@@ -132,13 +144,43 @@ export default {
 				preferences: destination.preferences
 			})
 			.then(() => app.api.clear(`people/${app.user.id}/notification/destinations`));  //limpiar cache
-		}
+		},
+
+		logout() {
+			this.app.logout();
+			this.$router.push('login');
+		}		
 
 	}
 }
 </script>
 
 <style lang="scss" scoped>
+
+header {
+
+	padding: 8px 12px 48px 12px;
+
+	.phi-media {
+		margin: auto;
+		padding: 0;
+
+		.phi-media-figure {
+			width: 72px;
+			height: 72px;
+			border-radius: 8px;
+			border: 5px solid #fff;
+			overflow: hidden;
+		}
+
+		.phi-media-body {
+			font-weight: normal;
+			font-size: 1.6em;
+		}
+	}
+
+}
+
 section {
 	margin-bottom: 2em;
 
@@ -152,7 +194,16 @@ section {
 
 }
 
+.phi-media-body {
+	align-self: center;
+}
+
 .phi-media-figure {
+	align-self: center;
 	text-align: center;
+}
+
+.logout {
+	color: #df3e3e;
 }
 </style>

@@ -5,32 +5,41 @@
 				<button class="phi-button" @click="$parent.$el.left.toggle()">
 					<i class="fa fa-bars"></i>
 				</button>
-				<h1>Phidias</h1>
+				<h1 v-text="app.title"></h1>
 			</div>
 		</div>
 
 		<div class="phi-page-contents">
 
-			<section>
-				<h2>Contacto</h2>
-				<div class="phi-card">
-					<a class="phi-media" href="http://phidias.co" target="_blank">
-						<div class="phi-media-figure fa fa-laptop"></div>
-						<div class="phi-media-body">Página web</div>
-					</a>
+			<div class="phi-card school">
+				<header>
+					<img :src="app.logo" :alt="app.title">
+				</header>
 
-					<a class="phi-media" href="tel:7531147">
-						<div class="phi-media-figure fa fa-phone"></div>
-						<div class="phi-media-body">Llamar al colegio</div>
-					</a>
+				<section>
+					<div>
+						<a class="phi-media" href="http://phidias.co" target="_blank">
+							<div class="phi-media-figure fa fa-laptop"></div>
+							<div class="phi-media-body">Página web</div>
+						</a>
 
-					<a class="phi-media" href="geo:37.786971,-122.399677">
-						<div class="phi-media-figure fa fa-map-marker"></div>
-						<div class="phi-media-body">Ubicación</div>
-					</a>
-				</div>
-			</section>
+						<a class="phi-media" href="tel:7531147">
+							<div class="phi-media-figure fa fa-phone"></div>
+							<div class="phi-media-body">Llamar al colegio</div>
+						</a>
 
+						<a class="phi-media" href="geo:37.786971,-122.399677">
+							<div class="phi-media-figure fa fa-map-marker"></div>
+							<div class="phi-media-body">Ubicación</div>
+						</a>
+					</div>
+				</section>
+			</div>
+
+			<footer>
+				<p>Phidias SAS &copy; 2016</p>
+				<p>Todos los derechos reservados</p>
+			</footer>
 
 		</div>
 	</div>
@@ -50,20 +59,56 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-section {
-	margin-bottom: 2em;
 
-	h2 {
-		font-weight: 1em;
-		text-transform: uppercase;
-		color: #666;
-		margin-bottom: 0.5em;
-		font-size: 0.8em;
+.school {
+
+	header {
+		text-align: center;
+		padding: 32px 0;
+
+		img {
+			max-width: 100%;
+			margin: auto;
+			background-color: #2196F3;
+
+			max-width: 80%;
+		}
+
+		h1 {
+			font-weight: normal;
+			font-size: 1.6em;
+			margin: 8px 0;
+			color: #444;
+		}
+	}
+
+	section {
+
+		h2 {
+			font-weight: 1em;
+			text-transform: uppercase;
+			color: #666;
+			margin-bottom: 0.5em;
+			font-size: 0.8em;
+		}
+
+	}
+
+	.phi-media-figure {
+		text-align: center;
 	}
 
 }
 
-.phi-media-figure {
+footer {
+	margin-top: 32px;
 	text-align: center;
+	font-size: 0.8em;
+	color: #666;
+
+	p {
+
+	}
 }
+
 </style>

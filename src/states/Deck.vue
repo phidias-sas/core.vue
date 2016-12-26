@@ -24,24 +24,21 @@
 			>
 
 			<header>
-				<div class="school">
-					<h1 v-text="app.title"></h1>
+				<div class="school" @click="toggleMenu">
+					<router-link to="/about">
+						<h1 v-text="app.title"></h1>
+					</router-link>
 				</div>
 
-				<div class="user" v-if="app.user">
-					<div class="phi-media" @click="isOpen.user = !isOpen.user; isOpen.school = false">
-						<div class="phi-media-figure phi-avatar">
-							<img :src="app.user.avatar" :alt="app.user.firstName">
+				<div class="user" v-if="app.user" @click="toggleMenu">
+					<router-link to="/settings">
+						<div class="phi-media">
+							<div class="phi-media-figure phi-avatar">
+								<img :src="app.user.avatar" :alt="app.user.firstName">
+							</div>
+							<h1 class="phi-media-body" v-text="app.user.firstName + ' ' + app.user.lastName"></h1>
 						</div>
-						<h1 class="phi-media-body" v-text="app.user.firstName + ' ' + app.user.lastName"></h1>
-						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.user, 'fa-caret-down': isOpen.user}"></i>
-					</div>
-					<phi-drawer :open="isOpen.user">
-						<div class="phi-menu" @click="toggleMenu">
-							<router-link to="/settings">Preferencias</router-link>
-							<div @click="logout()">Cerrar sesión</div>
-						</div>
-					</phi-drawer>
+					</router-link>
 				</div>
 			</header>
 
@@ -61,31 +58,6 @@
 					@click.native="app.navigation.clear()"
 				></router-link>
 
-				<hr>
-
-				<div class="collapsable">
-					<div @click.stop="isOpen.school = !isOpen.school" class="phi-media">
-						<span class="phi-media-body">Contactar</span>
-						<i class="phi-media-right fa" :class="{'fa-caret-right': !isOpen.school, 'fa-caret-down': isOpen.school}"></i>
-					</div>
-
-					<phi-drawer :open="isOpen.school">
-						<div class="phi-menu" @click="isOpen.school = false">
-							<a href="http://phidias.co" target="_blank">
-								<i class="fa fa-laptop"></i>
-								<span class="phi-media-body">Página web</span>
-							</a>
-							<a href="tel:7531147">
-								<i class="fa fa-phone"></i>
-								<span class="phi-media-body">Llamar</span>
-							</a>
-							<a href="geo:37.786971,-122.399677">
-								<i class="fa fa-map-marker"></i>
-								<span class="phi-media-body">Ubicación</span>
-							</a>
-						</div>
-					</phi-drawer>
-				</div>
 
 			</div>
 		</ons-splitter-side>
@@ -107,12 +79,7 @@ export default {
 		return {
 			app,
 			nodes: app.api.collection("nodes"),
-			transitionDirection: 'left',
-
-			isOpen: {
-				school: false,
-				user: false
-			}
+			transitionDirection: 'left'
 		}
 	},
 
@@ -128,9 +95,6 @@ export default {
 		},
 
 		toggleMenu() {
-			this.isOpen.school = false;
-			this.isOpen.user   = false;
-
 			this.$el.left.toggle();
 		},
 
@@ -207,6 +171,20 @@ ons-splitter-mask {
 	background-color: rgb(48, 62, 77);
 	color: #eaeaea;
 
+	// .router-link-active {
+	// 	display: block;
+	// 	background-color: rgba(0, 0, 0, 0.1);
+	// }
+
+	hr {
+		opacity: 0;
+		margin: 12px 0 24px 0;
+	}
+
+	.phi-menu-label {
+		padding: 0 24px;
+	}
+
 	header {
 
 		h1 {
@@ -224,11 +202,12 @@ ons-splitter-mask {
 		.school {
 			h1 {
 				padding: 24px;
+				padding-bottom: 12px;
 				font-size: 1.3em;
 
 				white-space: nowrap;
 				overflow: hidden;
-				text-overflow: ellipsis;				
+				text-overflow: ellipsis;
 			}
 		}
 
@@ -259,33 +238,9 @@ ons-splitter-mask {
 
 	}
 
-	.collapsable {
-		padding: 0 8px;
-
-		.phi-media {
-			color: #fff;
-		}
-
-		.phi-drawer {
-			padding: 12px 0;
-
-			i {
-				display: inline-block;
-				text-align: left;
-				width: 2em;
-			}
-		}
-	}
-
 	.main-options {
-		margin-top: 12px;
+		margin-top: 24px;
 	}
-
-	hr {
-		opacity: 0;
-	}
-
-
 
 }
 

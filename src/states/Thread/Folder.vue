@@ -259,10 +259,10 @@ export default {
 
 .selection-count {
 	width: auto;
+	margin-right: 1em;
 
 	& > * {
 		display: inline-block;
-		margin-right: 0.5em;
 	}
 
 	span {

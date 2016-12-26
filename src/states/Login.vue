@@ -52,7 +52,7 @@ export default {
 			if (!this.username || !this.password) {
 				this.error = "debes escribir tu usuario y contraseña";
 				return;
-			} 
+			}
 
 			this.app.login(this.username, this.password)
 				.then(() => {
@@ -75,7 +75,7 @@ export default {
 		},
 
 		resetCode() {
-			this.app.clear();
+			// this.app.clear();
 			this.$router.push('code');
 		}
 	},
@@ -98,15 +98,14 @@ export default {
 <style lang="scss">
 #state-login {
 
-    padding: 6px;
-    padding-top: 5%;
+	padding: 6px;
+	padding-top: 5%;
 	text-align: center;
 
 	.phi-card {
-
-        margin: auto;
-        width: 100%;
-        max-width: 600px;
+		margin: auto;
+		width: 100%;
+		max-width: 600px;
 		padding: 12px;
 
 		img {
@@ -135,8 +134,8 @@ export default {
 	.reset {
 		display: block;
 		margin: auto;
-        width: 100%;
-        max-width: 600px;
+		width: 100%;
+		max-width: 600px;
 
 		margin-top: 15px;
 
