@@ -24,7 +24,7 @@ export default {
 		loaded.then(() => {
 			// Create a map object and specify the DOM element for display.
 			this.map = new google.maps.Map(document.getElementById('main-map'), {
-				// center: {lat: -34.397, lng: 150.644},
+				center: {lat: 3.4544409, lng: -76.5377683},
 				mapTypeControl: true,
 				mapTypeControlOptions: {
 					style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
