@@ -2,13 +2,14 @@
 	<div>
 		<div class="controls">
 			<button id="menu" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-			<button id="myLocation" @click="locate()">Mi ubicacion</button>
+			<button id="myLocation" @click="locateMe()">Mi ubicacion</button>
 		</div>
 		<div id="main-map"></div>
 	</div>
 </template>
 
 <script>
+import moment from 'moment';
 import app from '../store/app.js';
 import {load, loaded} from 'vue-google-maps';
 
@@ -30,7 +31,7 @@ export default {
 					style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
 					position: google.maps.ControlPosition.TOP_CENTER
 				},
-				zoom: 18
+				zoom: 17
 			});
 
 			this.myLocation = new google.maps.InfoWindow({
@@ -40,11 +41,11 @@ export default {
 					</div>`
 			});
 
+			this.refresh();
+
 			/* Trigger a resize after 800ms.  This redraws the element correctly ¯\_(ツ)_/¯ */
 			setTimeout(() => {
 				google.maps.event.trigger(this.map, "resize");
-
-				this.locate();
 			}, 800);
 
 		});
@@ -53,16 +54,48 @@ export default {
 	data() {
 		return {
 			app,
-			center: {lat: 1.38, lng: 103.8},
-			zoom: 8,
-
 			map: null,
-			myLocation: null
+			myLocation: null,
+			items: []
 		}
 	},
 
 	methods: {
-		locate() {
+		// Reloads feed items and displays them in the map
+		refresh() {
+			app.api.get(`people/${app.user.id}/geo/feed`)
+				.then(items => {
+					this.items = items;
+					this.items.forEach(item => {
+
+						item.infowindow = new google.maps.InfoWindow({
+							content:
+								`<div class="mapItem">
+									<h1 class="title">${item.title}</h1>
+									<p class="date">${moment.unix(item.timestamp).format('h:mm a')}</p>
+								</div>`
+						});
+
+						item.marker = new google.maps.Marker({
+							title: item.title,
+							map:   this.map,
+							position: {
+								lat: parseFloat(item.coordinates.latitude),
+								lng: parseFloat(item.coordinates.longitude)
+							}
+						});
+
+						item.marker.addListener('click', function() {
+							item.infowindow.open(this.map, item.marker);
+						});
+
+						item.infowindow.open(this.map, item.marker);
+
+					});
+				});
+		},
+
+		locateMe() {
 			navigator.geolocation.getCurrentPosition(position => {
 				var coords = {
 					lat: position.coords.latitude,
@@ -95,6 +128,20 @@ export default {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
+}
+
+
+.mapItem {
+	.title {
+		font-size: 1.2em;
+		font-weight: normal;
+		margin: 0;
+	}
+
+	.date {
+		color: #999;
+		font-size: 12px;
+	}
 }
 
 .myPosition {
