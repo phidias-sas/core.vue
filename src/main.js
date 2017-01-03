@@ -21,6 +21,8 @@ import Login from './states/Login.vue';
 
 import Deck from './states/Deck.vue';
 import About from './states/About.vue';
+import Hidden from './states/Hidden.vue';
+
 import Dashboard from './states/Dashboard.vue';
 import ThreadFolder from './states/Thread/Folder.vue';
 import ThreadRead from './states/Thread/Read.vue';
@@ -65,6 +67,7 @@ const router = new VueRouter({
 
 		{ path: '/deck',  component: Deck,
 			children: [
+				{ path: '/hidden', component: Hidden },
 				{ path: '/about', component: About, meta: {order: 1} },
 
 				{ path: '/dashboard', component: Dashboard, meta: {order: 1, exitOnBack: true} },

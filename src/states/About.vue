@@ -39,6 +39,7 @@
 			<footer>
 				<p>Phidias SAS &copy; 2016</p>
 				<p>Todos los derechos reservados</p>
+				<div id="hidden" @click="openHidden"></div>
 			</footer>
 
 		</div>
@@ -52,7 +53,17 @@ export default {
 	name: "about",
 	data() {
 		return {
-			app
+			app,
+			hidden: 3
+		}
+	},
+
+	methods: {
+		openHidden() {
+			this.hidden--;
+			if (!this.hidden) {
+				this.$router.push("/hidden");
+			}
 		}
 	}
 }
@@ -106,8 +117,12 @@ footer {
 	font-size: 0.8em;
 	color: #666;
 
-	p {
+	#hidden {
+		display: block;
+		padding: 16px;
+		margin-top: 72px;
 
+		border-top: 1px solid #eee;
 	}
 }
 
