@@ -54,7 +54,7 @@ export default {
 	data() {
 		return {
 			app,
-			hidden: 3
+			hidden: 7
 		}
 	},
 
