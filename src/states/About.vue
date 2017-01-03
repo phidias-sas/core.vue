@@ -17,18 +17,29 @@
 				</header>
 
 				<section>
-					<div>
-						<a class="phi-media" href="http://phidias.co" target="_blank">
+					<div v-if="app.organization">
+
+						<a v-if="app.organization.website"
+							:href="app.organization.website"
+							target="_blank"
+							class="phi-media"
+						>
 							<div class="phi-media-figure fa fa-laptop"></div>
 							<div class="phi-media-body">Página web</div>
 						</a>
 
-						<a class="phi-media" href="tel:7531147">
+						<a v-if="app.organization.phone"
+							:href="'tel:' + app.organization.phone"
+							class="phi-media"
+						>
 							<div class="phi-media-figure fa fa-phone"></div>
 							<div class="phi-media-body">Llamar al colegio</div>
 						</a>
 
-						<a class="phi-media" href="geo:37.786971,-122.399677">
+						<a v-if="app.organization.latitude"
+							:href="`geo:${app.organization.longitude},${app.organization.latitude}`"
+							class="phi-media"
+						>
 							<div class="phi-media-figure fa fa-map-marker"></div>
 							<div class="phi-media-body">Ubicación</div>
 						</a>
@@ -37,7 +48,8 @@
 			</div>
 
 			<footer>
-				<p>Phidias SAS &copy; 2016</p>
+				<p>Desarrollado por Phidias SAS &copy; 2016</p>
+				<p v-if="app.organization">para {{ app.organization.name }}</p>
 				<p>Todos los derechos reservados</p>
 				<div id="hidden" @click="openHidden"></div>
 			</footer>

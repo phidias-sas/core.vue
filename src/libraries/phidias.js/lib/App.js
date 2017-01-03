@@ -74,9 +74,11 @@ export default class App {
 
 	reset() {
 		this.data = {
-			endpoint:       null,
 			title:          null,
 			logo:           null,
+			endpoint:       null,
+			organization:   {},
+
 			token:          null,
 			user:           null, // "user" holds the decoded token payload
 			pushToken:      null,
@@ -133,6 +135,10 @@ export default class App {
 		return this.data.logo;
 	}
 
+	get organization() {
+		return this.data.organization;
+	}
+
 	get user() {
 		return this.data.user;
 	}
@@ -170,9 +176,10 @@ export default class App {
 			.get("/code/" + code)
 			.then(response => {
 				this.set({
-					title:    response.title,
-					logo:     response.logo,
-					endpoint: response.url
+					title:        response.title,
+					logo:         response.logo,
+					endpoint:     response.url,
+					organization: response.organization
 				});
 				this.initialize();
 			});

@@ -51,13 +51,13 @@
 
 				<hr>
 
-				<label class="phi-menu-label">años lectivos</label>
+<!-- 				<label class="phi-menu-label">años lectivos</label>
 				<router-link v-for="node in nodes.items"
 					:to="{name:'node', params:{nodeId:node.id}}"
 					v-text="node.name"
 					@click.native="app.navigation.clear()"
 				></router-link>
-
+ -->
 
 			</div>
 		</ons-splitter-side>
@@ -84,8 +84,7 @@ export default {
 	},
 
 	mounted () {
-		// this.nodes = app.api.collection("nodes");
-		this.nodes.fetch();
+		// this.nodes.fetch();
 	},
 
 	methods: {
