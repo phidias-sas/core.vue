@@ -89,6 +89,8 @@ export default class App {
 		this.api        = null;
 		this.listeners  = {};
 		this.navigation = new Navigation;
+
+		this.isFixed = false; // App is fixed if app data came from meta tags
 	}
 
 	set(data) {
@@ -291,8 +293,9 @@ export default class App {
 	}
 
 	getDataFromMetaTags() {
-
-		var retval = {};
+		var retval = {
+			organization: {}
+		};
 
 		/* Obtain data from metatags (in public/index.html) */
 		var metas = document.querySelectorAll('meta');
@@ -301,6 +304,7 @@ export default class App {
 			/* Obtain endpoint from "phi-endpoint" metatag */
 			if (metas[cont].name == "phi-endpoint") {
 				retval.endpoint = metas[cont].content;
+				this.isFixed = true;
 			}
 
 			/* Obtain title from "phi-endpoint" metatag */
@@ -316,6 +320,29 @@ export default class App {
 			/* Obtain googleClientId from "phi-google-client-id" metatag */
 			if (metas[cont].name == "phi-google-client-id") {
 				retval.googleClientId = metas[cont].content;
+			}
+
+			/* Organization data */
+			if (metas[cont].name == "phi-google-client-id") {
+				retval.googleClientId = metas[cont].content;
+			}
+
+			if (metas[cont].name == "phi-organization-name") {
+				retval.organization.name = metas[cont].content;
+			}
+
+			if (metas[cont].name == "phi-organization-website") {
+				retval.organization.website = metas[cont].content;
+			}
+
+			if (metas[cont].name == "phi-organization-phone") {
+				retval.organization.phone = metas[cont].content;
+			}
+
+			if (metas[cont].name == "phi-organization-location") {
+				var latLng = metas[cont].content.split(',');
+				retval.organization.latitude  = latLng[0];
+				retval.organization.longitude = latLng[1];
 			}
 
 		}

@@ -37,7 +37,7 @@
 						</a>
 
 						<a v-if="app.organization.latitude"
-							:href="`geo:${app.organization.longitude},${app.organization.latitude}`"
+							:href="`geo:${app.organization.latitude},${app.organization.longitude}`"
 							class="phi-media"
 						>
 							<div class="phi-media-figure fa fa-map-marker"></div>

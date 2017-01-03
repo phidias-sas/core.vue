@@ -35,7 +35,7 @@ export default {
 			username: null,
 			password: null,
 			error: null,
-			canChangeCode: true
+			canChangeCode: !app.isFixed
 		}
 	},
 
