@@ -69,9 +69,11 @@ class CordovaApp
     {
         self::log("Creando nuevo proyecto de Cordova");
 
-        `rm -rf build`;
-        `cordova create build`;
-        `rm build/config.xml`;
+        if (!is_dir('build')) {
+            `cordova create build`;
+            `rm build/config.xml`;
+        }
+
         `rm -rf build/www`;
         `cp -r ../dist build/www`;
         `cp -r src/resources build/www`;
