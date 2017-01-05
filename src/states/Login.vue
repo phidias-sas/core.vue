@@ -19,7 +19,7 @@
 			</div>
 		</form>
 
-		<button v-if="canChangeCode" class="reset" @click="resetCode()">Cambiar institución</button>
+		<button v-if="!app.isFixed" class="reset" @click="resetCode()">Cambiar institución</button>
 
 	</div>
 </template>
@@ -34,8 +34,7 @@ export default {
 			app,
 			username: null,
 			password: null,
-			error: null,
-			canChangeCode: !app.isFixed
+			error: null
 		}
 	},
 

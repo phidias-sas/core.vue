@@ -63,7 +63,7 @@ const router = new VueRouter({
 
 		{ path: '/', redirect: '/dashboard' },
 		{ path: '/code',  component: Code, name: 'code', meta: {isPublic: true, exitOnBack: true} },
-		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true} },
+		{ path: '/login', component: Login, name: 'login', meta: {isPublic: true, exitOnBack: true} },
 
 		{ path: '/deck',  component: Deck,
 			children: [
