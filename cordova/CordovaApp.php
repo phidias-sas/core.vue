@@ -126,6 +126,11 @@ class CordovaApp
     {
         self::log("Generando config.xml");
 
+        if (!$this->id) {
+            copy("src/config.xml", "build/www/config.xml");
+            return;
+        }
+
         $contents = str_replace(
             [
                 "com.phidias.app.core",
