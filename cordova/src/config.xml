@@ -54,9 +54,17 @@
 
     <!-- iOS status bar customization -->
     <plugin name="cordova-plugin-statusbar" />
-    <preference name="StatusBarOverlaysWebView" value="false" />
-    <preference name="StatusBarBackgroundColor" value="#f3f3f3" />
-    <preference name="StatusBarStyle" value="default" />
+
+    <platform name="android">
+        <preference name="StatusBarOverlaysWebView" value="false" />
+        <preference name="StatusBarBackgroundColor" value="#000000" />
+        <preference name="StatusBarStyle" value="lightcontent" />
+    </platform>
+    <platform name="ios">
+        <preference name="StatusBarOverlaysWebView" value="false" />
+        <preference name="StatusBarBackgroundColor" value="#f3f3f3" />
+        <preference name="StatusBarStyle" value="default" />
+    </platform>
 
     <!-- URL whitelisting -->
     <access origin="*" />
