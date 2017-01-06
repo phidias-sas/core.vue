@@ -12,12 +12,13 @@ class CordovaApp
     public $title;
     public $logo;
     public $icon;
-    public $dateCreated;
 
-    public static function build($id = null)
+    private $outputFolder;
+
+    public static function build($id = null, $outputFolder = null)
     {
         $app = new CordovaApp($id);
-        return $app->generate();
+        return $app->generate($outputFolder);
     }
 
     public function __construct($id = null)
@@ -25,9 +26,14 @@ class CordovaApp
         $this->id = $id;
     }
 
-    public function generate()
+    public function generate($outputFolder)
     {
-        self::log("Generando aplicacion");
+        if (!trim($outputFolder)) {
+            $outputFolder = "project";
+        }
+        $this->outputFolder = rtrim($outputFolder, '/');
+
+        self::log("Generando aplicacion en $this->outputFolder/");
 
         $this->fetch();
         $this->initialize();
@@ -45,7 +51,6 @@ class CordovaApp
             return;
         }
 
-
         $codeUrl = "https://phidias.io/code/$this->id";
         self::log("Obteniendo datos de $codeUrl");
 
@@ -60,7 +65,6 @@ class CordovaApp
         $this->title        = $response->title;
         $this->logo         = $response->logo;
         $this->icon         = $response->icon;
-        $this->dateCreated  = $response->dateCreated;
 
         self::log("Datos obtenidos para {$this->title}");
     }
@@ -69,14 +73,14 @@ class CordovaApp
     {
         self::log("Creando nuevo proyecto de Cordova");
 
-        if (!is_dir('build')) {
-            `cordova create build`;
-            `rm build/config.xml`;
+        if (!is_dir($this->outputFolder)) {
+            mkdir($this->outputFolder, 0777, true);
+            `cordova create {$this->outputFolder}`;
         }
 
-        `rm -rf build/www`;
-        `cp -r ../dist build/www`;
-        `cp -r src/resources build/www`;
+        `rm -rf {$this->outputFolder}/www`;
+        `cp -r ../dist {$this->outputFolder}/www`;
+        `cp -r src/resources {$this->outputFolder}/resources`;
     }
 
     private function generateIndex()
@@ -96,7 +100,7 @@ class CordovaApp
                 "static",
                 '<div id=app></div><script type="text/javascript" src="cordova.js"></script>'
             ],
-            file_get_contents("build/www/index.html")
+            file_get_contents("$this->outputFolder/www/index.html")
         );
 
 
@@ -119,7 +123,7 @@ class CordovaApp
             );
         }
 
-        file_put_contents("build/www/index.html", $contents);
+        file_put_contents("$this->outputFolder/www/index.html", $contents);
     }
 
     private function generateConfig()
@@ -127,7 +131,7 @@ class CordovaApp
         self::log("Generando config.xml");
 
         if (!$this->id) {
-            copy("src/config.xml", "build/www/config.xml");
+            copy("src/config.xml", "$this->outputFolder/config.xml");
             return;
         }
 
@@ -143,7 +147,7 @@ class CordovaApp
             file_get_contents("src/config.xml")
         );
 
-        file_put_contents("build/www/config.xml", $contents);
+        file_put_contents("$this->outputFolder/config.xml", $contents);
     }
 
     private function generateIcons()
@@ -160,7 +164,7 @@ class CordovaApp
         foreach (self::getIconSpecs() as $specs) {
             $icon
                 ->resize($specs["width"], $specs["height"])
-                ->save($specs["dest"])
+                ->save($this->outputFolder . '/' . $specs["dest"])
                 ->reset();
         }
     }
@@ -171,7 +175,7 @@ class CordovaApp
 
         $image = Image::make("src/resources/icon.png");
         $retval[] = [
-            "dest"   => "build/www/resources/icon.png",
+            "dest"   => "resources/icon.png",
             "width"  => $image->width(),
             "height" => $image->height()
         ];
@@ -182,7 +186,7 @@ class CordovaApp
                 if ($file == "." || $file == "..") continue;
                 $image = Image::make("src/resources/$platform/icon/$file");
                 $retval[] = [
-                    "dest"   => "build/www/resources/$platform/icon/$file",
+                    "dest"   => "resources/$platform/icon/$file",
                     "width"  => $image->width(),
                     "height" => $image->height()
                 ];

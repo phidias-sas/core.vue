@@ -13,7 +13,7 @@
 						<i class="fa fa-spinner fa-spin"></i>
 						BUSCANDO
 					</span>
-					<span v-show="error">CÓDIGO NO ENCONTRADO</span>					
+					<span v-show="error">CÓDIGO NO ENCONTRADO</span>
 				</button>
 
 			</footer>
@@ -28,7 +28,7 @@
 			<p>Comunícate con tu colegio para obtener tu código de acceso e ingresar al sistema</p>
 
 			<div class="buttons">
-				<button @click="hideDialog()">OK</button>
+				<button class="phi-button" @click="hideDialog()">OK</button>
 			</div>
 		</ons-dialog>
 
@@ -41,7 +41,7 @@ import PhiInput from '../components/Phi/Input.vue';
 import app from '../store/app.js';
 
 export default {
-	data () {
+	data() {
 		return {
 			app,
 			inputCode: "",
@@ -51,7 +51,7 @@ export default {
 	},
 
 	methods: {
-		submit () {
+		submit() {
 
 			this.isLoading = true;
 
@@ -68,11 +68,11 @@ export default {
 			return false;
 		},
 
-		showDialog () {
+		showDialog() {
 			this.$el.querySelector("#dialog").show();
 		},
 
-		hideDialog () {
+		hideDialog() {
 			this.$el.querySelector("#dialog").hide();
 		}
 	},
@@ -109,31 +109,37 @@ export default {
 		}
 	}
 
-	#dialog {
-		text-align: left;
-		padding: 12px 24px;
-
-		h2 {
-			margin: 0;
-			margin-bottom: 1em;
-		}
-
-		p {
-			margin: 0;
-		}
-
-		strong {
-			font-weight: bold;
-		}
-	}
-
 	#toggle-dialog {
 		display: block;
 		color: #fff;
 		opacity: 0.8;
 		cursor: pointer;
 		padding: 8px 12px;
+		padding-top: 32px;
 	}
 
+}
+
+#dialog .dialog-container {
+	text-align: left;
+	padding: 12px 24px;
+
+	h2 {
+		margin: 0;
+		margin-bottom: 1em;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	strong {
+		font-weight: bold;
+	}
+
+	.buttons {
+		margin-top: 24px;
+		text-align: right;
+	}
 }
 </style>

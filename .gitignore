@@ -2,5 +2,5 @@
 node_modules/
 npm-debug.log
 nbproject
-cordova/build
+cordova/project
 vendor
