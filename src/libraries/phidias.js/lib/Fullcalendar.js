@@ -26,11 +26,21 @@ export default class PhidiasFullCalendarUtils {
             if(!source.color){
                 eventSources[index].color = defaultColors[lastColorUsed += 1];
                 needToRefetch = true;
+            }else{
+                if(!PhidiasColorUtils.isValidCssColour(source.color)){
+                    eventSources[index].color = defaultColors[lastColorUsed += 1];
+                    needToRefetch = true;
+                }
             }
             
             if(!source.textColor){
                 eventSources[index].textColor = PhidiasColorUtils.getTextColorForBG(eventSources[index].color);
                 needToRefetch = true;
+            }else{
+                if(!PhidiasColorUtils.isValidCssColour(source.textColor)){
+                    eventSources[index].textColor = PhidiasColorUtils.getTextColorForBG(eventSources[index].color);
+                    needToRefetch = true;
+                }
             }
             
             eventSources[index].toggle = () => {
