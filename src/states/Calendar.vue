@@ -52,7 +52,7 @@ export default {
 	data () {
 		return {
 			app,
-			isLoading: true,
+			isLoading: false,
 			displayViewsMenu: false,
 			displaySourcesFilter: false,
 			currentView: 'listMonth', //for switching views externaly
@@ -63,9 +63,8 @@ export default {
 	},
 
 	methods: {
-		initializeCalendar(){
-
-			let baseConfig = {
+		initializeSources(){
+			let calendarConfig = {
 				googleCalendarApiKey: 'AIzaSyC-w7WOjp6Rgg4pZZDFW7Eqp6gR2AAlt4I',
 				locale: 'es',
         		firstDay: 0,
@@ -140,22 +139,20 @@ export default {
 					});
 				});
 
-			//google example from educacem, uncomment to test
-			//sources.push({"title":"Lengua Extranjera: Ingl\u00e9s I 1\u00ba BXTO A","googleCalendarId":"educacem.com_8ab01jm6fnkksi46vv16u187ag@group.calendar.google.com"});
+			//google example from educacem, uncomment to test, disabled by default
+			//sources.push({enabled: false, title:"Lengua Extranjera: Ingl\u00e9s I 1\u00ba BXTO A",googleCalendarId:"educacem.com_8ab01jm6fnkksi46vv16u187ag@group.calendar.google.com"});
 
 			//wait for everything to finish, then configure the calendar
 			Promise.all([calendarsByType]).then( () => { 
-				baseConfig.eventSources = sources;
-				this.myCalendar = baseConfig;
+				this.preparedSources = FCUtils.prepareSources(sources);
+				this.myCalendar = calendarConfig;
 			});
 
 		},
 
 		setCalendar(fullCalendarInstance){
 			this.fullCalendarInstance = fullCalendarInstance;
-			
-			this.eventSources = FCUtils.getEventSources(this.fullCalendarInstance);
-			this.createSourcesSelector();
+			this.eventSources = FCUtils.injectSources(this.fullCalendarInstance, this.preparedSources);
 		},
 
 		positionMenu (anchor, menuElement){
@@ -198,15 +195,16 @@ export default {
 				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");	
 				this.positionMenu("button.fc-sourcesFilter-button", "div.sources-filter-menu");
 			}, true);
-		},
 
-		createSourcesSelector(){
-			
+			this.$parent.$on("transitionFinished", () => {
+				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");	
+				this.positionMenu("button.fc-sourcesFilter-button", "div.sources-filter-menu");	
+			});
 		}
 	},
 
 	mounted() {
-		this.initializeCalendar();
+		this.initializeSources();
 		this.addMenuEvents();
 	}
 }
@@ -221,7 +219,6 @@ export default {
 	.phi-menu-selected-alt{
 		background-color: rgb(238, 238, 238);
 		border-left: 5px solid #303e4d;
-		font-weight: bold;
 	}
 
 	.phi-menu.short-padding li{

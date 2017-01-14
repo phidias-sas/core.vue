@@ -136,6 +136,8 @@ export default {
 		afterLeave(el) {
 			incomingCover && (incomingCover.style.height = "auto");
 			outgoingCover && (outgoingCover.style.height = "auto");
+			
+			this.$emit("transitionFinished", true);
 		}
 	},
 
