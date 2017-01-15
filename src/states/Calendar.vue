@@ -8,7 +8,7 @@
                 <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics`"><i class="fa fa-calendar-plus-o"></i></a>
             </div>            
         </div>
-		
+	
 		<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
         
 		<div class="phi-page-contents">
@@ -223,6 +223,14 @@ export default {
 
 	.phi-menu.short-padding li{
 		padding-left: 10px;
+	}
+
+	.phi-menu.short-padding li:first-child{
+		border-top-left-radius:3px;
+	}
+
+	.phi-menu.short-padding li:last-child{
+		border-bottom-left-radius:3px;
 	}
 
 	.views-list-menu{
