@@ -65,7 +65,13 @@ export default {
 
 		googleLogin() {
 			this.app.googleLogin()
-				.then(this.redirect);
+				.then(data => {
+					this.redirect();
+				})
+				.catch(error => {
+					this.error = "usuario o contraseña incorrectos";
+					console.log("app.login error", error);
+				});				
 		},
 
 		redirect() {

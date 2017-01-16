@@ -31,9 +31,17 @@
         <link rel="stylesheet" href="static/onsenui/css/onsenui.css" />
         <link rel="stylesheet" href="static/onsenui/css/phidias-onsen-css-components.min.css" />
         <script src="static/onsenui/js/onsenui.js"></script>
+        <script 
+                type="text/javascript" 
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-w7WOjp6Rgg4pZZDFW7Eqp6gR2AAlt4I&libraries=geometry">
+        </script>
         <script type="text/javascript">
             // Force onsen platform theme (overrides auto-detect)
             ons.platform.select('android') // or 'ios'
+            var isMobile = false;
+            document.addEventListener("deviceready", () => {
+                isMobile = true;
+            }, false);
         </script>
 
         <!-- Quill text editor -->
@@ -44,6 +52,7 @@
 
     <body>
         <div id="app"></div>
+        <script type="text/javascript" src="cordova.js"></script>
     </body>
 
 </html>
