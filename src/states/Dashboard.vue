@@ -9,17 +9,19 @@
 		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
 		<div class="phi-page-contents">
 			<section v-if="!!billboard">
-				<router-link class="phi-card" :to="'/threads/all/'+billboard.thread">
-					<h1 v-text="billboard.title"></h1>
-					<div v-text="billboard.description"></div>
-				</router-link>
+				<div class="billboard phi-card _z-0">
+					<router-link class="phi-card" :to="{name: 'read', params:{threadId: billboard.thread}}">
+						<h1 v-text="billboard.title"></h1>
+						<div v-text="billboard.description"></div>
+					</router-link>
+				</div>
 			</section>
 			<section v-show="!!types">
-				<div class="phi-card _z-0">
-					<router-link 
+				<div class="types phi-card _z-0">
+					<router-link
 						v-for="type in types"
 						:to="{name: 'folder', params:{folder: 'inbox'}, query:{type: type.singular}}"
-						class="phi-media"  
+						class="phi-media"
 					>
 						<img class="phi-media-figure" :src="type.icon || defaultIcon" :alt="type.plural"  >
 						<h1 class="phi-media-body" v-text="type.plural"></h1>
@@ -91,6 +93,14 @@ export default {
 
 
 <style lang="scss" scoped>
+section {
+	margin-bottom: 24px;
+}
+
+.billboard {
+	padding: 16px;
+}
+
 .phi-page-cover {
 	background: transparent;
 	color: #444;
@@ -117,6 +127,6 @@ export default {
 	padding: 4px 8px;
 
 	background-color: #4c9689;
-	color: #fff;	
+	color: #fff;
 }
 </style>
