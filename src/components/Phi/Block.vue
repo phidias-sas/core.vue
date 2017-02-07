@@ -13,18 +13,20 @@
 
 <script>
 /* Declare all components */
-import Youtube from './Block/Youtube.vue';
+import Files from './Block/Files.vue';
+import Form from './Block/Form.vue';
 import Html from './Block/Html.vue';
 import Image from './Block/Image.vue';
-import Files from './Block/Files.vue';
 import V3 from './Block/V3.vue';
+import Youtube from './Block/Youtube.vue';
 
 var types = {
-	html:    Html,
-	youtube: Youtube,
-	image:   Image,
 	files:   Files,
-	v3:      V3
+	form:    Form,
+	html:    Html,
+	image:   Image,
+	v3:      V3,
+	youtube: Youtube
 }
 
 var components = {};
@@ -68,7 +70,7 @@ export default {
 		if ((typeof types[type] == "undefined") || (typeof types[type]['phi-actions'] == "undefined")) {
 			return {};
 		}
-		return types[type]['phi-actions'];	
+		return types[type]['phi-actions'];
 	}
 }
 </script>
