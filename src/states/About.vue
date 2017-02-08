@@ -43,6 +43,15 @@
 							<div class="phi-media-figure fa fa-map-marker"></div>
 							<div class="phi-media-body">Ubicación</div>
 						</a>
+
+						<a v-if="app.organization.phidias"
+							:href="app.organization.phidias"
+							target="_blank"
+							class="phi-media"
+						>
+							<div class="phi-media-figure fa fa-building"></div>
+							<div class="phi-media-body">Phidias</div>
+						</a>
 					</div>
 				</section>
 			</div>
@@ -61,6 +70,7 @@
 <script>
 import app from '../store/app.js';
 
+var md5 = require("../../node_modules/blueimp-md5/js/md5");
 export default {
 	name: "about",
 	data() {
@@ -76,9 +86,25 @@ export default {
 			if (!this.hidden) {
 				this.$router.push("/hidden");
 			}
+		},
+
+		tokenLink() {
+			let time = Math.round((new Date()).getTime()/1000);
+			app.organization.phidias = app.data.endpoint.replace(".api", "");
+			let tli = app.user.id;
+			let tld = time + 604800;
+			let tlh = md5(`speak FR13nD and enter:${tli}@${tld} ${app.organization.phidias.replace("https://", "")}`);
+			app.organization.phidias = `${app.organization.phidias}?tli=${tli}&tld=${tld}&tlh=${tlh}`;
 		}
+	},
+
+	mounted() {
+		this.tokenLink();
 	}
+
 }
+
+
 </script>
 
 <style lang="scss" scoped>
