@@ -9,6 +9,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "blueimp-md5": "^2.6.0",
     "fullcalendar": "^3.1.0",
     "jquery": "^3.1.1",
     "localforage": "^1.4.3",
