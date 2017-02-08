@@ -35,7 +35,18 @@ export default class PhidiasFullCalendarUtils {
                 eventSources[index].color = defaultColors[lastColorUsed += 1];
             }else{
                 if(!PhidiasColorUtils.isValidCssColour(source.color)){
-                    eventSources[index].color = defaultColors[lastColorUsed += 1];
+                    //lets asume bad formating from api
+                    if(String(source.color).length == 6){
+                        let fixedColor = "#" + String(source.color);
+                        
+                        if(!PhidiasColorUtils.isValidCssColour(fixedColor)){
+                            eventSources[index].color = defaultColors[lastColorUsed += 1];
+                        }else{
+                            eventSources[index].color = fixedColor;
+                        }
+                    }else{
+                        eventSources[index].color = defaultColors[lastColorUsed += 1];
+                    }
                 }
             }
             
