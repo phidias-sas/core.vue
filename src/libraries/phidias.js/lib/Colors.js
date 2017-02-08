@@ -91,7 +91,7 @@ export default class PhidiasColorUtils {
     static getColorsList(numberOfColors){
         //use predefined values to get a list of different colors, acording to http://krazydad.com/tutorials/makecolors.php
         
-        return this.createColorGradient(1.666, 2.666, 3.666, 0, 0, 0, 230, 25, numberOfColors);
+        return this.createColorGradient(1.666, 2.666, 3.666, 0, 0, 0, 200, 60, numberOfColors);
     }
 }
 
