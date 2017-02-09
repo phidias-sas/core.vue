@@ -80,6 +80,10 @@ export default {
 		}
 	},
 
+	beforeMount() {
+		this.tokenLink();
+	},
+
 	methods: {
 		openHidden() {
 			this.hidden--;
@@ -97,11 +101,6 @@ export default {
 			app.organization.phidias = `${app.organization.phidias}?tli=${tli}&tld=${tld}&tlh=${tlh}`;
 		}
 	},
-
-	mounted() {
-		this.tokenLink();
-	}
-
 }
 
 

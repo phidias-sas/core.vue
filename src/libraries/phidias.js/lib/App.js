@@ -414,6 +414,7 @@ export default class App {
 		var push = PushNotification.init({
 			android: {
 				senderID: senderID
+				//forceShow: "true"
 			},
 			ios: {
 				alert: "true",
@@ -426,6 +427,7 @@ export default class App {
 		push.on('registration', data => {
 
 			if (!window.device || !window.device.platform) {
+				alert("nop.. Im on top");
 				return;
 			}
 
