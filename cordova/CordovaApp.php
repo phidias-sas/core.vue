@@ -87,16 +87,21 @@ class CordovaApp
     {
         self::log("Generando index.html");
 
+        /*
+        !!! (?) As of Feb 9 2017  adding the policy causes the cordova project to show a blank screen.
+        Removing it alltogether fixes it
+        */
         $policy = '<meta http-equiv="Content-Security-Policy" content="default-src \'self\' data: gap: http: https: ws: \'unsafe-inline\' https://ssl.gstatic.com; style-src * blob: \'unsafe-inline\'; media-src *; img-src * data:; script-src * \'unsafe-inline\'">';
+
 
         $contents = str_replace(
             [
-                "<head>",
+                // "<head>",
                 "/static",
                 "<div id=app></div>"
             ],
             [
-                "<head>".$policy."\n",   // Without the \n phonegap will not render styles (only god knows why, but it took me about an hour to find out!)
+                // "<head>".$policy."\n",   // Without the \n phonegap will not render styles (only god knows why, but it took me about an hour to find out!)
                 "static",
                 '<div id=app></div><script type="text/javascript" src="cordova.js"></script>'
             ],
