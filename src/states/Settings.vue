@@ -11,7 +11,7 @@
 
 		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
 
-		<div class="phi-page-contents">
+		<div class="phi-page-contents" v-if="app.user">
 
 			<header>
 				<div class="phi-media">
@@ -26,7 +26,7 @@
 				<h2>Notificaciones</h2>
 				<div class="phi-card">
 					<div
-						v-for="destination in destinations" 
+						v-for="destination in destinations"
 						v-if="destination.transport == 'gcm' || destination.transport == 'email'"
 					>
 						<div class="phi-media">
@@ -58,7 +58,7 @@
 							</div>
 						</phi-drawer>
 					</div>
-					
+
 				</div>
 			</section>
 
@@ -72,7 +72,7 @@
 					<div class="phi-media logout" @click="logout">
 						<div class="phi-media-figure fa fa-sign-out"></div>
 						<div class="phi-media-body">Cerrar sesión</div>
-					</div>					
+					</div>
 				</div>
 			</section>
 
@@ -149,7 +149,7 @@ export default {
 		logout() {
 			this.app.logout();
 			this.$router.push('login');
-		}		
+		}
 
 	}
 }

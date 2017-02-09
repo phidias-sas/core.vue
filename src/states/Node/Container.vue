@@ -148,8 +148,8 @@ ons-progress-bar {
 
 <style lang="scss">
 /* Transition between tabs */
-$transition-duration:     .420s;
-$transition-displacement: 210px;
+$transition-duration:     .320s;
+$transition-displacement: 120px;
 
 .slidetab-enter-active,
 .slidetab-leave-active {

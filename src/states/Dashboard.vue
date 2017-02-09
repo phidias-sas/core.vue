@@ -20,12 +20,12 @@
 				<div class="types phi-card _z-0">
 					<router-link
 						v-for="type in types"
-						:to="{name: 'folder', params:{folder: 'inbox'}, query:{type: type.singular}}"
+						:to="{name: 'feed', query:{type: type.singular}}"
 						class="phi-media"
 					>
 						<img class="phi-media-figure" :src="type.icon || defaultIcon" :alt="type.plural"  >
 						<h1 class="phi-media-body" v-text="type.plural"></h1>
-						<p v-show="!!type.unread" class="phi-media-right" v-text="type.unread"></p>
+						<p v-show="type.unread > 0" class="phi-media-right" v-text="type.unread"></p>
 					</router-link>
 				</div>
 			</section>

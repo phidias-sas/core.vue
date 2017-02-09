@@ -9,7 +9,8 @@ export default class Client {
 		this.token          = null;
 		this.cache          = new Cache;
 		this.isLoading      = false;
-		this.cacheIsEnabled = true;
+		// this.cacheIsEnabled = true;
+		this.cacheIsEnabled = false; // !!! cache is DISABLED temporarily
 	}
 
 	collection(url, parameters) {

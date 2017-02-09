@@ -18,7 +18,13 @@ module.exports = {
   output: {
     path: config.build.assetsRoot,
     publicPath: process.env.NODE_ENV === 'production' ? config.build.assetsPublicPath : config.dev.assetsPublicPath,
-    filename: '[name].js'
+    filename: '[name].js',
+
+    // This will add each of the entry's corresponding module.exports in a
+    // global variables.  The same name as the file must be used instead of a single variable name
+    // because otherwise it would be overwritten by each entry
+    library: '[name]',
+    libraryTarget: 'var'
   },
   resolve: {
     extensions: ['', '.js', '.vue'],

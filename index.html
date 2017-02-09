@@ -8,7 +8,7 @@
 
         <meta name="phi-google-client-id" content="890266961007.apps.googleusercontent.com">
 
-<!--  
+<!--
         <meta name="phi-title" content="Phidias">
         <meta name="phi-endpoint" content="https://phidias.api.phidias.co">
         <meta name="phi-logo" content="https://phidias.phidias.co/interface/xhtml/img/label.png">
@@ -20,8 +20,11 @@
 
         <link rel="manifest" href="manifest.json">
 
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto|Open+Sans" rel="stylesheet">
+
         <!-- Phidias CSS -->
-        <link rel="stylesheet" href="static/css/normalize.css" />
+        <link rel="stylesheet" href="static/css/index.css" />
         <link rel="stylesheet" href="static/phidias.css/dist/phidias.min.css" />
 
         <!-- Fontawesome -->
@@ -31,10 +34,7 @@
         <link rel="stylesheet" href="static/onsenui/css/onsenui.css" />
         <link rel="stylesheet" href="static/onsenui/css/phidias-onsen-css-components.min.css" />
         <script src="static/onsenui/js/onsenui.js"></script>
-        <script 
-                type="text/javascript" 
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-w7WOjp6Rgg4pZZDFW7Eqp6gR2AAlt4I&libraries=geometry">
-        </script>
+
         <script type="text/javascript">
             // Force onsen platform theme (overrides auto-detect)
             ons.platform.select('android') // or 'ios'
@@ -51,7 +51,13 @@
     </head>
 
     <body>
-        <div id="app"></div>
+        <div id="app">
+            <transition name="slide">
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
+            </transition>
+        </div>
         <script type="text/javascript" src="cordova.js"></script>
     </body>
 

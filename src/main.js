@@ -14,8 +14,6 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 /* Set up routes */
-import Index from './states/Index.vue';
-
 import Code from './states/Code.vue';
 import Login from './states/Login.vue';
 
@@ -24,6 +22,18 @@ import About from './states/About.vue';
 import Hidden from './states/Hidden.vue';
 
 import Dashboard from './states/Dashboard.vue';
+
+import PostFeed from './states/Post/Feed.vue';
+import PostArchive from './states/Post/Archive.vue';
+
+import PostContainer from './states/Post/Container.vue';
+import PostContents from './states/Post/Contents.vue';
+import PostThread from './states/Post/Thread.vue';
+import PostAudience from './states/Post/Audience.vue';
+
+import PostReplies from './states/Post/Replies.vue';
+
+
 import ThreadFolder from './states/Thread/Folder.vue';
 import ThreadRead from './states/Thread/Read.vue';
 import ThreadArchive from './states/Thread/Archive.vue';
@@ -71,9 +81,20 @@ const router = new VueRouter({
 				{ path: '/about', component: About, meta: {order: 1} },
 
 				{ path: '/dashboard', component: Dashboard, meta: {order: 1, exitOnBack: true} },
+
+				{ path: '/posts/feed', component: PostFeed, meta: {order: 2}, name: 'feed' },
+				{ path: '/posts/feed/:postId', component: PostContainer, meta: {order: 13},
+					children: [
+						{ path: '', component: PostContents, meta: {order: 14}, name: 'post' },
+						{ path: 'thread/:thread', component: PostThread, meta: {order: 15}, name: 'post-thread' },
+						{ path: 'audience', component: PostAudience, meta: {order: 15}, name: 'post-audience' },
+						// { path: 'replies', component: PostReplies, meta: {order: 15}, name: 'post-replies' },
+					]
+				},
+
 				{ path: '/folder/:folder', component: ThreadFolder, meta: {order: 2}, name: 'folder' },
 				{ path: '/read/:threadId', component: ThreadRead, meta: {order: 99}, name: 'read' },
-				{ path: '/archive', component: ThreadArchive, meta: {order: 3, exitOnBack: true}, name: 'archive' },
+				{ path: '/archive', component: PostArchive, meta: {order: 3, exitOnBack: true}, name: 'archive' },
 
 				{ path: '/people', component: People, meta: {order: 10}, name: 'people' },
 				{ path: '/person/:personId', component: Person, meta: {order: 11}, name: 'person' },
@@ -133,7 +154,6 @@ router.beforeEach((to, from, next) => {
 app.on("load", () => {
 	new Vue({
 		el: '#app',
-		render: h => h(Index),
 		router
 	});
 });

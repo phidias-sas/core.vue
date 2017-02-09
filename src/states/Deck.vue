@@ -136,7 +136,7 @@ export default {
 		afterLeave(el) {
 			incomingCover && (incomingCover.style.height = "auto");
 			outgoingCover && (outgoingCover.style.height = "auto");
-			
+
 			this.$emit("transitionFinished", true);
 		}
 	},
@@ -156,7 +156,7 @@ export default {
 
 <style lang="scss">
 $transition-duration:     .420s;
-$transition-displacement: 210px;
+$transition-displacement: 160px;
 
 ons-splitter-mask {
 	background-color: rgba(0, 0, 0, 0.5);
@@ -257,7 +257,7 @@ ons-splitter-mask {
 
 	transition: opacity $transition-duration;
 
-	.phi-page-contents, .phi-page-navigation > * {
+	.phi-page-contents {
 		transition: transform $transition-duration;
 	}
 }
@@ -308,13 +308,13 @@ ons-splitter-mask {
 .move-left {
 
 	.slide-enter {
-		.phi-page-contents, .phi-page-navigation > * {
+		.phi-page-contents {
 			transform: translate3d($transition-displacement, 0, 0);
 		}
 	}
 
 	.slide-leave-active {
-		.phi-page-contents, .phi-page-navigation > * {
+		.phi-page-contents {
 			transform: translate3d(-$transition-displacement, 0, 0);
 		}
 	}
@@ -323,13 +323,13 @@ ons-splitter-mask {
 .move-right {
 
 	.slide-enter {
-		.phi-page-contents, .phi-page-navigation > * {
+		.phi-page-contents {
 			transform: translate3d(-$transition-displacement, 0, 0);
 		}
 	}
 
 	.slide-leave-active {
-		.phi-page-contents, .phi-page-navigation > * {
+		.phi-page-contents {
 			transform: translate3d($transition-displacement, 0, 0);
 		}
 	}

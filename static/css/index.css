@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: #f3f3f3;
+}
+
+html, body, input, textarea, button {
+  font-family: Open Sans, sans-serif;
+}
+
+h1, h2, h3, h4, h5, p {
+  font-family: Roboto, sans-serif;
+  font-weight: normal;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.phi-avatar {
+    border-radius: 5px !important;
+}
+
+#app, #app > * {
+    height: 100%;
+}

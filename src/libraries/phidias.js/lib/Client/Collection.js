@@ -36,10 +36,10 @@ export default class Collection {
                 return response.json();
             })
             .then(items => {
-                if (this.total == -1) {
-                    this.pagination.hasNext = items.length == this.pagination.limit;
-                } else {
+                if (this.total > 0) {
                     this.pagination.hasNext = this.pagination.page < Math.ceil(this.total/this.pagination.limit); // Match.ceil(...) is the total number of pages
+                } else {
+                    this.pagination.hasNext = items.length == this.pagination.limit;
                 }
 
                 !append && (this._items = []);
@@ -53,11 +53,11 @@ export default class Collection {
     }
 
     appendItems(items) {
-        items.forEach(item => this.append(item));
+        items.forEach(item => this.push(item));
         return items;
     }
 
-    append(incomingItem) {
+    push(incomingItem) {
         for (var i = 0; i < this._items.length; i++) {
             if (Collection.areEqual(incomingItem, this._items[i])) {
                 this._items[i] = Collection.merge(this._items[i], incomingItem);
@@ -66,6 +66,18 @@ export default class Collection {
         }
 
         this._items.push(incomingItem);
+        return incomingItem;
+    }
+
+    unshift(incomingItem) {
+        for (var i = 0; i < this._items.length; i++) {
+            if (Collection.areEqual(incomingItem, this._items[i])) {
+                this._items[i] = Collection.merge(this._items[i], incomingItem);
+                return this._items[i];
+            }
+        }
+
+        this._items.unshift(incomingItem);
         return incomingItem;
     }
 
@@ -202,6 +214,10 @@ export default class Collection {
 
     get hasNext() {
         return this.pagination.hasNext;
+    }
+
+    get isEmpty() {
+        return !this._items.length && !this.isLoading;
     }
 
     /* Dig into the cache and overwrite the data :) */
