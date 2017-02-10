@@ -58,6 +58,27 @@ import JWT from './JWT.js';
 import Push from './Push.js';
 import Navigation from './Navigation.js';
 
+
+/* Recursive equivalent of Object.assign */
+var deepObjectAssign = function(target, source) {
+
+	if (typeof target != 'object' || target == null) {   // JavaScript typeof null returns "object" :(
+		return source;
+	}
+
+	for (var prop in source) {
+		if (source.hasOwnProperty(prop)) {
+			if (typeof source[prop] === 'object') {
+				target[prop] = deepObjectAssign(target[prop], source[prop]);
+			} else {
+				target[prop] = source[prop];
+			}
+		}
+	};
+
+	return target;
+};
+
 export default class App {
 
 	constructor(name, data) {
@@ -65,7 +86,7 @@ export default class App {
 		this.reset();
 		this.retrieve()
 			.then(storedData => {
-				data = Object.assign(storedData, data);
+				data = deepObjectAssign(storedData, data);
 				this.set(data);
 				this.initialize();
 				this.emit("load");
@@ -97,7 +118,7 @@ export default class App {
 		if (!data) {
 			return;
 		}
-		this.data = Object.assign(this.data, data);
+		this.data = deepObjectAssign(this.data, data);
 		this.store();
 	}
 
@@ -119,7 +140,7 @@ export default class App {
 	retrieve() {
 		return localforage.getItem('app:' + this.name)
 			.then(stored => !!stored ? stored : {})
-			.then(data => Object.assign(data, this.getDataFromMetaTags()));
+			.then(data => deepObjectAssign(data, this.getDataFromMetaTags()));
 	}
 
 	clear() {
@@ -414,6 +435,12 @@ export default class App {
 		var push = PushNotification.init({
 			android: {
 				senderID: senderID
+
+				/*
+				forceShow will show the notification in the notification drawer when the app is in foreground
+				but will NOT fire the callback until the user clicks on it
+				https://github.com/phonegap/phonegap-plugin-push/blob/master/docs/API.md#pushnotificationinitoptions
+				*/
 				//forceShow: "true"
 			},
 			ios: {
@@ -427,7 +454,6 @@ export default class App {
 		push.on('registration', data => {
 
 			if (!window.device || !window.device.platform) {
-				alert("nop.. Im on top");
 				return;
 			}
 

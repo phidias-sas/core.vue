@@ -56,8 +56,9 @@
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
 import moment from 'moment';
-
 import app from '../../store/app.js';
+
+var destroyListener;
 
 export default {
 	name: "post-contents",
@@ -101,6 +102,17 @@ export default {
 			}
 			post.isExpanded = !post.isExpanded;
 		}
+	},
+
+	mounted() {
+		destroyListener = app.on("notification", stub => {
+			this.thread.unshift(stub.post);
+		});
+	},
+
+	beforeRouteLeave(to, from, next) {
+		destroyListener();
+		next();
 	},
 
 	beforeRouteEnter(to, from, next) {
