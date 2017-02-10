@@ -445,10 +445,12 @@ export default {
 	&.unread {
 
 		.post-title {
+
+			/* Unread indicator - but green dot */
 			&::before {
 				display: inline-block;
 				content: "";
-				background-color: #EC6A5C;
+				background-color: #60ca8c;
 				width: 10px;
 				height: 10px;
 				border-radius: 50%;

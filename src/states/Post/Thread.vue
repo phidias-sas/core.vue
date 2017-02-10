@@ -1,6 +1,5 @@
 <template>
 	<div class="post-thread">
-
 		<div
 			v-for="post in thread.items.reverse()"
 			class="post"
@@ -36,9 +35,7 @@
 					:block="block"
 				></phi-block>
 			</div>
-
 		</div>
-
 
 		<footer class="phi-page-footer">
 			<div class="reply">
@@ -53,12 +50,15 @@
 </template>
 
 <script>
+import moment from 'moment';
+import StayDown from '../../libraries/staydown.js';
+
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
-import moment from 'moment';
 import app from '../../store/app.js';
 
 var destroyListener;
+var stayDownScroller;
 
 export default {
 	name: "post-contents",
@@ -75,6 +75,9 @@ export default {
 	methods: {
 
 		sendReply() {
+			// Retain textarea focus
+			this.$el.querySelector('textarea').focus();
+
 			if (!this.replyBody.trim().length) {
 				return;
 			}
@@ -89,9 +92,9 @@ export default {
 
 			app.api.post(`/people/${app.user.id}/posts/feed/${this.$route.params.postId}/threads/${this.$route.params.thread}`, outgoing)
 				.then(post => {
-					app.api.clear(`/people/${app.user.id}/posts/feed`);
 					this.thread.splice(outgoing);
 					this.thread.unshift(post);
+					app.api.clear(`/people/${app.user.id}/posts/feed`);
 				});
 		},
 
@@ -105,12 +108,18 @@ export default {
 	},
 
 	mounted() {
+		/* stayDown */
+		stayDownScroller = new StayDown({
+			target: this.$parent.$el
+		});
+
 		destroyListener = app.on("notification", stub => {
 			this.thread.unshift(stub.post);
 		});
 	},
 
 	beforeRouteLeave(to, from, next) {
+		stayDownScroller.destroy();
 		destroyListener();
 		next();
 	},
@@ -215,6 +224,7 @@ footer {
 	bottom: 0;
 	right: 0;
 	padding: 12px;
+	background-color: #f3f3f3;
 
 	p {
 		font-size: 12px;
@@ -224,7 +234,6 @@ footer {
 
 	.reply {
 		display: flex;
-		background: #f3f3f3;
 
 		textarea {
 			flex: 1;
