@@ -167,7 +167,13 @@ app.on("notification", (data, notification) => {
 	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.thread}`);
 
 	if (!notification.additionalData.foreground) {
-		router.push({name: 'post-thread', params: {postId: data.post.id, thread: data.post.thread}});
+
+		if (data.post.replyTo) {
+			router.push({name: 'post-thread', params: {postId: data.post.replyTo, thread: data.post.thread}});
+		} else {
+			router.push({name: 'post', params: {postId: data.post.id}});
+		}
+
 	}
 });
 
