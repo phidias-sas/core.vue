@@ -98,12 +98,12 @@ class CordovaApp
             [
                 // "<head>",
                 "/static",
-                "<div id=app></div>"
+                "</body>"
             ],
             [
                 // "<head>".$policy."\n",   // Without the \n phonegap will not render styles (only god knows why, but it took me about an hour to find out!)
                 "static",
-                '<div id=app></div><script type="text/javascript" src="cordova.js"></script>'
+                '<script type="text/javascript" src="cordova.js"></script></body>'
             ],
             file_get_contents("$this->outputFolder/www/index.html")
         );
