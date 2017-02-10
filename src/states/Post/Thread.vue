@@ -114,7 +114,9 @@ export default {
 		});
 
 		destroyListener = app.on("notification", stub => {
-			this.thread.unshift(stub.post);
+			if (stub.post.replyTo == this.$route.params.postId && stub.post.thread == this.$route.params.thread) {
+				this.thread.unshift(stub.post);
+			}
 		});
 	},
 
