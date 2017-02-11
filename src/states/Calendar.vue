@@ -109,7 +109,7 @@ export default {
 						googleWindow.focus();
 					}else{
 						if (calEvent.hasOwnProperty('post')) {
-							this.$router.push({ name: 'read', params: { threadId: calEvent.post.thread }});
+							this.$router.push({ name: 'post', params: { postId: calEvent.post.id }});
 						}else{
 							if(calEvent.url){
 								let newWindow = window.open(calEvent.url, '_blank');

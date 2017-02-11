@@ -10,10 +10,15 @@
 		<div class="phi-page-contents">
 			<section v-if="!!billboard">
 				<div class="billboard phi-card _z-0">
-					<router-link class="phi-card" :to="{name: 'read', params:{threadId: billboard.thread}}">
+					<router-link class="phi-card" :to="{name: 'post', params:{postId: billboard.id}}">
 						<h1 v-text="billboard.title"></h1>
 						<div v-text="billboard.description"></div>
 					</router-link>
+
+					<div class="blocks" v-if="billboard.blocks.length">
+						<phi-block :block="billboard.blocks[0]"></phi-block>
+					</div>
+
 				</div>
 			</section>
 			<section v-show="!!types">
@@ -34,11 +39,12 @@
 </template>
 
 <script>
+import PhiBlock from '../components/Phi/Block.vue';
 import app from '../store/app.js';
 
 export default {
-
 	name: "dashboard",
+	components: {PhiBlock},
 
 	data() {
 		return {
@@ -99,6 +105,16 @@ section {
 
 .billboard {
 	padding: 16px;
+
+	h1 {
+		font-size: 1.6em;
+	}
+
+	.blocks {
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid #ddd;
+	}
 }
 
 .phi-page-cover {

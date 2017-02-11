@@ -33,11 +33,6 @@ import PostAudience from './states/Post/Audience.vue';
 
 import PostReplies from './states/Post/Replies.vue';
 
-
-import ThreadFolder from './states/Thread/Folder.vue';
-import ThreadRead from './states/Thread/Read.vue';
-import ThreadArchive from './states/Thread/Archive.vue';
-
 import Calendar from './states/Calendar.vue';
 import Settings from './states/Settings.vue';
 import Map from './states/Map.vue';
@@ -92,8 +87,6 @@ const router = new VueRouter({
 					]
 				},
 
-				{ path: '/folder/:folder', component: ThreadFolder, meta: {order: 2}, name: 'folder' },
-				{ path: '/read/:threadId', component: ThreadRead, meta: {order: 99}, name: 'read' },
 				{ path: '/archive', component: PostArchive, meta: {order: 3, exitOnBack: true}, name: 'archive' },
 
 				{ path: '/people', component: People, meta: {order: 10}, name: 'people' },

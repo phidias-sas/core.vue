@@ -11,7 +11,10 @@
                         <div class="fields">
                             <div class="field" v-for="field in form.fields">
                                 <label v-text="field.title"></label>
-                                <div class="value" v-text="record.values[field.name]"></div>
+
+                                <div v-if="field.type == 'checkbox'" class="value" v-text="record.values[field.name] ? 'Si' : 'No'"></div>
+                                <div v-if="field.type != 'checkbox'" class="value" v-text="record.values[field.name]"></div>
+
                             </div>
                         </div>
 
