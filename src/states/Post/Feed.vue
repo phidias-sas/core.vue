@@ -51,7 +51,7 @@
 
 				<div v-for="post in feed.items"
 					class="post phi-media"
-					:class="{selected: feed.hasTag(post, 'selected'), read: !!post.stub.readDate, unread: !post.stub.readDate}"
+					:class="{selected: feed.hasTag(post, 'selected'), read: !isUnread(post), unread: isUnread(post)}"
 				>
 					<div class="phi-media-figure phi-avatar" @click="feed.toggleTag(post, 'selected')">
 						<img :src="post.author.avatar" :alt="post.author.firstName">
@@ -149,6 +149,20 @@ export default {
 	},
 
 	methods: {
+
+		isUnread(post) {
+			if (!post.stub.readDate) {
+				return true;
+			}
+
+			for (var i = 0; i < post.meta.replies.length; i++) {
+				if ( parseInt(post.meta.replies[i].count.unread) > 0 ) {
+					return true;
+				}
+			}
+
+			return false;
+		},
 
 		select(query) {
 			if (query == "all") {

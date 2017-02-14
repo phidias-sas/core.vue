@@ -16,6 +16,18 @@
 			<phi-drawer :open="!pageIsCollapsed">
 				<div class="phi-page-header">
 					<h1 v-html="post.title || '&nbsp;'"></h1><!-- nbsp helps set the default cover height, which aides the transition animation-->
+
+					<div v-if="post.event" class="phi-post-event">
+						<i class="fa fa-calendar-o"></i>
+						<span v-if="post.event.allDay == '1'">
+							{{ moment.unix(post.event.startDate).format('LL') }}
+						</span>
+						<span v-if="post.event.allDay != '1'">
+							<span>{{ moment.unix(post.event.startDate).format('LL h:mm a') }}</span>
+							<span v-if="post.event.startDate != post.event.endDate"> - {{ moment.unix(post.event.endDate).format('h:mm a') }}</span>
+						</span>
+					</div>
+
 				</div>
 			</phi-drawer>
 		</div>
@@ -33,6 +45,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import app from '../../store/app.js';
 
@@ -53,6 +66,7 @@ export default {
 
 		return {
 			app,
+			moment,
 			post: {
 				id: this.$route.params.postId,
 				type: {}
@@ -114,6 +128,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+.phi-post-event {
+	/*background-color: #f3f3f3;*/
+	padding: 8px 0;
+}
 
 .phi-page-cover {
 	// background: #1C89B8 url('../../../static/covers/9.jpg') no-repeat 0 0;

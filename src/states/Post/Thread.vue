@@ -12,7 +12,7 @@
 				<div class="phi-media-body">
 					<h1 class="post-author" v-text="post.author.firstName + ' ' + post.author.lastName"></h1>
 					<div class="post-date">
-						<span v-if="post.publishDate">{{ moment.unix(post.publishDate).format('h:mm a') }}</span>
+						<span v-if="post.publishDate">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'DD/MM/YYYY h:mm a'}) }}</span>
 						<span v-if="!post.publishDate">enviando ...</span>
 					</div>
 

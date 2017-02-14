@@ -54,7 +54,6 @@ function StayDown(opts) {
         window.removeEventListener('resize', this.onResize);
         this.target.removeEventListener('scroll', this.onScroll);
         clearTimeout(this.timeout);
-        console.log("events unregistered");
     };
 
     if (window.MutationObserver) {
