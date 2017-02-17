@@ -3,12 +3,12 @@
     xmlns       = "http://www.w3.org/ns/widgets"
     xmlns:gap   = "http://phonegap.com/ns/1.0"
     id          = "com.phidias.app.core"
-    version     = "1.1.0"
-    versionCode = "10100" >  <!-- versionCode = MAJOR * 10000 + MINOR * 100 + PATCH -->
+    version     = "1.2.3"
+    versionCode = "10203" >  <!-- versionCode = MAJOR * 10000 + MINOR * 100 + PATCH -->
 
     <!--iOS build number (use the same versionCode here) -->
     <gap:config-file parent="CFBundleVersion" platform="ios">
-        <string>10100</string>
+        <string>10203</string>
     </gap:config-file>
 
     <name>Phidias</name>
