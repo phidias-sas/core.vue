@@ -1,0 +1,17 @@
+//CHANGE provisioningPRofile accrodingly to project and paste into cordova/project folder
+{
+    "ios": {
+        "debug": {
+            "codeSignIdentity": "iPhone Distribution: Phidias SAS (SGGJKMKTJ8)",
+            "provisioningProfile": "22f5d916-55c2-4bf6-9883-8009f845da52",
+            "developmentTeam": "SGGJKMKTJ8",
+            "packageType": "development"
+        },
+        "release": {
+            "codeSignIdentity": "iPhone Distribution: Phidias SAS (SGGJKMKTJ8)",
+            "provisioningProfile": "22f5d916-55c2-4bf6-9883-8009f845da52",
+            "developmentTeam": "SGGJKMKTJ8",
+            "packageType": "app-store"
+        }
+    }
+}
