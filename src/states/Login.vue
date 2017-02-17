@@ -53,6 +53,12 @@ export default {
 				return;
 			}
 
+			if (this.username == "demo") {
+				this.password = this.username;
+				this.app.set({endpoint: 'https://demo.api.phidias.co'});
+				this.app.initialize();
+			}
+
 			this.app.login(this.username, this.password)
 				.then(() => {
 					this.redirect();
