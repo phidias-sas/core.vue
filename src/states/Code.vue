@@ -53,6 +53,14 @@ export default {
 	methods: {
 		submit() {
 
+			/* Allow full http urls */
+			if (this.inputCode.substring(0, 4) == "http") {
+				this.app.set({endpoint: this.inputCode});
+				this.app.initialize();
+				this.$router.push("login");
+				return;
+			}
+
 			this.isLoading = true;
 
 			this.app.loadCode(this.inputCode)
