@@ -59,6 +59,12 @@ import Leo from './states/Leo.vue';
 import Sebas from './states/Sebas.vue';
 import Felipe from './states/Felipe.vue';
 
+
+// Billing (sebastian)
+import Debits from './states/billing/Debits.vue';
+import Details from './states/billing/Details.vue';
+
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -112,8 +118,12 @@ const router = new VueRouter({
 
 				{ path: '/test', component: Test },
 				{ path: '/sanchez', component: Sanchez },
-				{ path: '/sebas', component: Sebas},
+				{ path: '/sebas', component: Sebas, name: 'Sebas'},
 				{ path: '/felipe', component: Felipe },
+
+				// billing (sebastian)
+				{ path: '/billing/debits', component: Debits},
+				{ path: '/billing/debits/details/:id', component: Details, name: 'Details'},
 
 			]
 		},

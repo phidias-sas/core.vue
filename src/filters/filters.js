@@ -10,3 +10,9 @@ Vue.filter("bytes", (bytes, precision) => {
 });
 
 Vue.filter("date", value => moment(value * 1000).calendar());
+
+Vue.filter("person", (value) => {
+	return value.lastname + ", " + value.firstname;
+});
+
+Vue.filter("moment.format", value => moment(value * 1000).format('D MMM Y'));
