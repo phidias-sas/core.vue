@@ -11,7 +11,7 @@
 
 				<div class="phi-media-body">
 					<h1 class="post-author" v-text="$parent.post.author.firstName + ' ' + $parent.post.author.lastName"></h1>
-					<div class="post-date">{{ moment.unix($parent.post.publishDate).format('h:mm a') }}</div>
+					<div class="post-date">{{ moment.unix($parent.post.publishDate).calendar(null, {sameElse: 'MMM D, h:mm a'}) }}</div>
 					<div class="post-audience">enviado a {{ $parent.post.audienceCount }} {{ $parent.post.audienceCount == 1 ? 'persona' : 'personas' }}</div>
 				</div>
 			</router-link>
@@ -24,6 +24,30 @@
 					:block="block"
 				></phi-block>
 			</div>
+
+			<div class="post-forwards" v-if="$parent.post.forwards.length > 0">
+				<label>Mensaje reenviado</label>
+				<div class="forwarded post" v-for="forwardedPost in $parent.post.forwards">
+					<div class="phi-media post-header">
+						<div class="phi-media-figure phi-avatar">
+							<img :src="forwardedPost.author.avatar" :alt="forwardedPost.author.firstName">
+						</div>
+						<div class="phi-media-body">
+							<h1 class="post-author" v-text="forwardedPost.author.firstName + ' ' + forwardedPost.author.lastName"></h1>
+							<div class="post-date">{{ moment.unix(forwardedPost.publishDate).calendar(null, {sameElse: 'MMM D, h:mm a'}) }}</div>
+							<div class="post-subject" v-text="forwardedPost.title"></div>
+						</div>
+					</div>
+					<div class="post-description" v-text="forwardedPost.description"></div>
+					<div class="post-blocks">
+						<phi-block
+							v-for="block in forwardedPost.blocks"
+							:block="block"
+						></phi-block>
+					</div>
+				</div>
+			</div>
+
 		</div>
 
 		<div class="post-threads">
@@ -48,7 +72,7 @@
 					</div>
 					<div class="phi-media-body">
 						<h1 class="post-author" v-text="thread.highlightPost.author.firstName + ' ' + thread.highlightPost.author.lastName"></h1>
-						<div class="post-date">{{ moment.unix(thread.highlightPost.publishDate).format('h:mm a') }}</div>
+						<div class="post-date">{{ moment.unix(thread.highlightPost.publishDate).calendar(null, {sameElse: 'MMM D, h:mm a'}) }}</div>
 						<div class="post-description" v-text="thread.highlightPost.description"></div>
 					</div>
 				</div>
@@ -192,6 +216,20 @@ export default {
 
 	.phi-block {
 		margin: 6px 0;
+	}
+
+
+	.post-forwards {
+		font-size: 0.9em;
+		border-left: 2px solid #ccc;
+		padding: 4px 0 4px 16px;
+
+		& > label {
+			display: block;
+			font-size: 12px;
+			padding: 0;
+			margin: 0 0 16px 0;
+		}
 	}
 }
 

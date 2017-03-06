@@ -79,12 +79,6 @@ export default {
 		}
 	},
 
-	methods: {
-		fetch() {
-			return app.api.get("posts/" + this.post.id).then(post => this.post = post);
-		}
-	},
-
 	watch: {
 		'$route' (to, from) {
 			this.pageIsCollapsed = to.name != 'post'

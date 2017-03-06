@@ -63,13 +63,13 @@
 						<div v-if="!post.stub.lastReply">
 							<span class="post-author" v-text="post.author.firstName"></span>
 							<span class="post-description" v-text="post.description"></span>
-							<span class="post-date">{{ moment.unix(post.publishDate).format('h:mm a') }}</span>
+							<span class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D'}) }}</span>
 						</div>
 
 						<div v-if="post.stub.lastReply">
 							<span class="post-author" v-text="post.stub.lastReply.author.firstName"></span>
 							<span class="post-description" v-text="post.stub.lastReply.description"></span>
-							<span class="post-date">{{ moment.unix(post.stub.lastReply.publishDate).format('h:mm a') }}</span>
+							<span class="post-date">{{ moment.unix(post.stub.lastReply.publishDate).calendar(null, {sameElse: 'MMM D'}) }}</span>
 						</div>
 
 					</router-link>
