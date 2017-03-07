@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import './filters/filters.js';
+import './store/filters.js';
 import app from './store/app.js';
 
 // window.Phidias = {

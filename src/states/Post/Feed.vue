@@ -22,19 +22,19 @@
 					<button class="phi-button"> <i class="fa fa-ellipsis-v"></i></button>
 					<ul class="phi-menu _texture-paper">
 						<li @click="tpl.drawerIsOpen = !tpl.drawerIsOpen">
-							<span>seleccionar</span>
+							<span>{{ $t("select") }}</span>
 							<phi-drawer :open="tpl.drawerIsOpen">
 								<ul class="phi-menu">
-									<li @click="select('all')">todos</li>
-									<li @click="select('read')">leídos</li>
-									<li @click="select('unread')">no leídos</li>
-									<li @click="select('none')">ninguno</li>
+									<li @click="select('all')">{{ $t("all") }}</li>
+									<li @click="select('read')">{{ $t("read") }}</li>
+									<li @click="select('unread')">{{ $t("unread") }}</li>
+									<li @click="select('none')">{{ $t("none") }}</li>
 								</ul>
 							</phi-drawer>
 						</li>
-						<li @click="move('archive')" :disabled="!feed.count('selected')">archivar</li>
-						<li @click="move('read')" :disabled="!feed.count('selected')">marcar leído</li>
-						<li @click="move('unread')" :disabled="!feed.count('selected')">marcar no leído</li>
+						<li @click="move('archive')" :disabled="!feed.count('selected')">{{ $t("archive") }}</li>
+						<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
+						<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
 					</ul>
 				</div>
 			</div>
