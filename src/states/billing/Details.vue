@@ -8,30 +8,35 @@
 			</div>
 		</div>
 		
+		<!-- componente -->
+		<phi-debit :id="$route.params.debitId"></phi-debit>
+	
 	</div>
 </template>
 
 <script>
-var url = "http://localhost/01/api.project/public/index.php/v3/debits/";
-export default{
-	data() {
-		return {
-			debit: {},
-			period: {},
-			person: {}
-		}
-	},
-	mounted(){
-		fetch(url + this.$route.params.id)
-		.then(response => response.json())
-		.then(datos => {
-			this.debit  = datos;
-			this.period = datos.period;
-			this.person = datos.person;
-		});
-	}
+	import PhiDebit from '../../components/Phi/PhiDebit.vue';
+	var url = "http://localhost/01/api.project/public/index.php/v3/debits/";
 
-}
+	export default{
+		data() {
+			return {
+				period: {}
+			}
+		},
+
+		mounted(){
+			fetch(url + this.$route.params.debitId)
+			.then(response => response.json())
+			.then(datos => {
+				this.period = datos.period;
+			});
+		},
+
+		components: {
+			PhiDebit
+		}
+	}
 </script>
 
 <style lang="scss" scoped>

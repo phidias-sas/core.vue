@@ -52,8 +52,8 @@ import Felipe from '../states/Felipe.vue';
 
 
 // Billing (sebastian)
-import Debits from '../states/billing/Debits.vue';
-import Details from '../states/billing/Details.vue';
+import BillingDebits from '../states/billing/Debits.vue';
+import BillingDetails from '../states/billing/Details.vue';
 
 var router = new VueRouter({
     routes: [
@@ -113,8 +113,8 @@ var router = new VueRouter({
                 { path: '/felipe', component: Felipe },
 
                 // billing (sebastian)
-                { path: '/billing/debits', component: Debits },
-                { path: '/billing/debits/details/:id', component: Details, name: 'Details' },
+                { path: '/billing/debits', component: BillingDebits},
+                { path: '/billing/debits/:debitId', component: BillingDetails, name: 'billing-debit-debitId'},
 
             ]
         },

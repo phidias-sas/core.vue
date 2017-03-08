@@ -7,31 +7,34 @@
 				<h1>Consolidado de tesorería</h1>
 			</div>
 		</div>
+		
+		<!-- Loading is true -->
+		<div v-if="loading" class="loading">
+			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+		</div>
+		
 
-		<div class="phi-page-contents">
+		<!-- Loadingset is false -->
+		<div class="phi-page-contents" v-if="!loading">
 			<section>
 				<h2>Cobros pendientes</h2>
 				<div class="types phi-card _z-0">
-					<ul>
-						<router-link  v-for="pending in pendings" :to="{name: 'Details', params:{id: pending.id}}" tag="li">
-							<p>
-								<span class="fa fa-thumb-tack"></span> {{pending.period.name}} <br>
-								<small>{{pending.person|person}}</small>
-							</p>
-							<p>
-								<b>{{pending.balance}}</b> <br>
-								<small>{{pending.expiration_date|moment.format}}</small>
-							</p>
-						</router-link>
+					<ul class="list">
+						<li v-for="pending in pendings">
+							<router-link :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}">
+								<div class="info">
+									<p><b>{{pending.period.name}} <small>#{{pending.sequence}}</small></b></p>
+									<p class="dato"><span class="fa fa-clock-o"></span> {{pending.expiration_date|moment.format}}</p>
+									<p class="dato"><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
+								</div>
+								<div class="balance">
+									{{pending.balance|currency}} <br>
+									<span class="interest"><span class="fa fa-warning"></span> $000.000</span>
+								</div>
+							</router-link>
+						</li>
 					</ul>
 				</div>
-
-				<ul>
-					<li>
-						<p>Total:</p>
-						<p>$000.000</p>
-					</li>
-				</ul>
 			</section>
 		</div>
 
@@ -39,40 +42,32 @@
 </template>
 
 <script>
-var url = "http://localhost/01/api.project/public/index.php/v3/people/920";
-import app from '../../store/app.js'
+	import app from '../../store/app.js';
+	var url = "http://localhost/01/api.project/public/index.php/";
 
-export default{
-	data() {
-		return {
-			payed: [],
-			planned: [],
-			pendings: []
+	export default{
+		data() {
+			return {
+				pendings: [],
+				getInterests: {},
+				loading: true,
+			}
+		},
+		
+		mounted(){
+			// pendings
+			fetch(url +'v3/people/920/billing/debits/pending')
+			.then(response => response.json())
+			.then(datos => {
+				this.pendings = datos;
+				if (datos){
+					this.loading = false;
+				}else{
+					this.loading = true;
+				}
+			});
 		}
-	},
-	mounted(){
-		// pendings
-		fetch(url +'/billing/debits/pending')
-		.then(response => response.json())
-		.then(datos => {
-			this.pendings = datos;
-		});
-
-		// payed
-		fetch(url +'/billing/debits/payed')
-		.then(response => response.json())
-		.then(datos => {
-			this.payed = datos;
-		});
-
-		// planned
-		fetch(url +'/billing/debits/planned')
-		.then(response => response.json())
-		.then(datos => {
-			this.planned = datos;
-		});
 	}
-}
 </script>
 
 <style lang="scss" scoped>
@@ -85,42 +80,55 @@ export default{
 				margin-bottom: 0.5em;
 				text-transform: uppercase;
 			}
-			ul{
+			.list{
 				margin: 0;
 				padding: 0;
+				border: 0;
 				list-style: none;
 				li{
-					padding: 10px;
-					display: block;
-					cursor: pointer;
-					overflow: hidden;
-					-webkit-box-sizing: border-box;
-					-moz-box-sizing: border-box;
-					box-sizing: border-box;
-					-webkit-transition: all 0.2s ease;
-					-o-transition: all 0.2s ease;
-					transition: all 0.2s ease;
-					.fa-thumb-tack{
-						color: #F44336;
-						font-size: 18px;
-						margin-right: 10px;
-						transform: rotate(25deg);
-					}
-					small{ 
-						color: #666;
-					}
-					p:nth-child(1){
-						float: left;
-					}
-					p:nth-child(2){
-						float: right;
+					border-bottom: 1px dashed #ccc;
+					a{
+						padding: 8px;
+						display: flex;
+						flex-wrap: wrap;
+						flex-direction: row;
+						transition: all 0.2s ease;
+						.info{
+							flex-grow: 1;
+							.dato{
+								color: #666;
+								margin: 5px;
+								font-size: 13px;
+								margin-left: 15px;
+							}
+						}
+						.balance{
+							flex-grow: 1;
+							color: green;
+							font-weight: bold;
+							text-align: right;
+							.interest{
+								color:red;
+								font-size: 11px;
+								background: #f2f2f2;
+							}
+						}
 					}
 				}
+				li:nth-last-child(1){
+					border-bottom: none;
+				}
 				li:hover{
-					background: #EEEEEE;
+					background: #F5F5F5;
 				}
 			}
 		}
 
+		.loading{
+			width: 100%;
+			font-size: 15px;
+			margin-top: 15px;
+			text-align: center;
+		}
 	}
 </style>
