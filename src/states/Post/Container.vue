@@ -79,6 +79,17 @@ export default {
 		}
 	},
 
+	methods: {
+		isAllowed(flag) {
+			try {
+				return !!this.post.settings.allowed[flag];
+			} catch (e) {
+				return false;
+			}
+		}
+	},
+
+
 	watch: {
 		'$route' (to, from) {
 			this.pageIsCollapsed = to.name != 'post'

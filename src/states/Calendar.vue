@@ -4,7 +4,7 @@
         <div class="phi-page-cover">
             <div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-                <h1>Calendario</h1>
+                <h1>{{ $t("Calendar") }}</h1>
                 <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics`"><i class="fa fa-calendar-plus-o"></i></a>
             </div>            
         </div>
@@ -14,10 +14,10 @@
 		<div class="phi-page-contents">
 			<div class="views-list-menu" v-show="displayViewsMenu">
 				<ul class="phi-menu">
-					<li @click="currentView = 'month'" 		v-bind:class="{ 'phi-menu-selected': currentView === 'month' }">Mes</li>
-					<li @click="currentView = 'agendaDay'" 	v-bind:class="{ 'phi-menu-selected': currentView === 'agendaDay' }">Día</li>
-					<li @click="currentView = 'agendaWeek'" v-bind:class="{ 'phi-menu-selected': currentView === 'agendaWeek' }">Semana</li>
-					<li @click="currentView = 'listMonth'"	v-bind:class="{ 'phi-menu-selected': currentView === 'listMonth' }">Agenda</li>
+					<li @click="currentView = 'month'" 		v-bind:class="{ 'phi-menu-selected': currentView === 'month' }">{{ $t("Month") }}</li>
+					<li @click="currentView = 'agendaDay'" 	v-bind:class="{ 'phi-menu-selected': currentView === 'agendaDay' }">{{ $t("Day") }}</li>
+					<li @click="currentView = 'agendaWeek'" v-bind:class="{ 'phi-menu-selected': currentView === 'agendaWeek' }">{{ $t("Week") }}</li>
+					<li @click="currentView = 'listMonth'"	v-bind:class="{ 'phi-menu-selected': currentView === 'listMonth' }">{{ $t("Agenda") }}</li>
 				</ul>
 			</div>
 
@@ -44,6 +44,7 @@
 import FullCalendar from '../components/Fullcalendar.vue';
 import FCUtils from '../libraries/phidias.js/lib/Fullcalendar.js';
 import app from '../store/app.js';
+import locale from '../store/i18n.js';
 
 export default {
 	name: "calendar",
@@ -66,7 +67,7 @@ export default {
 		initializeSources(){
 			let calendarConfig = {
 				googleCalendarApiKey: 'AIzaSyC-w7WOjp6Rgg4pZZDFW7Eqp6gR2AAlt4I',
-				locale: 'es',
+				locale: locale.language,
         		firstDay: 0,
 				defaultView: 'listMonth',
 				height: 'parent',
@@ -80,7 +81,7 @@ export default {
 				},
 				customButtons: {
 					viewSwitcher: {
-						text: 'Ver',
+						text: this.$t("View"),
 						click: evt => {
 							evt.stopPropagation();
 							this.displaySourcesFilter = false;
@@ -89,7 +90,7 @@ export default {
 					},
 
 					sourcesFilter: {
-						text: 'Tipo',
+						text: this.$t("Type"),
 						click: evt => {
 							evt.stopPropagation();
 							this.displayViewsMenu =  false;

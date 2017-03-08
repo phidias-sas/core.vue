@@ -5,7 +5,7 @@
 				<button class="phi-button" @click="$parent.$el.left.toggle()">
 					<i class="fa fa-bars"></i>
 				</button>
-				<h1>Preferencias</h1>
+				<h1>{{ $t('Preferences') }}</h1>
 			</div>
 		</div>
 
@@ -23,7 +23,7 @@
 			</header>
 
 			<section v-if="destinations.length">
-				<h2>Notificaciones</h2>
+				<h2>{{ $t('Notifications') }}</h2>
 				<div class="phi-card">
 					<div
 						v-for="destination in destinations"
@@ -63,15 +63,29 @@
 			</section>
 
 			<section>
-				<h2>General</h2>
+				<h2>{{ $t('Language') }}</h2>
+				<div class="phi-card">
+					<div class="phi-media">
+						<div class="phi-media-right fa" :class="locale.language == 'es' ? 'fa-check' : ''"></div>
+						<a class="phi-media-body" @click="locale.set('es')">Español</a>
+					</div>
+					<div class="phi-media">
+						<div class="phi-media-right fa" :class="locale.language == 'en' ? 'fa-check' : ''"></div>
+						<a class="phi-media-body" @click="locale.set('en')">English</a>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h2>{{ $t('General') }}</h2>
 				<div class="phi-card">
 					<div class="phi-media clear-cache" @click="clearCache">
 						<div class="phi-media-figure fa fa-trash-o"></div>
-						<div class="phi-media-body">Limpiar cache</div>
+						<div class="phi-media-body">{{ $t('Clear cache') }}</div>
 					</div>
 					<div class="phi-media logout" @click="logout">
 						<div class="phi-media-figure fa fa-sign-out"></div>
-						<div class="phi-media-body">Cerrar sesión</div>
+						<div class="phi-media-body">{{ $t('Logout') }}</div>
 					</div>
 				</div>
 			</section>
@@ -84,6 +98,7 @@
 <script>
 import PhiDrawer from '../components/Phi/Drawer.vue';
 import app from '../store/app.js';
+import locale from '../store/i18n.js';
 
 export default {
 	name: "settings",
@@ -91,6 +106,7 @@ export default {
 	data() {
 		return {
 			app,
+			locale,
 			destinations: []
 		}
 	},

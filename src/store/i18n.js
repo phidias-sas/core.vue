@@ -9,7 +9,10 @@ import langEs from '../languages/es.js';
 Vue.locale('es', langEs);
 
 export default {
+    language: null,
+
     set(lang) {
+        this.language = lang;
         moment.locale(lang);
         Vue.config.lang = lang;
     } 

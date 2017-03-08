@@ -1,10 +1,8 @@
 <template>
 	<div class="post-contents">
 
-		<div v-if="$parent.post.author"
-			class="main post"
-		>
-			<router-link class="phi-media post-header" :to="{name: 'post-audience'}">
+		<div class="main post" v-if="$parent.post.author">
+			<div class="phi-media post-header" :is="$parent.isAllowed('audience') ? 'router-link' : 'div'" :to="{name: 'post-audience'}">
 				<div class="phi-media-figure phi-avatar">
 					<img :src="$parent.post.author.avatar" :alt="$parent.post.author.firstName">
 				</div>
@@ -12,9 +10,9 @@
 				<div class="phi-media-body">
 					<h1 class="post-author" v-text="$parent.post.author.firstName + ' ' + $parent.post.author.lastName"></h1>
 					<div class="post-date">{{ moment.unix($parent.post.publishDate).calendar(null, {sameElse: 'MMM D, h:mm a'}) }}</div>
-					<div class="post-audience">enviado a {{ $parent.post.audienceCount }} {{ $parent.post.audienceCount == 1 ? 'persona' : 'personas' }}</div>
+					<div class="post-audience" v-if="$parent.isAllowed('audience')">enviado a {{ $parent.post.audienceCount }} {{ $parent.post.audienceCount == 1 ? 'persona' : 'personas' }}</div>
 				</div>
-			</router-link>
+			</div>
 
 			<div class="post-description" v-text="$parent.post.description"></div>
 

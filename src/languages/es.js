@@ -2,6 +2,19 @@ export default {
 	'Inbox': 'Bandeja de entrada',
 	'Calendar': 'Calendario',
 	'Archived': 'Archivados',
+	'View': 'Vista',
+	'Type': 'Tipo',
+	'Preferences': 'Preferencias',
+	'Clear cache': 'Limpiar caché',
+	'Logout': 'Cerrar sesión',
+	'Notifications': 'Notificaciones',
+	'Language': 'Idioma',
+	
+
+	'Month': 'Mes',
+	'Day': 'Día',
+	'Week': 'Semana',
+	'Agenda': 'Agenda',
 
 	'select': 'seleccionar',
 	'all': 'todos',

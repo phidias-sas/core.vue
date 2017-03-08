@@ -51,11 +51,6 @@
 
 				<hr>
 
-				<!-- Testing -->
-				<a @click="locale.set('es')">Español</a>
-				<a @click="locale.set('en')">English</a>
-
-
 <!-- 				<label class="phi-menu-label">años lectivos</label>
 				<router-link v-for="node in nodes.items"
 					:to="{name:'node', params:{nodeId:node.id}}"
@@ -73,7 +68,6 @@
 <script>
 import PhiDrawer from '../components/Phi/Drawer.vue';
 import app from '../store/app.js';
-import locale from '../store/i18n.js';
 
 var incomingCover = null;
 var outgoingCover = null;
@@ -83,7 +77,6 @@ export default {
 	components: {PhiDrawer},
 	data () {
 		return {
-			locale,
 			app,
 			nodes: app.api.collection("nodes"),
 			transitionDirection: 'left'
