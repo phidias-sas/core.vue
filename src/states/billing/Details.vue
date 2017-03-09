@@ -8,7 +8,9 @@
 		</div>
 		
 		<!-- componente -->
-		<phi-debit :id="$route.params.debitId"></phi-debit>
+		<div class="phi-page-contents">
+			<phi-debit :id="$route.params.debitId"></phi-debit>
+		</div>
 	</div>
 </template>
 

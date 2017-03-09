@@ -1,7 +1,19 @@
 <template>
 	<div id="phi-debit">
+		
+		<section>
+			<h2># {{debit.sequence}}</h2>
+			<div class="types phi-card _z-0">
+				<div class="label"><span class="fa fa-user-o"></span> {{person.firstname}}</div>
+				<div class="label"><span class="fa fa-calendar-check-o"></span> Expedido el {{debit.issue_date|moment.format}}</div>
+				<div class="label"><span class="fa fa-calendar-times-o"></span> Vence el {{debit.expiration_date|moment.format}}</div>
+				<div class="label"><span class="fa fa-money"></span> Saldo a pagar {{debit.balance|currency}}</div>
+			</div>
+		</section>
 
-		{{prices}}
+		<div class="button-pay">
+			<button>Pagar <span class="fa fa-arrow-right"></span></button>
+		</div>
 
 	</div>
 </template>
@@ -11,6 +23,7 @@ import app from '../../store/app.js';
 
 export default{
 	props: ['id'],
+
 	data () {
 		return {
 			debit: {},
@@ -32,8 +45,51 @@ export default{
 
 <style lang="scss" scoped>
 
-#phi-debit{
+#phi-debit {
+	section {
+		h2 {
+			color: #666;
+			font-size: 0.8em;
+			font-weight: 1em;
+			margin-bottom: 0.5em;
+			text-transform: uppercase;
+		}
+		.label {
+			padding: 7px;
 
+			.fa {
+				margin-right: 15px;
+			}
+		}
+	}
+
+	.button-pay {
+		right: 0;
+		width: 140px;
+		padding: 10px;
+		position: fixed;
+		text-align: right;
+		margin-top: 15px;
+		background: #2196F3;
+		margin-bottom: 15px;
+		border-radius: 38px 0px 0px 38px;
+		-webkit-transition: all 0.3s ease;
+		-o-transition: all 0.3s ease;
+		transition: all 0.3s ease;
+
+		button {
+			width: 80%;
+			color: #fff;
+			border: none;
+			font-size: 18px;
+			cursor: pointer;
+			background: transparent;
+		}
+	}
+	.button-pay:hover {
+		width: 150px;
+		padding-left: 35px;
+	}
 }
 
 </style>
