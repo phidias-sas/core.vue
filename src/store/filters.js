@@ -15,4 +15,11 @@ Vue.filter("person", (value) => {
 	return value.lastname + ", " + value.firstname;
 });
 
+Vue.filter("currency", (value) =>{
+	if (value){
+		var number = parseFloat(value);
+		return "$"+number.toLocaleString('de-DE');
+	}
+});
+
 Vue.filter("moment.format", value => moment(value * 1000).format('D MMM Y'));

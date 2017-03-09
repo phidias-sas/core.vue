@@ -26,8 +26,8 @@
 									<p class="dato"><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
 								</div>
 								<div class="balance">
-									{{pending.balance}} <br>
-									<span class="interest"><span class="fa fa-warning" v-show="pending.interests"></span> {{pending.interests ? pending.interests.value : ''}}</span>
+									{{pending.balance|currency}} <br>
+									<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
 								</div>
 							</router-link>
 						</li>
