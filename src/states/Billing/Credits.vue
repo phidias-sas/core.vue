@@ -11,6 +11,13 @@
         <div class="phi-page-contents">
             <section>
                 <h2>Pagos recientes</h2>
+
+                    <!-- Loading is true -->
+                <div v-if="loading1" class="loading">
+                  <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                </div>
+
+
                 <div class="types phi-card _z-0">
                     <ul class="list">
                     <li v-for="payment in recent" >
@@ -39,6 +46,12 @@
             <br/>
             <section>
                 <h2>Pagos por aplicar</h2>
+
+                <!-- Loading is true -->
+                <div v-if="loading2" class="loading">
+                  <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                </div>
+
                 <div class="types phi-card _z-0">
                     <ul class="list">
                         <router-link  v-for="payment in unapplied" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}" tag="li">
@@ -65,7 +78,9 @@ export default{
   data() {
     return {
       recent: [],
-      unapplied: []
+      unapplied: [],
+      loading1: true,
+      loading2: true
     }
   },
   mounted(){
@@ -73,12 +88,22 @@ export default{
     app.api.get(`v3/people/${app.user.id}/billing/credits?limit=5`)
     .then(data => {
       this.recent = data;
+      if (data){
+        this.loading1 = false;
+      }else{
+        this.loading1 = true;
+      }
     });
 
     // unapplied
     app.api.get(`v3/people/${app.user.id}/billing/credits?limit=5&balance=true`)
     .then(data => {
       this.unapplied = data;
+      if (data){
+        this.loading2 = false;
+      }else{
+        this.loading2 = true;
+      }
     });
 
   }
