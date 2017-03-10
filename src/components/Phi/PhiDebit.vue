@@ -1,6 +1,6 @@
 <template>
 	<div id="phi-debit">
-		
+
 		<section>
 			<h2># {{debit.sequence}}</h2>
 			<div class="types phi-card _z-0">
@@ -29,7 +29,7 @@
 				</div>
 			</div>
 		</section>
-		
+
 	</div>
 </template>
 
@@ -107,23 +107,21 @@ export default{
 	}
 
 	// conceptos
-	
+
 	.concepts {
 		padding: 10px;
 		display: flex;
 		flex-wrap:wrap;
 		justify-content: center;
 		border-bottom: 1px dashed #ddd;
+		transition:  all 0.2s ease;
 
 		.concept_name {
 			flex-grow: 1;
 			width: 300px;
 
-			p:nth-child(1) {
-				font-size: 18px;
-			}
 			p:nth-child(2) {
-				font-size: 15px;
+				font-size: 14px;
 				font-style: italic;
 			}
 		}
@@ -135,6 +133,9 @@ export default{
 	}
 	.concepts:nth-last-child(1) {
 		border: none;
+	}
+	.concepts:hover {
+		background: #FAFAFA;
 	}
 }
 

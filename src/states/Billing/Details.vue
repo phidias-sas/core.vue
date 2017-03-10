@@ -6,7 +6,7 @@
 				<h1>{{period.name}}</h1>
 			</div>
 		</div>
-		
+
 		<!-- componente -->
 		<div class="phi-page-contents">
 			<phi-debit :id="$route.params.debitId"></phi-debit>
