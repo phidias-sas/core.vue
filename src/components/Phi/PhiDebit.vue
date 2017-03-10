@@ -15,6 +15,21 @@
 			<button>Pagar <span class="fa fa-arrow-right"></span></button>
 		</div>
 
+		<br><br><br>
+
+		<section>
+			<h2>conceptos a pagar</h2>
+			<div class="types phi-card _z-0">
+				<div class="concepts" v-for="price in prices">
+					<div class="concept_name">
+						<p>{{price.concept != price.name ? price.concept : ''}} {{price.name}}</p>
+						<p v-if="price.observations">"{{price.observations}}"</p>
+					</div>
+					<div class="balance">{{price.balance|currency}}</div>
+				</div>
+			</div>
+		</section>
+		
 	</div>
 </template>
 
@@ -89,6 +104,37 @@ export default{
 	.button-pay:hover {
 		width: 150px;
 		padding-left: 35px;
+	}
+
+	// conceptos
+	
+	.concepts {
+		padding: 10px;
+		display: flex;
+		flex-wrap:wrap;
+		justify-content: center;
+		border-bottom: 1px dashed #ddd;
+
+		.concept_name {
+			flex-grow: 1;
+			width: 300px;
+
+			p:nth-child(1) {
+				font-size: 18px;
+			}
+			p:nth-child(2) {
+				font-size: 15px;
+				font-style: italic;
+			}
+		}
+		.balance {
+			text-align: right;
+			flex-grow: 1;
+			width: 200px;
+		}
+	}
+	.concepts:nth-last-child(1) {
+		border: none;
 	}
 }
 
