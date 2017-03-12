@@ -7,7 +7,12 @@
       </div>
     </div>
     <!-- componente -->
-    <phi-credit :id="$route.params.creditId"></phi-credit>
+    <div v-if="loading" class="loading">
+      <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    </div>
+    <div v-else>
+      <phi-credit :id="$route.params.creditId" :model="credit"></phi-credit>
+    </div>
 
   </div>
 </template>
@@ -15,13 +20,14 @@
 
 
 import app from '../../store/app.js'
-import PhiCredit from '../../components/Phi/PhiCredit.vue';
+import PhiCredit from '../../components/Phi/Credit.vue';
 
 export default{
   data() {
     return {
-      credit: {},
-      method: {}
+      credit: null,
+      method: {},
+      loading: true
     }
   },
 
@@ -34,6 +40,11 @@ export default{
     .then(data => {
       this.credit  = data;
       this.method = data.method;
+      if (data){
+        this.loading = false;
+      }else{
+        this.loading = true;
+      }
     });
   }
 

@@ -16,7 +16,7 @@
 
 <script>
 import app from '../../store/app.js';
-import PhiDebit from '../../components/Phi/PhiDebit.vue';
+import PhiDebit from '../../components/Phi/Debit.vue';
 
 export default{
 	data() {

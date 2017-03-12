@@ -122,7 +122,7 @@ var router = new VueRouter({
 
                 // billing (esteban)
                 { path: '/billing/credits', component: Credits },
-                { path: '/billing/credits/details/:creditId', component: CreditDetails, name: 'billing-credit-creditId' },
+                { path: '/billing/credits/:creditId', component: CreditDetails, name: 'billing-credit-creditId' },
 
             ]
         },
