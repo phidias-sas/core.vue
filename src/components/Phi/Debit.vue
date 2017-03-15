@@ -1,34 +1,39 @@
 <template>
 	<div id="phi-debit">
-
-		<section>
-			<h2># {{debit.sequence}}</h2>
-			<div class="types phi-card _z-0">
-				<div class="label"><span class="fa fa-user-o"></span> {{person.firstname}}</div>
-				<div class="label"><span class="fa fa-calendar-check-o"></span> Expedido el {{debit.issue_date|moment.format}}</div>
-				<div class="label"><span class="fa fa-calendar-times-o"></span> Vence el {{debit.expiration_date|moment.format}}</div>
-				<div class="label"><span class="fa fa-money"></span> Saldo a pagar {{debit.balance|currency}}</div>
-			</div>
-		</section>
-
-		<div class="button-pay">
-			<button>Pagar <span class="fa fa-arrow-right"></span></button>
+		<div v-if="loading" class="loading">
+			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 		</div>
-
-		<br><br><br>
-
-		<section>
-			<h2>conceptos a pagar</h2>
-			<div class="types phi-card _z-0">
-				<div class="concepts" v-for="price in prices">
-					<div class="concept_name">
-						<p>{{price.concept != price.name ? price.concept : ''}} {{price.name}}</p>
-						<p v-if="price.observations">"{{price.observations}}"</p>
-					</div>
-					<div class="balance">{{price.balance|currency}}</div>
+		
+		<div v-show="!loading">
+			<section>
+				<h2># {{debit.sequence}}</h2>
+				<div class="types phi-card _z-0">
+					<div class="label"><span class="fa fa-user-o"></span> {{person.firstname}}</div>
+					<div class="label"><span class="fa fa-calendar-check-o"></span> Expedido el {{debit.issue_date|moment.format}}</div>
+					<div class="label"><span class="fa fa-calendar-times-o"></span> Vence el {{debit.expiration_date|moment.format}}</div>
+					<div class="label"><span class="fa fa-money"></span> Saldo a pagar {{debit.balance|currency}}</div>
 				</div>
+			</section>
+
+			<div class="button-pay">
+				<button>Pagar</button>
 			</div>
-		</section>
+
+			<br><br><br>
+
+			<section>
+				<h2>conceptos a pagar</h2>
+				<div class="types phi-card _z-0">
+					<div class="concepts" v-for="price in prices">
+						<div class="concept_name">
+							<p>{{price.concept != price.name ? price.concept : ''}} {{price.name}}</p>
+							<p v-if="price.observations">"{{price.observations}}"</p>
+						</div>
+						<div class="balance">{{price.balance|currency}}</div>
+					</div>
+				</div>
+			</section>
+		</div>
 
 	</div>
 </template>
@@ -43,7 +48,8 @@ export default{
 		return {
 			debit: {},
 			person: {},
-			prices: {}
+			prices: {},
+			loading: true,
 		}
 	},
 
@@ -53,6 +59,11 @@ export default{
 				this.debit  = datos;
 				this.person = datos.person;
 				this.prices = datos.prices;
+				if (datos){
+					this.loading = false;
+				}else{
+					this.loading = true;
+				}
 			});
 	}
 }
@@ -135,7 +146,14 @@ export default{
 		border: none;
 	}
 	.concepts:hover {
-		background: #FAFAFA;
+		background: #eee;
+	}
+
+	.loading{
+		width: 100%;
+		font-size: 15px;
+		margin-top: 15px;
+		text-align: center;
 	}
 }
 
