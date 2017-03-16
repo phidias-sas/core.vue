@@ -8,25 +8,24 @@
 		</div>
 
 		<!-- Loading is true -->
-		<div v-if="loading" class="loading">
-			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-		</div>
+		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
+
 
 		<!-- Loadingset is false -->
-		<div class="phi-page-contents" v-if="!loading">
+		<div class="phi-page-contents" v-if="!isLoading">
 			<section>
 				<h2>Cobros pendientes</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
 						<li v-for="pending in pendings">
 							<router-link :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}">
-								<div class="info">
+								<div class="col info">
 									<p><b>{{pending.period.name}} <small>#{{pending.sequence}}</small></b></p>
 									<p class="dato"><span class="fa fa-clock-o"></span> {{pending.expiration_date|moment.format}}</p>
 									<p class="dato"><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
 								</div>
-								<div class="balance">
-									{{pending.balance|currency}} <br>
+								<div class="col balance" align="right">
+									<b>{{pending.balance|currency}}</b> <br>
 									<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
 								</div>
 							</router-link>
@@ -46,20 +45,15 @@ export default{
 	data() {
 		return {
 			pendings:  [],
-			interests: [],
-			loading:   true,
+			isLoading:   true,
 		}
 	},
 
 	mounted(){
 		app.api.get(`v3/people/${app.user.id}/billing/debits/pending`)
 			.then(datos => {
-				if (datos) {
-					this.loading  = false;
-					this.pendings = datos;
-				} else {
-					this.loading = true;
-				}
+				this.pendings  = datos;
+				this.isLoading = !datos;
 			});
 	}
 }
@@ -77,8 +71,6 @@ export default{
 			text-transform: uppercase;
 		}
 		.list {
-			margin: 0;
-			padding: 0;
 			border: 0;
 			list-style: none;
 
@@ -91,29 +83,30 @@ export default{
 					flex-wrap: wrap;
 					flex-direction: row;
 					transition: all 0.2s ease;
-
-					.info {
+					
+					.col {
 						flex-grow: 1;
-
 						.dato {
 							color: #666;
 							margin: 5px;
 							font-size: 13px;
 							margin-left: 15px;
 						}
-					}
-
-					.balance {
-						flex-grow: 1;
-						color: green;
-						font-weight: bold;
-						text-align: right;
-
 						.interest {
 							color:red;
 							font-size: 11px;
 							background: #f2f2f2;
 						}
+						.fa-clock-o {
+							color: #3F51B5;
+						}
+						.fa-user-o {
+							color: #009688;
+						}
+					}
+
+					.balance {
+						color: green;
 					}
 				}
 			}
@@ -121,18 +114,12 @@ export default{
 			li:nth-last-child(1) {
 				border-bottom: none;
 			}
-
 			li:hover {
 				background: #F5F5F5;
 			}
-		}
-	}
 
-	.loading{
-		width: 100%;
-		font-size: 15px;
-		margin-top: 15px;
-		text-align: center;
+		}
+
 	}
 }
 

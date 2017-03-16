@@ -1,10 +1,8 @@
 <template>
 	<div id="phi-debit">
-		<div v-if="loading" class="loading">
-			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-		</div>
-		
-		<div v-show="!loading">
+		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
+
+		<div v-show="!isLoading">
 			<section>
 				<h2># {{debit.sequence}}</h2>
 				<div class="types phi-card _z-0">
@@ -15,11 +13,11 @@
 				</div>
 			</section>
 
-			<div class="button-pay">
+			<!-- <div class="button-pay">
 				<button>Pagar</button>
-			</div>
+			</div> -->
 
-			<br><br><br>
+			<br><br>
 
 			<section>
 				<h2>conceptos a pagar</h2>
@@ -49,7 +47,7 @@ export default{
 			debit: {},
 			person: {},
 			prices: {},
-			loading: true,
+			isLoading: true,
 		}
 	},
 
@@ -59,11 +57,7 @@ export default{
 				this.debit  = datos;
 				this.person = datos.person;
 				this.prices = datos.prices;
-				if (datos){
-					this.loading = false;
-				}else{
-					this.loading = true;
-				}
+				this.isLoading = !datos;
 			});
 	}
 }
@@ -89,33 +83,33 @@ export default{
 		}
 	}
 
-	.button-pay {
-		right: 0;
-		width: 140px;
-		padding: 10px;
-		position: fixed;
-		text-align: right;
-		margin-top: 15px;
-		background: #2196F3;
-		margin-bottom: 15px;
-		border-radius: 38px 0px 0px 38px;
-		-webkit-transition: all 0.3s ease;
-		-o-transition: all 0.3s ease;
-		transition: all 0.3s ease;
+	// .button-pay {
+	// 	right: 0;
+	// 	width: 140px;
+	// 	padding: 10px;
+	// 	position: fixed;
+	// 	text-align: right;
+	// 	margin-top: 15px;
+	// 	background: #2196F3;
+	// 	margin-bottom: 15px;
+	// 	border-radius: 38px 0px 0px 38px;
+	// 	-webkit-transition: all 0.3s ease;
+	// 	-o-transition: all 0.3s ease;
+	// 	transition: all 0.3s ease;
 
-		button {
-			width: 80%;
-			color: #fff;
-			border: none;
-			font-size: 18px;
-			cursor: pointer;
-			background: transparent;
-		}
-	}
-	.button-pay:hover {
-		width: 150px;
-		padding-left: 35px;
-	}
+	// 	button {
+	// 		width: 80%;
+	// 		color: #fff;
+	// 		border: none;
+	// 		font-size: 18px;
+	// 		cursor: pointer;
+	// 		background: transparent;
+	// 	}
+	// }
+	// .button-pay:hover {
+	// 	width: 150px;
+	// 	padding-left: 35px;
+	// }
 
 	// conceptos
 
@@ -137,9 +131,9 @@ export default{
 			}
 		}
 		.balance {
-			text-align: right;
 			flex-grow: 1;
 			width: 200px;
+			text-align: right;
 		}
 	}
 	.concepts:nth-last-child(1) {
@@ -149,12 +143,6 @@ export default{
 		background: #eee;
 	}
 
-	.loading{
-		width: 100%;
-		font-size: 15px;
-		margin-top: 15px;
-		text-align: center;
-	}
 }
 
 </style>

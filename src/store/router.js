@@ -52,6 +52,7 @@ import Felipe from '../states/Felipe.vue';
 
 
 // Billing (sebastian)
+import Billing from '../states/Billing/Billing.vue';
 import BillingDebits from '../states/Billing/Debits.vue';
 import BillingDetails from '../states/Billing/Details.vue';
 
@@ -123,6 +124,7 @@ var router = new VueRouter({
                 // billing (esteban)
                 { path: '/billing/credits', component: Credits },
                 { path: '/billing/credits/:creditId', component: CreditDetails, name: 'billing-credit-creditId' },
+                { path: '/billing/:personId', component: Billing, name: 'billing'},
 
             ]
         },
