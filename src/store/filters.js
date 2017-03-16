@@ -12,7 +12,7 @@ Vue.filter("bytes", (bytes, precision) => {
 Vue.filter("date", value => moment(value * 1000).calendar());
 
 Vue.filter("person", (value) => {
-	return value.lastname + ", " + value.firstname;
+	return value != null ? value.lastname + ", " + value.firstname : '';
 });
 
 Vue.filter("currency", (value) =>{

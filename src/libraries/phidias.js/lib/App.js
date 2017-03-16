@@ -50,6 +50,9 @@ app.logout();
 
 app.clear();
 
+// Authorization:
+app.api.allowed(url);
+
 */
 import localforage from 'localforage';
 
@@ -99,6 +102,7 @@ export default class App {
 			logo:           null,
 			endpoint:       null,
 			organization:   {},
+			language:       null,
 
 			token:          null,
 			user:           null, // "user" holds the decoded token payload

@@ -3,7 +3,7 @@
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<h1>Consolidado de tesorería</h1>
+				<h1>{{ $t("Billing") }}</h1>
 			</div>
 		</div>
 

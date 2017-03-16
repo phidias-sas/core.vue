@@ -1,6 +1,7 @@
 export default {
 	'Inbox': 'Bandeja de entrada',
 	'Calendar': 'Calendario',
+	'Billing': 'Tesorería',
 	'Archived': 'Archivados',
 	'View': 'Vista',
 	'Type': 'Tipo',
@@ -9,7 +10,6 @@ export default {
 	'Logout': 'Cerrar sesión',
 	'Notifications': 'Notificaciones',
 	'Language': 'Idioma',
-	
 
 	'Month': 'Mes',
 	'Day': 'Día',

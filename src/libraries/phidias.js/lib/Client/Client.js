@@ -11,6 +11,7 @@ export default class Client {
 		this.isLoading      = false;
 		// this.cacheIsEnabled = true;
 		this.cacheIsEnabled = false; // !!! cache is DISABLED temporarily
+		this.authorization  = {};
 	}
 
 	collection(url, parameters) {
@@ -131,6 +132,20 @@ export default class Client {
 			body:   data
 		})
 		.then(response => response.json());
+	}
+
+	allowed(url) {
+		if (typeof this.authorization[url] != 'undefined') {
+			return new Promise((resolve, reject) => {
+				resolve(this.authorization[url]);
+			});
+		}
+
+		return this.get(`allowed\\${url}`)
+			.then(response => {
+				this.authorization[url] = response[url];
+				return this.authorization[url];
+			});
 	}
 
 	static serialize(obj, prefix) {

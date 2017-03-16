@@ -46,6 +46,7 @@
 			<div class="phi-menu main-options" @click="toggleMenu">
 				<router-link to="/dashboard">{{ $t("Inbox") }}</router-link>
 				<router-link to="/calendar">{{ $t("Calendar") }}</router-link>
+				<router-link to="/billing/debits" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
 				<router-link to="/archive">{{ $t("Archived") }}</router-link>
 				<!-- <router-link to="/map">Mapa</router-link> -->
 
@@ -79,12 +80,16 @@ export default {
 		return {
 			app,
 			nodes: app.api.collection("nodes"),
-			transitionDirection: 'left'
+			transitionDirection: 'left',
+			allowed: {
+				billing: false
+			}
 		}
 	},
 
 	mounted () {
-		// this.nodes.fetch();
+		app.api.allowed(`people/${app.user.id}/settings/modules/billing`)
+			.then(response => this.allowed.billing = response)
 	},
 
 	methods: {

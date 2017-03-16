@@ -18,7 +18,6 @@
 					<div class="blocks" v-if="billboard.blocks.length">
 						<phi-block :block="billboard.blocks[0]"></phi-block>
 					</div>
-
 				</div>
 			</section>
 			<section v-show="!!types">
