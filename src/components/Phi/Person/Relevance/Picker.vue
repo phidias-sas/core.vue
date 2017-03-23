@@ -1,196 +1,162 @@
 <template>
-	<div>
-		<div class="phi-person-relevance-picker" v-show="!isLoading">
-			<div class="person phi-media" @click="goToGroups">
-                <div class="phi-media-figure phi-avatar">
-                    <img :src="personObj.avatar" :alt="personObj.firstName">
+    <div class="phi-person-relevance-picker">
+
+
+
+        personIsExpanded: {{personIsExpanded}}
+
+        <v-expansion-panel>
+            <v-expansion-panel-content v-model="personIsExpanded">
+                <div slot="header" @zzzzzclick="fetchGroups()">
+                    <div class="phi-media">
+                        <div class="phi-media-figure phi-avatar">
+                            <img :src="person.avatar" :alt="person.firstName">
+                        </div>
+                        <div class="phi-media-body">
+                            {{person.firstName}} {{person.lastName}}
+                        </div>
+                    </div>
                 </div>
-                <h1 class="phi-media-body">
-					{{personObj.firstName}} {{personObj.lastName}}
-					<br>
-					{{ $t("Contacts") }}
-				</h1>
-				<div class="selected-people-counter"><i class="fa fa-chevron-right"></i></div>
-            </div>
-		</div>
-	</div>
+
+                <div class="groups">
+                    <div class="group" v-for="group in groups" @click="fetchGroupMembers(group)">
+                        <h1>{{ group.name }}</h1>
+                        <div class="members">
+                            <div
+                                v-for="member in group.members"
+                                class="phi-media member"
+                                :class="{selected: isSelected(member.id)}"
+                                @click="togglePerson(member.id)"
+                            >
+                                <div class="phi-media-figure phi-avatar">
+                                    <img :src="member.avatar" :alt="member.firstname">
+                                </div>
+                                <div class="phi-media-body">
+                                    {{member.firstname}} {{member.lastname}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </v-expansion-panel-content>
+        </v-expansion-panel>
+
+
+    </div>
 </template>
 
 <script>
-import app from '../../../../store/app.js';
-import Groups from '../../../../states/Person/Relevance/Groups.vue';
-import People from '../../../../states/Person/Relevance/People.vue';
+/*
+Componente:
+
+<phi-person-relevance-picker person-id="1504" v-model="personas">
+</phi-person-relevance-picker>
+
+*/
+
+import Vue from 'vue';
 
 export default {
-	name: "phi-person-relevance-picker",
+    name: "phi-person-relevance-picker",
 
 	model: {
-		prop: 'selectedPeople',
-		event: 'selectedPeopleChange'
+		prop:  'selectedPeople',
+		// event: 'selectedPeopleChange' // ?????
 	},
-	
+
 	props: {
 		selectedPeople: {
 			type: Array,
-			required: false,
+			required: true,
 			default: []
 		},
 
-		//default to deck for this particular app
-		rootRoute: {
+        personId: {
 			type: String,
-			required: false,
-			default: "/deck"
+			required: true
 		},
 
-        person: {
-			type: Number,
+        api: {
 			required: true
 		}
-	},
+    },
 
-	watch: {
-		isLoading: function (loading) {
-			if(!loading){
-				this.$emit("loaded", true);
-			}
-		}
-	},
+    data() {
+        return {
+            person: {},
+            groups: [],
+            personIsExpanded: false
+        }
+    },
 
-	computed: {
-		selectedContacts () {
-			return this.$store.state.relevance.people;
-		}
-  	},
+    watch: {
+        personIsExpanded: function(val) {
+            if (val && this.groups.length == 0) {
+                this.fetchGroups()
+                    .then(() => {
+                        this.personIsExpanded = false;
+                        setTimeout(() => {
+                            this.personIsExpanded = true;
+                        }, 0);
+                    });
+            }
+        }
+    },
 
-	data () {
-		return {
-			isLoading: true,
-			personObj: {},
-			relatedRoutes: ["relevanceGroups", "relevancePeople"]	
-		}
-	},
+    methods: {
+        isSelected(personId) {
+            return this.selectedPeople.indexOf(personId) >= 0;
+        },
 
-	methods: {
-		initializeComponent () {
-			this.isLoading = true;
-			app.api.get("people/"+this.person)
-				.then(result => {
-					this.personObj = result;
-					this.isLoading = false;
-				});
-		},
+        addPerson(personId) {
+            this.selectedPeople.push(personId);
+        },
 
-		goToGroups(){
-			this.$router.push({ name: 'relevanceGroups', params: { personId: this.person }});
-		},
+        removePerson(personId) {
+            this.selectedPeople.splice(this.selectedPeople.indexOf(personId), 1);
+        },
 
-		initailizeStorage(){
+        togglePerson(personId) {
+            this.isSelected(personId) ? this.removePerson(personId) : this.addPerson(personId);
+        },
 
-			let storageName = "relevance";
-			let storageDefinition = {
-				namespaced: true,
-				state: {
-					people: []
-				},
+        fetchPerson() {
+            this.api
+                .get(`people/${this.personId}`)
+                .then(person => this.person = person);
+        },
 
-				mutations: {
-					addPerson (state, payload) {
-						state.people.push(payload.person);
-					},
+        fetchGroups() {
+            return this.api
+                .get(`v3/people/${this.personId}/relevance/groups`)
+                .then(groups => this.groups = groups);
+        },
 
-					removePerson (state, payload) {
-						let index = state.people.indexOf(payload.person);
+        fetchGroupMembers(group) {
+            this.api
+                .get(`v3/people/${this.personId}/relevance/groups/${group.id}`)
+                .then(people => Vue.set(group, 'members', people));
+        }
 
-						if(index >= 0){
-							state.people.splice(index, 1);
-						}
-					}
-				}	
-			};
+    },
 
-			if(this.relatedRoutes.indexOf(this.$router.previousRoute.name) < 0){
-				if(this.$store.state.hasOwnProperty(storageName)){
-					this.$store.unregisterModule(storageName);
-				}	
-			}
-			
-			if(!this.$store.state.hasOwnProperty(storageName)){
-				this.$store.registerModule(storageName, storageDefinition);
-			}
-			
-		},
+    mounted() {
+        this.fetchPerson();
+    }
 
-		initializeRoutes(){
-			
-			let rootIndex = null;
-			for(let i = 0; i < this.$router.options.routes.length; i++){
-				if(this.$router.options.routes[i].path === this.rootRoute){
-					rootIndex = i;
-					break;
-				}
-			}
-			
-			let myRoutes = [];
-			let routesDefinition = [
-				{ 
-					path: '/person/:personId/relevance/groups',  
-					component: Groups,
-					name: 'relevanceGroups'
-				},
-
-				{ 
-					path: '/person/:personId/relevance/group/:groupId/people',  
-					component: People,
-					name: 'relevancePeople'
-				},
-			];
-
-			if(rootIndex !== null){
-				myRoutes = [
-					{
-						path: this.$router.options.routes[rootIndex].path, 
-						component: this.$router.options.routes[rootIndex].component,
-						children: routesDefinition
-					}
-				];
-			}else{
-				myRoutes = routesDefinition;
-			}
-
-			this.$router.addRoutes(myRoutes);
-		}
-	},
-
-	created() {
-		this.initailizeStorage();
-		this.initializeRoutes();
-	},
-
-	mounted() {
-		this.initializeComponent();
-
-		this.$emit("selectedPeopleChange", this.selectedContacts);
-	}
 }
 </script>
 
-<style scoped>
-	.phi-avatar {
-		width: 20px !important;
-		height: 20px !important;
-		order: 1;
-	}
+<style lang="scss" scoped>
 
-	.phi-media-body {
-		font-size: 1em;
-		align-self: center;
-		order: 2;
-	}
+.member.selected {
+    background-color: #ff8;
+}
 
-	.selected-people-counter{
-		font-size: .9em;
-		text-align: center;
-		order: 3;
-	}
+.group {
+    border: 1px dotted #999;
+    padding: 12px;
+}
+
 </style>
