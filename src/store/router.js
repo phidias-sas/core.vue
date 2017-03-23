@@ -62,8 +62,7 @@ import CreditDetails from '../states/Billing/CreditDetails.vue';
 var router = new VueRouter({
     routes: [
         { path: '/santiago', component: Santiago },
-        { path: '/leo', component: Leo },
-
+        
         { path: '/', redirect: '/dashboard' },
         { path: '/code', component: Code, name: 'code', meta: { isPublic: true, exitOnBack: true } },
         { path: '/login', component: Login, name: 'login', meta: { isPublic: true, exitOnBack: true } },
@@ -115,6 +114,7 @@ var router = new VueRouter({
                 { path: '/sanchez', component: Sanchez },
                 { path: '/sebas', component: Sebas, name: 'Sebas' },
                 { path: '/felipe', component: Felipe },
+                { path: '/leo', component: Leo },
 
                 // billing (sebastian)
                 { path: '/billing/debits', component: BillingDebits},
@@ -152,6 +152,10 @@ router.beforeEach((to, from, next) => {
 
     next();
 });
+
+router.afterEach((to, from) => {
+   router.previousRoute = from;
+})
 
 
 export default router;

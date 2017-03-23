@@ -12,12 +12,14 @@ Fastclick.attach(document.body);
 import './store/filters.js';
 import app from './store/app.js';
 import router from './store/router.js';
+import store from './store/vuexStore.js';
 
 /* Initialize the app */
 app.on("load", () => {
 	new Vue({
 		el: '#app',
-		router
+		router,
+		store
 	});
 });
 
