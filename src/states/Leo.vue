@@ -11,21 +11,34 @@
 
 		<div class="phi-page-contents">
 			<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
-			
-			<phi-person-relevance-picker
-				:api="app.api"
-				v-model="audience1"
-				person-id="1405"
-			>
-			</phi-person-relevance-picker>
-			
-			<phi-person-relevance-picker
-				:api="app.api"
-				v-model="audience2"
-				person-id="627"
-			>
-			</phi-person-relevance-picker>
- 
+
+			<div style="max-width: 768px">
+				<phi-person-relevance-picker
+					:api="app.api"
+					v-model="audience1"
+					person-id="1405"
+				>
+				</phi-person-relevance-picker>
+
+				<phi-person-relevance-picker
+					:api="app.api"
+					v-model="audience2"
+					person-id="627"
+				>
+				</phi-person-relevance-picker>
+
+				<div class="selected-people">
+					<div class="phi-media person" v-for="person in audience2">
+						<div class="phi-media-figure phi-avatar">
+							<img :src="person.avatar" alt="person.firstname">
+						</div>
+						<h3 class="phi-media-body">{{ person.firstname }} {{ person.lastname }}</h3>
+						<div class="phi-media-right fa fa-times" @click="audience2.splice(audience2.indexOf(person), 1)"></div>
+					</div>
+				</div>
+			</div>
+
+
 		</div>
 	</div>
 </template>
@@ -51,7 +64,7 @@ export default {
 	},
 
 	methods: {
-		
+
 	}
 }
 </script>

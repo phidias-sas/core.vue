@@ -1,8 +1,8 @@
 <template>
-	<div class="phi-slider-pannel">	
+	<div class="phi-slider-pannel">
 		<div class="modal-mask" @click="closePannel()"></div>
-		<div class="slider-pannel"  
-			v-bind:style="styleConfiguration" 
+		<div class="slider-pannel"
+			v-bind:style="styleConfiguration"
 			v-bind:class="{ open: open }"
 		>
 			<slot></slot>
@@ -40,7 +40,7 @@ export default {
 		backgroundColor: {
 			type: String,
 			required: false,
-			default: "#F3F3F3"	
+			default: "#F3F3F3"
 		}
 	},
 
@@ -79,7 +79,7 @@ export default {
 			}else{
 				this.pannel.style.setProperty('--width-to-hide', "-" + this.width);
 			}
-			
+
 			this.pannel.scrollTop = 0;
 
 			this.$emit("opened", true);
@@ -93,8 +93,8 @@ export default {
 				this.pannel.style.setProperty('--width-to-hide', this.width);
 			}else{
 				this.pannel.style.setProperty('--width-to-hide', "-" + this.width);
-			}	
-			
+			}
+
 			this.$emit("closed", true);
 		},
 
@@ -124,7 +124,7 @@ export default {
     mounted () {
 		this.pannel = this.$el.querySelector(".slider-pannel");
 		this.modalMask = this.$el.querySelector(".modal-mask");
-		
+
 		this.addGlobalEvents();
     }
 }
@@ -136,9 +136,9 @@ export default {
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 100vw;	
+	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0,0,0,0.6);
+	/* background-color: rgba(0,0,0,0.6); */
 	visibility:hidden;
 	display: none;
 }

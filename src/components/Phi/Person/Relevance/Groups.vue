@@ -14,27 +14,27 @@
                 <section v-for="group in groups">
                     <h2 v-if="group.people.length > 0">{{group.name}}</h2>
                     <div class="phi-card">
-                        <div class="person phi-media"  v-for="person in group.people" 
-                            @click="togglePerson(person.id)" 
-                            v-bind:class="{ selectedPerson: (selectedPeople.indexOf(person.id) >= 0) }"
+                        <div class="person phi-media"  v-for="person in group.people"
+                            @click="togglePerson(person)"
+                            v-bind:class="{ selectedPerson: isSelected(person) }"
                         >
                             <div class="phi-media-figure phi-avatar">
-                                <img :src="person.avatar" :alt="person.firstname">	
+                                <img :src="person.avatar" :alt="person.firstname">
                             </div>
                             <h1 class="phi-media-body">
                                 {{person.firstname}} {{person.lastname}}
-                                <input class="person-check" type="checkbox" :value="person.id" :checked="selectedPeople.indexOf(person.id) >= 0">
+                                <input class="person-check" type="checkbox" :value="person.id" :checked="isSelected(person)">
                                 <br>
                                 <span class="roles" v-for="(role, key) in person.roles">{{ $t(role) }}<span v-if="key < person.roles.length-1">, </span></span>
                             </h1>
-                            <div class="phi-media-options" v-show="(selectedPeople.indexOf(person.id) >= 0)">
+                            <div class="phi-media-options" v-show="isSelected(person)">
                                 <i class="blue fa fa-check"></i>
                             </div>
-                        </div> 
+                        </div>
 
-                        <div class="person phi-media" 
-                            v-if="group.type !== 'relatives'" 
-                            v-bind:class="{ optionsBar: (group.people.length > 0) }" 
+                        <div class="person phi-media"
+                            v-if="group.type !== 'relatives'"
+                            v-bind:class="{ optionsBar: (group.people.length > 0) }"
                             @click="fetchGroupMembers(group)"
                         >
                             <h1 class="phi-media-body"
@@ -46,7 +46,7 @@
                             <div class="phi-media-options">
                                 <i class="fa fa-chevron-right"></i>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </section>
             </div>
@@ -63,65 +63,65 @@
                 </div>
                 <section>
                     <div class="phi-card">
-                        <div class="person phi-media" v-for="person in membersToLoad" 
+                        <div class="person phi-media" v-for="person in membersToLoad"
                             v-if="!person.hasOwnProperty('relatives')"
-                            @click="togglePerson(person.id)" 
-                            v-bind:class="{ selectedPerson: (selectedPeople.indexOf(person.id) >= 0) }"
+                            @click="togglePerson(person)"
+                            v-bind:class="{ selectedPerson: (isSelected(person)) }"
                         >
                             <div class="phi-media-figure phi-avatar">
-                                <img :src="person.avatar" :alt="person.firstname">	
+                                <img :src="person.avatar" :alt="person.firstname">
                             </div>
                             <h1 class="phi-media-body">
                                 {{person.firstname}} {{person.lastname}}
-                                <input class="person-check" type="checkbox" :value="person.id" :checked="selectedPeople.indexOf(person.id) >= 0">
+                                <input class="person-check" type="checkbox" :value="person.id" :checked="isSelected(person)">
                                 <br>
                                 <span class="roles" v-for="(role, key, index) in person.roles">{{ $t(role) }}<span v-if="index > 0">,</span></span>
                             </h1>
-                            <div class="phi-media-options" v-show="(selectedPeople.indexOf(person.id) >= 0)">
+                            <div class="phi-media-options" v-show="(isSelected(person))">
                                 <i class="blue fa fa-check"></i>
                             </div>
-                        </div> 
+                        </div>
                     </div>
 			    </section>
 
                 <div class="sections-container"  v-for="person in membersToLoad">
                     <section v-if="person.hasOwnProperty('relatives')">
                         <div class="phi-card">
-                            <div class="person phi-media"  
-                                @click="togglePerson(person.id)" 
-                                v-bind:class="{ selectedPerson: (selectedPeople.indexOf(person.id) >= 0) }"
+                            <div class="person phi-media"
+                                @click="togglePerson(person)"
+                                v-bind:class="{ selectedPerson: (isSelected(person)) }"
                             >
                                 <div class="phi-media-figure phi-avatar">
-                                    <img :src="person.avatar" :alt="person.firstname">	
+                                    <img :src="person.avatar" :alt="person.firstname">
                                 </div>
                                 <h1 class="phi-media-body">
                                     {{person.firstname}} {{person.lastname}}
-                                    <input class="person-check" type="checkbox" :value="person.id" :checked="selectedPeople.indexOf(person.id) >= 0">
+                                    <input class="person-check" type="checkbox" :value="person.id" :checked="isSelected(person)">
                                     <br>
                                     <span class="roles" v-for="(role, key) in person.roles">{{ $t(role) }}<span v-if="key < person.roles.length-1">, </span></span>
                                 </h1>
-                                <div class="phi-media-options" v-show="(selectedPeople.indexOf(person.id) >= 0)">
+                                <div class="phi-media-options" v-show="isSelected(person)">
                                     <i class="blue fa fa-check"></i>
                                 </div>
-                            </div> 
+                            </div>
 
                             <div class="person phi-media" v-for="relative in person.relatives"
-                                @click="togglePerson(relative.id)" 
-                                v-bind:class="{ selectedPerson: (selectedPeople.indexOf(relative.id) >= 0) }"
+                                @click="togglePerson(relative)"
+                                v-bind:class="{ selectedPerson: isSelected(relative) }"
                             >
                                 <div class="phi-media-figure phi-avatar">
-                                    <img :src="relative.avatar" :alt="relative.firstname">	
+                                    <img :src="relative.avatar" :alt="relative.firstname">
                                 </div>
                                 <h1 class="phi-media-body">
                                     {{relative.firstname}} {{relative.lastname}}
-                                    <input class="person-check" type="checkbox" :value="relative.id" :checked="selectedPeople.indexOf(relative.id) >= 0">
+                                    <input class="person-check" type="checkbox" :value="relative.id" :checked="isSelected(relative)">
                                     <br>
                                     <span class="roles" v-for="(role, key) in relative.roles">{{ $t(role) }}<span v-if="key < relative.roles.length-1">, </span></span>
                                 </h1>
-                                <div class="phi-media-options" v-show="(selectedPeople.indexOf(relative.id) >= 0)">
+                                <div class="phi-media-options" v-show="isSelected(relative)">
                                     <i class="blue fa fa-check"></i>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -171,36 +171,36 @@ export default {
     },
 
     methods: {
-        isSelected(personId) {
-            return this.selectedPeople.indexOf(personId) >= 0;
+        togglePerson(person) {
+            this.isSelected(person) ? this.removePerson(person) : this.addPerson(person);
         },
 
-        addPerson(personId) {
-            this.selectedPeople.push(personId);
+        isSelected(person) {
+            return this.selectedPeople.indexOf(person) >= 0;
         },
 
-        removePerson(personId) {
-            this.selectedPeople.splice(this.selectedPeople.indexOf(personId), 1);
+        addPerson(person) {
+            this.selectedPeople.push(person);
         },
 
-        togglePerson(personId) {
-            this.isSelected(personId) ? this.removePerson(personId) : this.addPerson(personId);
+        removePerson(person) {
+            this.selectedPeople.splice(this.selectedPeople.indexOf(person), 1);
         },
 
         openPersonPannel(){
             this.$parent.$el.querySelector(".slider-pannel").scrollTop = 0;
-            
-            this.groupsContainer.style.setProperty("left", "-100%");    
+
+            this.groupsContainer.style.setProperty("left", "-100%");
             this.groupsContainer.style.setProperty("opacity", "0");
             this.peopleContainer.style.setProperty("opacity", "1");
-            this.peopleContainer.style.setProperty("left", "0");   
-        },    
+            this.peopleContainer.style.setProperty("left", "0");
+        },
 
         closePersonPannel(){
-            this.groupsContainer.style.setProperty("left", "0");  
-            this.groupsContainer.style.setProperty("opacity", "1");  
+            this.groupsContainer.style.setProperty("left", "0");
+            this.groupsContainer.style.setProperty("opacity", "1");
             this.peopleContainer.style.setProperty("opacity", "0");
-            this.peopleContainer.style.setProperty("left", "100%");   
+            this.peopleContainer.style.setProperty("left", "100%");
         },
 
         closeGroupPannel(){
@@ -223,7 +223,7 @@ export default {
                 this.membersToLoad.splice(0, 0, ...group.members);
                 this.openPersonPannel();
             }
-        }    
+        }
     },
 
     mounted() {
@@ -264,9 +264,9 @@ export default {
 }
 
 .phi-page-toolbar h1{
-    overflow:hidden; 
+    overflow:hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;  
+    text-overflow: ellipsis;
 }
 
 
