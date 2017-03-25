@@ -1,48 +1,22 @@
 <template>
     <div class="phi-person-relevance-picker">
-
-
-
-        personIsExpanded: {{personIsExpanded}}
-
-        <v-expansion-panel>
-            <v-expansion-panel-content v-model="personIsExpanded">
-                <div slot="header" @zzzzzclick="fetchGroups()">
-                    <div class="phi-media">
-                        <div class="phi-media-figure phi-avatar">
-                            <img :src="person.avatar" :alt="person.firstName">
-                        </div>
-                        <div class="phi-media-body">
-                            {{person.firstName}} {{person.lastName}}
-                        </div>
-                    </div>
+        <div>
+            <div class="person phi-media" @click="fetchGroups()">
+                <div class="phi-media-figure phi-avatar">
+                    <img :src="person.avatar" :alt="person.firstName">
                 </div>
-
-                <div class="groups">
-                    <div class="group" v-for="group in groups" @click="fetchGroupMembers(group)">
-                        <h1>{{ group.name }}</h1>
-                        <div class="members">
-                            <div
-                                v-for="member in group.members"
-                                class="phi-media member"
-                                :class="{selected: isSelected(member.id)}"
-                                @click="togglePerson(member.id)"
-                            >
-                                <div class="phi-media-figure phi-avatar">
-                                    <img :src="member.avatar" :alt="member.firstname">
-                                </div>
-                                <div class="phi-media-body">
-                                    {{member.firstname}} {{member.lastname}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="phi-media-body">
+                    {{person.firstName}} {{person.lastName}}
+                    <br>
+                    <span class="person-info">{{selectedPeople.length}} <span v-if="selectedPeople.length == 1">{{ $t("contact selected") }}</span><span v-else>{{ $t("contacts selected") }}</span></span>
                 </div>
+                <div class="phi-media-actions"><i class="fa fa-chevron-right"></i></div>
+            </div>
+        </div>
 
-            </v-expansion-panel-content>
-        </v-expansion-panel>
-
-
+        <phi-slider-pannel :open="groupsPannel" side="right" @closed="groupsPannel = false">
+            <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="groups" @closeMe="groupsPannel = false"></person-relevance-groups>
+        </phi-slider-pannel>
     </div>
 </template>
 
@@ -55,17 +29,23 @@ Componente:
 
 */
 
-import Vue from 'vue';
+import SliderPannel from '../../SliderPannel.vue';
+import RelevanceGroups from './Groups.vue';
 
 export default {
     name: "phi-person-relevance-picker",
 
+    components: {
+        "phi-slider-pannel": SliderPannel,
+        "person-relevance-groups": RelevanceGroups
+    },
+
 	model: {
 		prop:  'selectedPeople',
-		// event: 'selectedPeopleChange' // ?????
+		event: 'selectedPeopleChange'
 	},
 
-	props: {
+   props: {
 		selectedPeople: {
 			type: Array,
 			required: true,
@@ -84,43 +64,14 @@ export default {
 
     data() {
         return {
+            loadingContent: false,
             person: {},
             groups: [],
-            personIsExpanded: false
-        }
-    },
-
-    watch: {
-        personIsExpanded: function(val) {
-            if (val && this.groups.length == 0) {
-                this.fetchGroups()
-                    .then(() => {
-                        this.personIsExpanded = false;
-                        setTimeout(() => {
-                            this.personIsExpanded = true;
-                        }, 0);
-                    });
-            }
+            groupsPannel: false
         }
     },
 
     methods: {
-        isSelected(personId) {
-            return this.selectedPeople.indexOf(personId) >= 0;
-        },
-
-        addPerson(personId) {
-            this.selectedPeople.push(personId);
-        },
-
-        removePerson(personId) {
-            this.selectedPeople.splice(this.selectedPeople.indexOf(personId), 1);
-        },
-
-        togglePerson(personId) {
-            this.isSelected(personId) ? this.removePerson(personId) : this.addPerson(personId);
-        },
-
         fetchPerson() {
             this.api
                 .get(`people/${this.personId}`)
@@ -128,17 +79,26 @@ export default {
         },
 
         fetchGroups() {
-            return this.api
-                .get(`v3/people/${this.personId}/relevance/groups`)
-                .then(groups => this.groups = groups);
+            if(!this.loadingContent){
+                if(this.groups.length <= 0){
+                    this.loadingContent = true;
+                    this.api
+                        .get(`v3/people/${this.personId}/relevance/groups`)
+                        .then(groups => {
+                            this.groups = groups;
+                            this.groupsPannel = true;
+                            this.loadingContent = false;
+                        });
+                }else{
+                    this.groupsPannel = true;
+                    this.loadingContent = false;
+                }
+            }
         },
 
-        fetchGroupMembers(group) {
-            this.api
-                .get(`v3/people/${this.personId}/relevance/groups/${group.id}`)
-                .then(people => Vue.set(group, 'members', people));
+        closePeoplePannel(gropupId){
+            this.$set(this.peoplePannels, gropupId, false);
         }
-
     },
 
     mounted() {
@@ -148,15 +108,22 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
-.member.selected {
-    background-color: #ff8;
+<style scoped>
+.phi-avatar {
+	width: 20px !important;
+	height: 20px !important;
+	order: 1;
 }
 
-.group {
-    border: 1px dotted #999;
-    padding: 12px;
+.phi-media-body {
+	font-size: 1em;
+	align-self: center;
+	order: 2;
 }
 
+.phi-media-actions{
+    font-size: .9em;
+    text-align: center;
+    order: 3;
+}
 </style>
