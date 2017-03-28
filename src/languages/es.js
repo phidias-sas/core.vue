@@ -16,12 +16,15 @@ export default {
 	'Week': 'Semana',
 	'Agenda': 'Agenda',
 
-	'select': 'seleccionar',
 	'all': 'todos',
-	'read': 'leídos',
-	'unread': 'no leídos',
-	'none': 'ninguno',
 	'archive': 'archivar',
+	'discard': 'descartar',
+	'read': 'leídos',
 	'mark read': 'marcar leído',
-	'mark unread': 'marcar no leído'
+	'mark unread': 'marcar no leído',
+	'none': 'ninguno',
+	'select': 'seleccionar',
+	'send': 'enviar',
+	'to {n} people': 'para {n} personas',
+	'unread': 'no leídos'
 }

@@ -9,17 +9,22 @@ locale.set("es");
 import Fastclick from 'fastclick';
 Fastclick.attach(document.body);
 
+/* Muse-UI */
+// import MuseUI from 'muse-ui';
+// import 'muse-ui/dist/muse-ui.css';
+// import 'muse-ui/dist/theme-carbon.css'; // use carbon theme
+// Vue.use(MuseUI);
+
 import './store/filters.js';
 import app from './store/app.js';
 import router from './store/router.js';
-import store from './store/vuexStore.js';
 
 /* Initialize the app */
 app.on("load", () => {
 	new Vue({
 		el: '#app',
 		router,
-		store
+		// store
 	});
 });
 

@@ -14,6 +14,9 @@ import Hidden from '../states/Hidden.vue';
 
 import Dashboard from '../states/Dashboard.vue';
 
+import ThreadFeed from '../states/Thread/Feed.vue';
+import Thread from '../states/Thread/Thread.vue';
+
 import PostFeed from '../states/Post/Feed.vue';
 import PostArchive from '../states/Post/Archive.vue';
 
@@ -62,7 +65,7 @@ import CreditDetails from '../states/Billing/CreditDetails.vue';
 var router = new VueRouter({
     routes: [
         { path: '/santiago', component: Santiago },
-        
+
         { path: '/', redirect: '/dashboard' },
         { path: '/code', component: Code, name: 'code', meta: { isPublic: true, exitOnBack: true } },
         { path: '/login', component: Login, name: 'login', meta: { isPublic: true, exitOnBack: true } },
@@ -75,7 +78,11 @@ var router = new VueRouter({
 
                 { path: '/dashboard', component: Dashboard, meta: { order: 1, exitOnBack: true } },
 
-                { path: '/posts/feed', component: PostFeed, meta: { order: 2 }, name: 'feed' },
+                { path: '/threads/feed', component: ThreadFeed, meta: { order: 2 }, name: 'feed' },
+                { path: '/threads/feed/:threadId', component: Thread, meta: { order: 3 }, name: 'thread' },
+
+
+                //{ path: '/posts/feed', component: PostFeed, meta: { order: 2 }, name: 'feed' },
                 {
                     path: '/posts/feed/:postId', component: PostContainer, meta: { order: 13 },
                     children: [
@@ -85,6 +92,7 @@ var router = new VueRouter({
                         // { path: 'replies', component: PostReplies, meta: {order: 15}, name: 'post-replies' },
                     ]
                 },
+
 
                 { path: '/archive', component: PostArchive, meta: { order: 3, exitOnBack: true }, name: 'archive' },
 
