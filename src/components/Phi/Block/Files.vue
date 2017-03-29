@@ -1,9 +1,5 @@
 <template>
     <div class="phi-block-files">
-        <template v-if="action == 'edit' && fullUrl">
-            <dropzone :url="fullUrl" @success="success(arguments[0], arguments[1])"></dropzone>
-        </template>
-
         <a v-for="file in files" class="phi-media" :href="file.url" target="_blank" rel="noopener">
             <div class="phi-media-figure">
                 <img v-if="file.thumbnail" :src="file.thumbnail" :alt="file.title">
@@ -18,6 +14,16 @@
                 <span v-text="file.name"></span>
             </div>
         </a>
+
+        <template v-if="action == 'edit' && fullUrl">
+            <dropzone :url="fullUrl" @success="success(arguments[0], arguments[1])" class="dropzone">
+                <h1>Toca aqui para subir archivos</h1>
+                <!--
+				<p class="dz-message-idle">Arrastra archivos aquí o haz click</p>
+				<p class="dz-message-hover">Sueltalos aquí</p>
+                -->
+            </dropzone>
+        </template>
     </div>
 </template>
 
@@ -75,6 +81,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.dropzone {
+    border: 3px dotted #ccc;
+}
+
 .phi-block-files {
     .phi-media-figure {
         white-space: nowrap;

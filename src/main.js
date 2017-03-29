@@ -10,10 +10,12 @@ import Fastclick from 'fastclick';
 Fastclick.attach(document.body);
 
 /* Muse-UI */
-// import MuseUI from 'muse-ui';
-// import 'muse-ui/dist/muse-ui.css';
-// import 'muse-ui/dist/theme-carbon.css'; // use carbon theme
-// Vue.use(MuseUI);
+import MuseUI from 'muse-ui';
+
+// de-globalized CSS
+import '../static/muse/muse-ui.css';
+import '../static/muse/theme-carbon.css'; // use carbon theme
+Vue.use(MuseUI);
 
 import './store/filters.js';
 import app from './store/app.js';

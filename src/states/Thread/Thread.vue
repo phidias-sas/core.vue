@@ -56,9 +56,22 @@
 
                 </div>
 
-
                 <div class="post-contents">
                     <div class="post-description" v-text="post.description"></div>
+
+                    <div class="post-quotes" v-if="post.quotes">
+                        <div class="post quote phi-media" v-for="quote in post.quotes">
+                            <div class="phi-media-figure phi-avatar">
+                                <img :src="quote.author.avatar" alt="quote.author.firstName">
+                            </div>
+                            <div class="phi-media-body">
+                                <div class="post-author">{{quote.author.firstName}} {{quote.author.lastName}}</div>
+                                <div class="post-date">{{ moment.unix(quote.publishDate).calendar(null, {sameElse: 'MMM D h:mm a'}) }}</div>
+                                <div class="post-description">{{quote.description}}</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="post-blocks">
                         <phi-block
                             v-for="block in post.blocks"
@@ -365,6 +378,23 @@ export default {
 
 
 <style lang="scss" scoped>
+
+.post-quotes {
+    margin: 12px 6px;
+    font-size: 0.8em;
+    border-left: 2px solid dodgerblue;
+    background-color: #f6f6f6;
+
+    .phi-media-figure {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        max-width: 32px;
+        max-height: 32px;
+    }
+}
+
 .phi-page-cover {
     color: #fff;
 	background: #1C89B8 !important;

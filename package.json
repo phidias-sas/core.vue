@@ -44,6 +44,7 @@
     "json-loader": "^0.5.4",
     "localforage": "^1.4.3",
     "moment": "^2.17.0",
+    "muse-ui": "^2.0.0",
     "node-sass": "^3.13.0",
     "onsenui": "^2.0.4",
     "opn": "^4.0.2",

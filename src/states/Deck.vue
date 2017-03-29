@@ -19,7 +19,7 @@
 			swipe-target-width="64"
 			side="left"
 			width="314px"
-			collapse="portrait"
+			collapse="(max-width: 800px)"
 			swipeable
 			>
 
@@ -46,7 +46,7 @@
 			<div class="phi-menu main-options" @click="toggleMenu">
 				<router-link to="/dashboard">{{ $t("Inbox") }}</router-link>
 				<router-link to="/calendar">{{ $t("Calendar") }}</router-link>
-				<router-link to="/billing/debits" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
+				<router-link :to="'/billing/'+app.user.id" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
 				<router-link to="/archive">{{ $t("Archived") }}</router-link>
 				<!-- <router-link to="/map">Mapa</router-link> -->
 
@@ -76,7 +76,7 @@ var outgoingCover = null;
 export default {
 	name: "deck",
 	components: {PhiDrawer},
-	data () {
+	data() {
 		return {
 			app,
 			nodes: app.api.collection("nodes"),
@@ -87,7 +87,7 @@ export default {
 		}
 	},
 
-	mounted () {
+	mounted() {
 		app.api.allowed(`people/${app.user.id}/settings/modules/billing`)
 			.then(response => this.allowed.billing = response)
 	},
