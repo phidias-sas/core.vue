@@ -155,7 +155,6 @@ export default {
     top: 0;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 30px;
 }
 
 .slider-pannel.open{

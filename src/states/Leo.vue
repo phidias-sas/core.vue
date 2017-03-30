@@ -13,17 +13,23 @@
 			<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
 
 
+			<picker2
+				:api="app.api"
+				:person-id="app.user.id"
+				v-model="audience1"
+			>
+				<h1>Hola, soy picker2!</h1>
+			</picker2>
+
 
 			<button @click="tpl.isFlipped = !tpl.isFlipped">Alternar</button>
 
 			<div class="box" :class="{flipped: tpl.isFlipped}">
 				<div class="front">
 					<label>Cara 1</label>
-
 					<div class="group phi-card" v-for="group in groups" @click="openGroup(group)">
 						{{ group.name }}
 					</div>
-
 				</div>
 
 				<div class="back">
@@ -72,12 +78,12 @@
 				</phi-person-relevance-picker>
 
 				<div class="selected-people">
-					<div class="phi-media person" v-for="person in audience2">
+					<div class="phi-media person" v-for="person in audience1">
 						<div class="phi-media-figure phi-avatar">
 							<img :src="person.avatar" alt="person.firstname">
 						</div>
 						<h3 class="phi-media-body">{{ person.firstname }} {{ person.lastname }}</h3>
-						<div class="phi-media-right fa fa-times" @click="audience2.splice(audience2.indexOf(person), 1)"></div>
+						<div class="phi-media-right fa fa-times" @click="audience1.splice(audience1.indexOf(person), 1)"></div>
 					</div>
 				</div>
 			</div>
@@ -90,12 +96,14 @@
 <script>
 import app from '../store/app.js';
 import PhiPersonRelevancePicker from '../components/Phi/Person/Relevance/Picker.vue';
+import Picker2 from '../components/Phi/Person/Relevance/Picker2.vue';
 
 export default {
 	name: "leo-sandbox",
 
 	components: {
-		"phi-person-relevance-picker": PhiPersonRelevancePicker
+		Picker2,
+		PhiPersonRelevancePicker
 	},
 
 	data () {
