@@ -20,7 +20,7 @@
 				<div class="front">
 					<label>Cara 1</label>
 
-					<div class="group" v-for="group in groups" @click="openGroup(group)">
+					<div class="group phi-card" v-for="group in groups" @click="openGroup(group)">
 						{{ group.name }}
 					</div>
 
@@ -32,13 +32,11 @@
 
 					<div v-if="activeGroup">
 						<h1>{{ activeGroup.name }}</h1>
-						<pre>{{ activeGroup.people }}</pre>
+						<pre>{{ activeGroup.members }}</pre>
 					</div>
 					<div v-else>
 						<h1>No hay grupo</h1>
 					</div>
-
-
 				</div>
 			</div>
 
@@ -156,8 +154,14 @@ export default {
 
 	methods: {
 		openGroup(group) {
-			this.activeGroup = group;
-			this.tpl.isFlipped = true;
+
+			/* Dummy de accion asincrona.  Como hacer un fetch de datos  */
+			setTimeout(() => {
+				this.activeGroup = group;
+				this.$set(this.activeGroup, 'members', [1,2,3]);
+				this.tpl.isFlipped = true;
+			}, 200);
+
 		}
 	}
 }
@@ -167,7 +171,6 @@ export default {
 .box {
 	position: relative;
 
-	border: 1px solid red;
 	width: 300px;
 	height: 400px;
 	overflow: hidden;
@@ -184,26 +187,43 @@ export default {
 		overflow-y: auto;
 
 		transition: 0.5s;
+
+		padding: 4px;
 	}
 
 	.front {
 		border: 2px solid green;
+		transform: translateX(0);
 	}
 
 	.back {
 		border: 2px solid blue;
-		left: 100%;
+		transform: translateX(100%);
 	}
 
 
 	/* Caja "volteada" */
 	&.flipped {
 		.front {
-			left: -100%;
+			transform: translateX(-100%);
 		}
 		.back {
-			left: 0;
+			transform: translateX(0);
 		}
+	}
+
+
+	/* Estilos de prueba */
+	label {
+		display: block;
+		font-size: 12px;
+		font-weight: bold;
+		margin-bottom: 6px;
+	}
+
+	.phi-card {
+		padding: 6px;
+		margin-bottom: 6px;
 	}
 
 }
