@@ -16,9 +16,16 @@
                     </div>
                 </div>
             </slot>
+
+            <h1>HOLAAAA</h1>
+            <input type="text" v-model="query" />
+            <input type="number" v-model="searchOptions.threshold" />
+            <pre style="border: 2px solid red">{{resultados}}</pre>
+            <pre>{{groups}}</pre>
+
         </div>
         <phi-slider-pannel :open="groupsPannel" side="right" @closed="groupsPannel = false">
-            <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="groups" :openParent="groupsPannel" @closeMe="groupsPannel = false"></person-relevance-groups>
+            <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="resultados" :openParent="groupsPannel" @closeMe="groupsPannel = false"></person-relevance-groups>
         </phi-slider-pannel>
     </div>
 </template>
@@ -34,6 +41,7 @@ Componente:
 
 import SliderPannel from '../../SliderPannel.vue';
 import RelevanceGroups from './Groups.vue';
+import Fuse from 'fuse.js';
 
 export default {
     name: "phi-person-relevance-picker",
@@ -70,7 +78,37 @@ export default {
             loadingContent: false,
             person: {},
             groups: [],
-            groupsPannel: false
+            groupsPannel: false,
+
+            query: '',
+            searchOptions: {
+                shouldSort: true,
+                threshold: 0.25,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 2,
+                keys: [
+                    "name",
+                    "people.firstname",
+                    "people.lastname",
+                    "people.roles",
+                    "members.firstname",
+                    "members.lastname"
+                ]
+            },
+
+            fuse: null
+        }
+    },
+
+    computed: {
+        resultados() {
+            if (!this.fuse) {
+                return [];
+            }
+            console.log("recomputa");
+            return this.query.length ? this.fuse.search(this.query) : this.groups;
         }
     },
 
@@ -91,6 +129,8 @@ export default {
                             this.groups = groups;
                             this.groupsPannel = true;
                             this.loadingContent = false;
+
+                            this.fuse = new Fuse(this.groups, this.searchOptions);
                         });
                 }else{
                     this.groupsPannel = true;
