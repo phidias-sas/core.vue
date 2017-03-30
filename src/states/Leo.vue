@@ -12,6 +12,37 @@
 		<div class="phi-page-contents">
 			<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
 
+
+
+			<button @click="tpl.isFlipped = !tpl.isFlipped">Alternar</button>
+
+			<div class="box" :class="{flipped: tpl.isFlipped}">
+				<div class="front">
+					<label>Cara 1</label>
+
+					<div class="group" v-for="group in groups" @click="openGroup(group)">
+						{{ group.name }}
+					</div>
+
+				</div>
+
+				<div class="back">
+					<label>Cara 2</label>
+					<button @click="tpl.isFlipped = false">Regresar</button>
+
+					<div v-if="activeGroup">
+						<h1>{{ activeGroup.name }}</h1>
+						<pre>{{ activeGroup.people }}</pre>
+					</div>
+					<div v-else>
+						<h1>No hay grupo</h1>
+					</div>
+
+
+				</div>
+			</div>
+
+
 			<div style="max-width: 768px">
 				<phi-person-relevance-picker
 					:api="app.api"
@@ -75,15 +106,105 @@ export default {
 			audience1: [],
 			audience2: [],
 			isLoading: false,
+
+			tpl: {
+				isFlipped: false
+			},
+
+			activeGroup: null,
+
+			groups: [
+				{
+					"id": "r0",
+					"type": "relatives",
+					"name": "Relatives",
+					"people": []
+				},
+				{
+					"id": "e1",
+					"type": "employee group",
+					"name": "Desarrollo",
+					"people": []
+				},
+				{
+					"id": "e2",
+					"type": "employee group",
+					"name": "Comercial",
+					"people": []
+				},
+				{
+					"id": "e4",
+					"type": "employee group",
+					"name": "Administraci\u00f3n",
+					"people": []
+				},
+				{
+					"id": "e5",
+					"type": "employee group",
+					"name": "Consultores Phidias",
+					"people": []
+				},
+				{
+					"id": "e6",
+					"type": "employee group",
+					"name": "PhiPages",
+					"people": []
+				}
+			]
 		}
 	},
 
 	methods: {
-
+		openGroup(group) {
+			this.activeGroup = group;
+			this.tpl.isFlipped = true;
+		}
 	}
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.box {
+	position: relative;
 
+	border: 1px solid red;
+	width: 300px;
+	height: 400px;
+	overflow: hidden;
+	overflow-y: auto;
+
+	.front,
+	.back {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
+		overflow-y: auto;
+
+		transition: 0.5s;
+	}
+
+	.front {
+		border: 2px solid green;
+	}
+
+	.back {
+		border: 2px solid blue;
+		left: 100%;
+	}
+
+
+	/* Caja "volteada" */
+	&.flipped {
+		.front {
+			left: -100%;
+		}
+		.back {
+			left: 0;
+		}
+	}
+
+}
 </style>
