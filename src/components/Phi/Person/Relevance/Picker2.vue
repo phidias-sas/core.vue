@@ -51,19 +51,27 @@
                     <div v-if="activeGroup">
 
                         <div class="toolbar phi-media">
-                            <i class="phi-media-figure fa fa-chevron-left" @click="template.boxIsFlipped = false"></i>
-                            <div class="phi-media-body">{{ activeGroup.name }}</div>
+                            <i class="phi-media-figure fa fa-chevron-left" @click="closeGroup()"></i>
+                            <div class="phi-media-body">
+                                <div>{{ activeGroup.name }}</div>
+                                <input type="text" v-model="activeQuery" />
+                            </div>
                             <div class="phi-media-right">{{ selection.length }}</div>
                         </div>
 
                         <!-- seleccion de roles -->
                         <label>Marcar:</label>
                         <div @click="activeGroup.members.forEach(deselectPerson)">Ninguno</div>
-                        <div v-for="role in distinctRoles(activeGroup)" @click="selectWithRole(activeGroup.members, role)">{{ role }}</div>
+                        <div @click="activeGroup.members.forEach(selectPerson)">Todos</div>
+
+                        <div v-for="role in distinctRoles(activeGroup)" @click="toggleWithRole(activeGroup.members, role)">
+                            <span>{{ role }}</span>
+                            <i class="fa fa-check" v-if="roleIsSelected(activeGroup.members, role)"></i>
+                        </div>
 
                         <!-- listado de personas en el grupo activo -->
                         <div
-                            v-for="person in activeGroup.members"
+                            v-for="person in activeMembers"
                             class="person phi-media"
                             @click="togglePerson(person)"
                             :class="{ selected: isSelected(person) }"
@@ -120,8 +128,16 @@ export default {
     data() {
         return {
             groups: [],
-            query: '',
             activeGroup: null,
+            query: '',
+            activeQuery: '',
+
+            activeFuse: null,
+            activeFuseKeys: [
+                "firstname",
+                "lastname",
+                "roles"
+            ],
 
             fuse: null,
             searchOptions: {
@@ -152,12 +168,20 @@ export default {
                 return [];
             }
             return this.query.length ? this.fuse.search(this.query) : this.groups;
+        },
+
+        activeMembers() {
+            if (!this.activeGroup) {
+                return [];
+            }
+
+            return this.activeQuery.length ? this.activeFuse.search(this.activeQuery) : this.activeGroup.members;
         }
     },
 
     methods: {
         isSelected(person) {
-            return this.selection.indexOf(person) >= 0;
+            return this.selection.some(selectedPerson => selectedPerson.id == person.id);
         },
 
         togglePerson(person) {
@@ -165,11 +189,20 @@ export default {
         },
 
         selectPerson(person) {
+            if (this.isSelected(person)) {
+                return;
+            }
+
             this.selection.push(person);
         },
 
         deselectPerson(person) {
-            this.selection.splice(this.selection.indexOf(person), 1);
+            for (var i = 0; i < this.selection.length; i++) {
+                if (this.selection[i].id == person.id) {
+                    this.selection.splice(i, 1);
+                    return;
+                }
+            }
         },
 
         fetchGroups() {
@@ -182,18 +215,31 @@ export default {
         },
 
         openGroup(group) {
+            var promise = null;
             if (!group.hasOwnProperty('members')) {
-                this.api
+                promise = this.api
                     .get(`v3/people/${this.personId}/relevance/groups/${group.id}`)
-                    .then(members => this.$set(group, "members", members))
-                    .then(() => {
-                        this.activeGroup = group;
-                        this.template.boxIsFlipped = true;
-                    });
+                    .then(members => this.$set(group, "members", members));
             } else {
+                promise = new Promise((resolve, reject) => resolve());
+            }
+
+            promise.then(() => {
                 this.activeGroup = group;
                 this.template.boxIsFlipped = true;
-            }
+
+                var searchOptions  = Object.assign({}, this.searchOptions);
+                searchOptions.keys = this.activeFuseKeys;
+                this.activeFuse    = new Fuse(this.activeGroup.members, searchOptions);
+
+                this.query = '';
+            });
+        },
+
+        closeGroup() {
+            this.template.boxIsFlipped = false;
+            this.activeGroup      = null;
+            this.activeQuery      = '';
         },
 
         distinctRoles(group) {
@@ -213,12 +259,28 @@ export default {
             return retval;
         },
 
+        roleIsSelected(people, role) {
+            return people.filter(person => person.roles.indexOf(role) >= 0).every(this.isSelected);
+        },
+
         selectWithRole(people, role) {
             people.forEach(person => {
                 if (person.roles.indexOf(role) >= 0) {
                     this.selectPerson(person);
                 }
             });
+        },
+
+        deselectWithRole(people, role) {
+            people.forEach(person => {
+                if (person.roles.indexOf(role) >= 0) {
+                    this.deselectPerson(person);
+                }
+            });
+        },
+
+        toggleWithRole(people, role) {
+            this.roleIsSelected(people, role) ? this.deselectWithRole(people, role) : this.selectWithRole(people, role);
         },
 
         togglePicker() {
