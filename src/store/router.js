@@ -96,7 +96,7 @@ var router = new VueRouter({
 
                 { path: '/archive', component: PostArchive, meta: { order: 3, exitOnBack: true }, name: 'archive' },
 
-                { path: '/billing/:personId', component: Billing, name: 'billing'},
+                { path: '/billing/:personId', component: Billing, name: 'billing', meta: {order: 1}},
 
                 { path: '/people', component: People, meta: { order: 10 }, name: 'people' },
                 { path: '/person/:personId', component: Person, meta: { order: 11 }, name: 'person' },
@@ -128,11 +128,11 @@ var router = new VueRouter({
 
                 // billing (sebastian)
                 { path: '/billing/debits', component: BillingDebits},
-                { path: '/billing/debits/:debitId', component: BillingDetails, name: 'billing-debit-debitId'},
+                { path: '/billing/debits/:debitId', component: BillingDetails, name: 'billing-debit-debitId', meta: {order: 2} },
 
                 // billing (esteban)
                 { path: '/billing/credits', component: Credits },
-                { path: '/billing/credits/:creditId', component: CreditDetails, name: 'billing-credit-creditId' },
+                { path: '/billing/credits/:creditId', component: CreditDetails, name: 'billing-credit-creditId', meta: {order: 2} },
 
             ]
         },

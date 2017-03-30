@@ -8,12 +8,12 @@
 		</div>
 
 		<!-- Loading -->
-		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
+		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
 
+		<div class="phi-page-contents">
 
-		<!-- pendings -->
-		<div class="phi-page-contents" v-if="!isLoading">
-			<section>
+			<!-- pendings -->
+			<section v-if="pendings.length">
 				<h2>Cobros pendientes</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -33,13 +33,9 @@
 					</ul>
 				</div>
 			</section>
-		</div>
 
-		<br><br>
-
-		<!-- pagos recientes -->
-		<div class="phi-page-contents" v-if="!isLoading">
-			<section>
+			<!-- pagos recientes -->
+			<section v-if="recent.length">
 				<h2>Pagos recientes</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -58,13 +54,9 @@
 					</ul>
 				</div>
 			</section>
-		</div>
 
-		<br><br>
-
-		<!-- pagos por aplicar -->
-		<div class="phi-page-contents" v-if="!isLoading">
-			<section>
+			<!-- pagos por aplicar -->
+			<section v-if="unapplied.length">
 				<h2>Pagos por aplicar</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -83,7 +75,10 @@
 					</ul>
 				</div>
 			</section>
+
+
 		</div>
+
 
 	</div>
 </template>
@@ -94,10 +89,10 @@ import app from '../../store/app.js';
 export default{
 	data() {
 		return {
+			app,
 			recent: 	[],
 			unapplied: 	[],
 			pendings:  	[],
-			isLoading:  true,
 			personId: 	this.$route.params.personId,
 		}
 	},
@@ -106,8 +101,7 @@ export default{
 		// pendings
 		app.api.get(`v3/people/${this.personId}/billing/debits/pending`)
 		.then(data => {
-			this.pendings  = data;
-			this.isLoading = !data;
+			this.pendings = data;
 		});
 
 		// recent
@@ -127,66 +121,68 @@ export default{
 
 <style lang="scss" scoped>
 
-#state-billing{
-	section {
-		h2 {
-			color: #666;
-			font-size: 0.8em;
-			font-weight: 1em;
-			margin-bottom: 0.5em;
-			text-transform: uppercase;
-		}
-		.list {
-			border: 0;
-			list-style: none;
+section {
+	margin-bottom: 24px;
+}
 
-			li {
-				border-bottom: 1px dashed #ccc;
+section {
+	h2 {
+		color: #666;
+		font-size: 0.8em;
+		font-weight: 1em;
+		margin-bottom: 0.5em;
+		text-transform: uppercase;
+	}
+	.list {
+		border: 0;
+		list-style: none;
 
-				a {
-					padding: 8px;
-					display: flex;
-					flex-wrap: wrap;
-					flex-direction: row;
-					transition: all 0.2s ease;
-					
-					.col {
-						flex-grow: 1;
-						.dato {
-							color: #666;
-							margin: 5px;
-							font-size: 13px;
-							margin-left: 15px;
-						}
-						.interest {
-							color:red;
-							font-size: 11px;
-							background: #f2f2f2;
-						}
-						.fa-clock-o {
-							color: #3F51B5;
-						}
-						.fa-user-o {
-							color: #009688;
-						}
+		li {
+			border-bottom: 1px dashed #ccc;
+
+			a {
+				padding: 8px;
+				display: flex;
+				flex-wrap: wrap;
+				flex-direction: row;
+				transition: all 0.2s ease;
+
+				.col {
+					flex-grow: 1;
+					.dato {
+						color: #666;
+						margin: 5px;
+						font-size: 13px;
+						margin-left: 15px;
 					}
-
-					.balance {
-						color: green;
+					.interest {
+						color:red;
+						font-size: 11px;
+						background: #f2f2f2;
+					}
+					.fa-clock-o {
+						color: #3F51B5;
+					}
+					.fa-user-o {
+						color: #009688;
 					}
 				}
-			}
 
-			li:nth-last-child(1) {
-				border-bottom: none;
+				.balance {
+					color: green;
+				}
 			}
-			li:hover {
-				background: #F5F5F5;
-			}
+		}
 
+		li:nth-last-child(1) {
+			border-bottom: none;
+		}
+		li:hover {
+			background: #F5F5F5;
 		}
 
 	}
+
 }
 
 </style>
