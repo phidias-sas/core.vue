@@ -1,21 +1,24 @@
 <template>
     <div class="phi-person-relevance-picker">
-        <div>
-            <div class="person phi-media" @click="fetchGroups()">
-                <div class="phi-media-figure phi-avatar">
-                    <img :src="person.avatar" :alt="person.firstName">
+        <div @click="fetchGroups()">
+            <slot>
+                <div>
+                    <div class="person phi-media">
+                        <div class="phi-media-figure phi-avatar">
+                            <img :src="person.avatar" :alt="person.firstName">
+                        </div>
+                        <div class="phi-media-body">
+                            {{person.firstName}} {{person.lastName}}
+                            <br>
+                            <span class="person-info">{{selectedPeople.length}} <span v-if="selectedPeople.length == 1">{{ $t("contact selected") }}</span><span v-else>{{ $t("contacts selected") }}</span></span>
+                        </div>
+                        <div class="phi-media-actions"><i class="fa fa-chevron-right"></i></div>
+                    </div>
                 </div>
-                <div class="phi-media-body">
-                    {{person.firstName}} {{person.lastName}}
-                    <br>
-                    <span class="person-info">{{selectedPeople.length}} <span v-if="selectedPeople.length == 1">{{ $t("contact selected") }}</span><span v-else>{{ $t("contacts selected") }}</span></span>
-                </div>
-                <div class="phi-media-actions"><i class="fa fa-chevron-right"></i></div>
-            </div>
+            </slot>
         </div>
-
         <phi-slider-pannel :open="groupsPannel" side="right" @closed="groupsPannel = false">
-            <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="groups" @closeMe="groupsPannel = false"></person-relevance-groups>
+            <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="groups" :openParent="groupsPannel" @closeMe="groupsPannel = false"></person-relevance-groups>
         </phi-slider-pannel>
     </div>
 </template>

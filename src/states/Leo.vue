@@ -18,6 +18,20 @@
 					v-model="audience1"
 					person-id="1405"
 				>
+					 <!-- sample slot content -->
+					 <div>
+						<div class="person phi-media">
+							<div class="phi-media-figure phi-avatar">
+								<img src="http://www.extramedia1.com/wp-content/uploads/2016/05/02.jpg" alt="Jon">
+							</div>
+							<div class="phi-media-body">
+								Jon Snow
+								<br>
+								<span class="person-info">knows nothing ({{audience1.length}})</span>
+							</div>
+							<div class="phi-media-actions"><i class="fa fa-snowflake-o"></i></div>
+						</div>
+					</div>
 				</phi-person-relevance-picker>
 
 				<phi-person-relevance-picker
@@ -25,6 +39,7 @@
 					v-model="audience2"
 					person-id="627"
 				>
+					<!-- if no content, then fallback to default block -->
 				</phi-person-relevance-picker>
 
 				<div class="selected-people">
