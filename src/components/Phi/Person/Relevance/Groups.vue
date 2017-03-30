@@ -2,7 +2,7 @@
     <div class="person-relevance-groups">
         <div class="list-container">
             <div class="groups-container">
-                <div class="phi-page-toolbar">
+                <div class="groups-toolbar">
                     <button class="phi-button" @click="closeGroupPannel">
                         <i class="fa fa-chevron-left"></i>
                     </button>
@@ -90,7 +90,7 @@
             </div>
 
             <div class="people-container">
-                <div class="phi-page-toolbar">
+                <div class="groups-toolbar">
                     <button class="phi-button" @click="closePersonPannel">
                         <i class="fa fa-chevron-left"></i>
                     </button>
@@ -578,7 +578,7 @@ export default {
     left: 100%;
 }
 
-.phi-page-toolbar h1{
+.groups-toolbar h1{
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -664,7 +664,7 @@ section h2 {
     font-weight: 600;
 }
 
-.phi-page-toolbar h1{
+.groups-toolbar h1{
     font-size: 1em;
 }
 

@@ -151,7 +151,7 @@ export default {
 .slider-pannel {
 	height: 100vh;
     position: fixed;
-    z-index: 1;
+    z-index: 9;
     top: 0;
     overflow-x: hidden;
     transition: 0.5s;

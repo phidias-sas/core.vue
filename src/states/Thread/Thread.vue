@@ -92,11 +92,13 @@
 
             <div class="reply post expanded" v-show="tpl.replyIsOpen">
 
+                <label>Para:</label>
 				<phi-person-relevance-picker
 					:api="app.api"
 					:person-id="app.user.id"
 					v-model="audience"
 				>
+                    <i class="fa fa-plus"></i>
 				</phi-person-relevance-picker>
 
                 <div class="post-contents">

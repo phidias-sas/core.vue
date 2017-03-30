@@ -1,6 +1,7 @@
 <template>
     <div class="phi-person-relevance-picker">
         <div @click="fetchGroups()">
+            <input type="text" v-model="query" />
             <slot>
                 <div>
                     <div class="person phi-media">
@@ -16,13 +17,6 @@
                     </div>
                 </div>
             </slot>
-
-            <h1>HOLAAAA</h1>
-            <input type="text" v-model="query" />
-            <input type="number" v-model="searchOptions.threshold" />
-            <pre style="border: 2px solid red">{{resultados}}</pre>
-            <pre>{{groups}}</pre>
-
         </div>
         <phi-slider-pannel :open="groupsPannel" side="right" @closed="groupsPannel = false">
             <person-relevance-groups v-model="selectedPeople" :api="api" :person="person" :groups="resultados" :openParent="groupsPannel" @closeMe="groupsPannel = false"></person-relevance-groups>
@@ -83,7 +77,7 @@ export default {
             query: '',
             searchOptions: {
                 shouldSort: true,
-                threshold: 0.25,
+                threshold: 0.4,
                 location: 0,
                 distance: 100,
                 maxPatternLength: 32,
