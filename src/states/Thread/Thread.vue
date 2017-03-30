@@ -92,24 +92,31 @@
 
             <div class="reply post expanded" v-show="tpl.replyIsOpen">
 
-                <label>Para:</label>
-				<phi-person-relevance-picker
-					:api="app.api"
-					:person-id="app.user.id"
-					v-model="audience"
-				>
-                    <i class="fa fa-plus"></i>
-				</phi-person-relevance-picker>
-
                 <div class="post-contents">
+
+                    <!-- lista de destinatarios -->
+                    <label>Para:</label>
                     <div class="post-audience-people">
-                        <div class="phi-chip phi-media" v-for="person in audience">
+                        <div class="phi-chip phi-media" v-for="person in sanitizeAudience(audience)">
                             <div class="phi-media-figure phi-avatar">
                                 <img :src="person.avatar" alt="person.firstName">
                             </div>
-                            <div class="phi-media-body">{{person.firstname}} {{person.lastname}}</div>
+                            <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
                             <i class="phi-media-right fa fa-times" @click="audience.splice(audience.indexOf(person), 1)"></i>
                         </div>
+
+                        <phi-person-relevance-picker
+                            :api="app.api"
+                            :person-id="app.user.id"
+                            v-model="audience"
+                        >
+                            <div class="phi-chip phi-media adder">
+                                <div class="phi-media-figure">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+                                <div class="phi-media-body">agregar</div>
+                            </div>
+                        </phi-person-relevance-picker>
                     </div>
 
                     <textarea v-model="reply.description" placeholder="Escribe aqui tu respuesta" @input="saveReply"></textarea>
@@ -159,7 +166,7 @@ import moment from 'moment';
 
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
-import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker.vue';
+import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker2.vue';
 
 
 Vue.component('post-trail', {
@@ -196,12 +203,12 @@ export default {
             app,
             moment,
             posts: app.api.collection(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`),
-            audience: [],
 
             reply: {
                 replyTo: null,
                 description: null
             },
+            audience: [],
             replyTimer: null,
 
             tpl: {
@@ -259,7 +266,10 @@ export default {
             alert("author!");
         },
 
-        openReply(post) {
+        openReply(post, toAll) {
+
+            this.audience = [post.author];
+
             // Fetch a fresh draft
             app.api
                 .get(`/people/${app.user.id}/posts/drafts`, {
@@ -269,7 +279,14 @@ export default {
                 })
                 .then(drafts => {
                     this.reply = drafts[0];
-
+                })
+                .then(() => {
+                    if (toAll) {
+                        return this.fetchAudience(post)
+                            .then(people => this.audience = this.audience.concat(people));
+                    }
+                })
+                .then(() => {
                     setTimeout(() => {
                         this.tpl.replyIsOpen = true;
                         this.$el.querySelector('textarea').focus();
@@ -319,11 +336,11 @@ export default {
         sendReply() {
             this.reply.audience = {
                 to: {
-                    people: this.audience.map(person => person.id)
+                    people: this.audience.map(person => String(person.id))
                 }
             };
 
-            this.reply.audience.to.people.push(this.replyTo.author.id);
+            this.reply.audience.to.people.push(String(this.replyTo.author.id));
 
             app.api
                 .post(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`, this.reply)
@@ -339,6 +356,19 @@ export default {
                     }
                     this.tpl.replyIsOpen = false;
                 });
+        },
+
+        sanitizeAudience(people) {
+            return people.map(person => {
+
+                console.log("sanitizing", person);
+
+                if (typeof person.firstname != 'undefined') {
+                    this.$set(person, 'firstName', person.firstname);
+                    this.$set(person, 'lastName', person.lastname);
+                }
+                return person;
+            });
         },
 
         scrollToBottom(delay) {

@@ -8,7 +8,7 @@
 		</div>
 
 		<!-- Loading is true -->
-		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
 
 
 		<!-- Loadingset is false -->

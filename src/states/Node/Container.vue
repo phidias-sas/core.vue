@@ -1,6 +1,6 @@
 <template>
 	<div class="phi-page">
-		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 		<div class="phi-page-cover" :style="{'background-image': `url(${coverImage})`}">
 			<div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
@@ -124,13 +124,6 @@ export default {
 
 .phi-page-toolbar {
 	color: #fff;
-}
-
-ons-progress-bar {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
 }
 
 .phi-page-navigation {

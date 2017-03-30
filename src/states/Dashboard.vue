@@ -6,7 +6,7 @@
 				<h1>{{ $t("Inbox") }}</h1>
 			</div>
 		</div>
-		<ons-progress-bar indeterminate v-show="isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
 		<div class="phi-page-contents">
 			<section v-if="!!billboard">
 				<div class="billboard phi-card _z-0">

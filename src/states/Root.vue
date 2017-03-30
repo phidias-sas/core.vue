@@ -1,6 +1,6 @@
 <template>
 	<div class="phi-page">
-		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 		<div class="phi-page-toolbar">
 			<h1>Administración</h1>
 		</div>

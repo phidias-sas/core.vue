@@ -40,7 +40,7 @@
 			</div>
 		</div>
 
-		<ons-progress-bar indeterminate v-show="feed.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="feed.isLoading" />
 
 		<div class="phi-page-contents">
 
@@ -106,7 +106,8 @@ export default {
 
 	methods: {
 		isUnread(post) {
-			return post.thread.nUnread > 0;
+			// return post.thread.nUnread > 0;
+			return !post.stub.readDate;
 		},
 
 		select(query) {
@@ -135,6 +136,29 @@ export default {
 					break;
 				}
 			});
+		},
+
+		move(target) {
+			var selection = this.feed.tagged("selected");
+			if (!selection.length) {
+				return;
+			}
+
+			var threadIds = selection.map(post => post.thread.thread);
+
+			app.api
+				.post(`/people/${app.user.id}/threads/` + target, threadIds)
+				.then(() => {
+					if (target != "read" && target != "unread") {
+						this.feed.hide(selection);
+					} else {
+						this.feed.untag(selection, "selected");
+						selection.forEach(post => {
+							post.stub.readDate = target == "unread" ? null : 111;
+						});
+					}
+				});
+
 		}
 	},
 
@@ -152,7 +176,7 @@ export default {
 					scrollValue = page.scrollTop;
 				}
 			});
-		});		
+		});
 	}
 }
 
@@ -248,7 +272,9 @@ export default {
 
 		.post-title {
 
-			/* Unread indicator - but green dot */
+			font-weight: bold;
+
+			/* Unread indicator - green dot */
 			&::before {
 				display: inline-block;
 				content: "";

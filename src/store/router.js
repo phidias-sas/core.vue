@@ -48,7 +48,6 @@ import Person from '../states/Person.vue';
 import Test from '../states/Test.vue';
 
 import Santiago from '../states/Santiago.vue';
-import Sanchez from '../states/Sanchez.vue';
 import Leo from '../states/Leo.vue';
 import Sebas from '../states/Sebas.vue';
 import Felipe from '../states/Felipe.vue';
@@ -121,7 +120,6 @@ var router = new VueRouter({
                 { path: '/nodes/:nodeId/posts/compose/:postId', component: NodeCompose, meta: { order: 20 }, name: 'node-compose' },
 
                 { path: '/test', component: Test },
-                { path: '/sanchez', component: Sanchez },
                 { path: '/sebas', component: Sebas, name: 'Sebas' },
                 { path: '/felipe', component: Felipe },
                 { path: '/leo', component: Leo },

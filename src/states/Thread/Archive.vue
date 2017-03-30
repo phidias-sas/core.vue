@@ -30,7 +30,7 @@
 			</div>
 		</div>
 
-		<ons-progress-bar indeterminate v-show="folder.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="folder.isLoading" />
 
 		<div class="phi-page-contents">
 			<div class="empty" v-show="folder.isEmpty">

@@ -9,7 +9,7 @@
 			</div>
 		</div>
 
-		<ons-progress-bar indeterminate v-show="app.api.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 
 		<div class="phi-page-contents" v-if="app.user">
 
@@ -42,19 +42,13 @@
 								{{destination.transport == 'gcm' ? 'Aplicación móvil' : 'E-mail'}}
 							</div>
 							<div class="phi-media-right">
-								<ons-switch
-									:checked="destination.isEnabled == '1'"
-									@change="toggleDestination(destination)">
-								</ons-switch>
+								<mu-switch :value="destination.isEnabled == '1'" @change="toggleDestination(destination)"  />
 							</div>
 						</div>
 						<phi-drawer :open="destination.drawerIsOpen">
 							<div v-for="preference in destination.preferences" class="phi-media" >
 								<div class="phi-media-body">{{preference.type}}</div>
-								<ons-switch class="phi-media-right"
-									:checked="preference.isEnabled == '1'"
-									@change="togglePreference(preference, destination)">
-								</ons-switch>
+								<mu-switch class="phi-media-right" :value="preference.isEnabled == '1'" @change="togglePreference(preference, destination)"  />
 							</div>
 						</phi-drawer>
 					</div>

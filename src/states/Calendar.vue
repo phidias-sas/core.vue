@@ -9,7 +9,7 @@
             </div>            
         </div>
 	
-		<ons-progress-bar v-show="isLoading" indeterminate ></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
         
 		<div class="phi-page-contents">
 			<div class="views-list-menu" v-show="displayViewsMenu">

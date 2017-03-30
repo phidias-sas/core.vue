@@ -40,7 +40,7 @@
 			</div>
 		</div>
 
-		<ons-progress-bar indeterminate v-show="feed.isLoading"></ons-progress-bar>
+		<mu-linear-progress color="#1c89b8" v-show="feed.isLoading" />
 
 		<div class="phi-page-contents">
 			<div class="empty" v-show="feed.isEmpty">
