@@ -407,7 +407,6 @@ export default {
 
 
 <style lang="scss" scoped>
-
 .post-quotes {
     margin: 12px 6px;
     font-size: 0.8em;

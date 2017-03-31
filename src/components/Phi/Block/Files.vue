@@ -1,17 +1,23 @@
 <template>
     <div class="phi-block-files">
-        <a v-for="file in files" class="phi-media" :href="file.url" target="_blank" rel="noopener">
-            <div class="phi-media-figure">
+
+        <a v-for="file in files" class="phi-card file" :href="file.url" target="_blank" rel="noopener" :title="file.title">
+            <div class="preview">
                 <img v-if="file.thumbnail" :src="file.thumbnail" :alt="file.title">
                 <audio v-if="file.mimetype == 'audio/x-m4a'" controls preload="none">
                     <source :src="file.url" type="audio/mp4" />
-                    <!--<p>Your browser does not support HTML5 audio.</p>-->
                 </audio>
+            </div>
+
+            <div class="description">
+                <h1 v-text="file.title"></h1>
                 <p>{{ file.size | bytes}}</p>
             </div>
-            <div class="phi-media-body">
-                <h1 v-text="file.title"></h1>
-                <span v-text="file.name"></span>
+
+            <div class="actions" v-if="action == 'edit'">
+                <a @click.prevent="remove(file)">
+                    <i class="fa fa-trash"></i>
+                </a>
             </div>
         </a>
 
@@ -46,7 +52,7 @@ export default {
         }
     },
 
-    data () {
+    data() {
         return {
 			files:   [],
 			fullUrl: null
@@ -56,17 +62,25 @@ export default {
     methods: {
 
 		/* The response from the API is an array of uploaded files */
-		success (file, response) {
+		success(file, response) {
 			this.files = response.concat(this.files);
 		},
 
-        reload () {
+        reload() {
 			app.api.get(this.block.url)
 				.then(files => this.files = files);
+        },
+
+        remove(file) {
+            this.files.splice(this.files.indexOf(file), 1);
+            app.api.delete(file.endpoint + "/" + file.path)
+                .then(() => {
+                    this.$emit("change");
+                });
         }
     },
 
-    created () {
+    created() {
         if (!this.block.url) {
             var random     = Math.floor((Math.random() * 100000) + 1);
             this.block.url = `posts/${this.post.id}/resources/files/block-` + random;
@@ -81,11 +95,55 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.dropzone {
-    border: 3px dotted #ccc;
-}
+
 
 .phi-block-files {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    .file {
+        background-color: #f6f6f6;
+        margin: 0 1em 1em 0;
+        padding: 8px;
+
+        .preview {
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            margin: auto;
+
+            & > * {
+                width: 100%;
+            }
+        }
+
+        .description {
+            margin-top: 12px;
+
+            h1 {
+                font-size: 1em;
+                max-width: 120px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            p {
+                font-size: 12px;
+                color: #666;
+            }
+        }
+
+        .actions {
+            color: #777;
+            margin-top: 6px;
+            text-align: right;
+            padding: 3px 6px;
+        }
+
+    }
+
     .phi-media-figure {
         white-space: nowrap;
         width: 80px;
@@ -98,5 +156,11 @@ export default {
             font-weight: 300;
         }
     }
+
+    .dropzone {
+        border: 3px dotted #ccc;
+        width: 100%;
+    }
+
 }
 </style>
