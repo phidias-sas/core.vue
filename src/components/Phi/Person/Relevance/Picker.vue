@@ -96,8 +96,8 @@
                             <div class="phi-media-right phi-tooltip">
                                 <button class="phi-button"> <i class="fa fa-ellipsis-v"></i></button>
                                 <ul class="phi-menu _texture-paper">
-                                    <li @click="activeGroup.members.forEach(selectPerson)">{{ $t("everyone")}}</li>
-                                    <li @click="activeGroup.members.forEach(deselectPerson)">{{ $t("noone")}}</li>
+                                    <li @click="activeGroup.members.forEach(selectPerson); getRelatives(activeGroup.members).forEach(selectPerson);">{{ $t("everyone")}}</li>
+                                    <li @click="activeGroup.members.forEach(deselectPerson); getRelatives(activeGroup.members).forEach(deselectPerson);">{{ $t("noone")}}</li>
                                     <li v-for="role in distinctRoles(activeGroup)" @click="toggleWithRole(activeGroup.members, role)" :class="{checked: roleIsSelected(activeGroup.members, role)}">
                                         {{ role }}
                                     </li>
@@ -322,19 +322,52 @@ export default {
                         retval.push(role);
                     }
                 });
+
+                if (member.hasOwnProperty('relatives')) {
+                    member.relatives.forEach(relative => {
+                        relative.roles.forEach(relativeRole => {
+                            if (retval.indexOf(relativeRole) == -1) {
+                                retval.push(relativeRole);
+                            }
+                        });
+                    });
+                }
             });
 
             return retval;
         },
 
+        getRelatives(people){
+            let relatives = [];
+            people.forEach( person => {
+                if (person.hasOwnProperty('relatives')) {
+                    relatives = relatives.concat(person.relatives);
+                }
+            });
+            return relatives;
+        },
+
         roleIsSelected(people, role) {
-            return people.filter(person => person.roles.indexOf(role) >= 0).every(this.isSelected);
+            return people
+                .filter(person => person.roles.indexOf(role) >= 0)
+                .concat(this.getRelatives(people)
+                    .filter(relative => relative.roles.indexOf(role) >= 0)
+                )
+                .every(this.isSelected);
         },
 
         selectWithRole(people, role) {
             people.forEach(person => {
                 if (person.roles.indexOf(role) >= 0) {
                     this.selectPerson(person);
+                }
+                
+                if (person.hasOwnProperty('relatives')) {
+                    person.relatives.forEach(relative => {
+                        if (relative.roles.indexOf(role) >= 0) {
+                            this.selectPerson(relative);
+                        }
+                    });
                 }
             });
         },
@@ -343,6 +376,14 @@ export default {
             people.forEach(person => {
                 if (person.roles.indexOf(role) >= 0) {
                     this.deselectPerson(person);
+                }
+
+                if (person.hasOwnProperty('relatives')) {
+                    person.relatives.forEach(relative => {
+                        if (relative.roles.indexOf(role) >= 0) {
+                            this.deselectPerson(relative);
+                        }
+                    });
                 }
             });
         },
@@ -512,10 +553,10 @@ input.search-field{
 
 .phi-menu li{
     text-align: left;
+}
 
-    .checked{
-        border-left: 4px solid #1C89B8;
-        background-color: #f7fcfe;
-    }
+.phi-menu li.checked{
+    border-left: 4px solid #1C89B8;
+    background-color: #f7fcfe;
 }
 </style>
