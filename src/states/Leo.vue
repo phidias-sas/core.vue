@@ -15,42 +15,12 @@
 			<div style="max-width: 768px">
 
 
-				<picker2
+				<phi-person-relevance-picker
 					:api="app.api"
 					:person-id="app.user.id"
 					v-model="audience1"
 				>
-					<h1>Hola, soy picker2!</h1>
-				</picker2>
-
-
-				<phi-person-relevance-picker
-					:api="app.api"
-					v-model="audience1"
-					person-id="1405"
-				>
-					 <!-- sample slot content -->
-					 <div>
-						<div class="person phi-media">
-							<div class="phi-media-figure phi-avatar">
-								<img src="http://www.extramedia1.com/wp-content/uploads/2016/05/02.jpg" alt="Jon">
-							</div>
-							<div class="phi-media-body">
-								Jon Snow
-								<br>
-								<span class="person-info">knows nothing ({{audience1.length}})</span>
-							</div>
-							<div class="phi-media-actions"><i class="fa fa-snowflake-o"></i></div>
-						</div>
-					</div>
-				</phi-person-relevance-picker>
-
-				<phi-person-relevance-picker
-					:api="app.api"
-					v-model="audience2"
-					person-id="627"
-				>
-					<!-- if no content, then fallback to default block -->
+					<h1>Nuevo picker ({{audience1.length}})</h1>
 				</phi-person-relevance-picker>
 
 				<div class="selected-people">
@@ -71,15 +41,13 @@
 
 <script>
 import app from '../store/app.js';
-import PhiPersonRelevancePicker from '../components/Phi/Person/Relevance/Picker.vue';
-import Picker2 from '../components/Phi/Person/Relevance/Picker2.vue';
+import personPicker from '../components/Phi/Person/Relevance/Picker.vue';
 
 export default {
 	name: "leo-sandbox",
 
 	components: {
-		Picker2,
-		PhiPersonRelevancePicker
+		"phi-person-relevance-picker": personPicker
 	},
 
 	data () {

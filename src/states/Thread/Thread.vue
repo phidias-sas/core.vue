@@ -166,7 +166,7 @@ import moment from 'moment';
 
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
-import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker2.vue';
+import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker.vue';
 
 
 Vue.component('post-trail', {
