@@ -15,9 +15,9 @@
                             <i class="fa fa-chevron-left"></i>
                         </button>
                         <div class="phi-media-body">
-                            <input class="search-field" type="text" 
-                                v-model="query" 
-                                :placeholder="$t('search people by name')"
+                            <input class="search-field" type="text"
+                                v-model="query"
+                                :placeholder="$t('search')"
                             />
                         </div>
                         <button class="phi-media-right phi-button" v-if="query.length > 0" @click="query = ''">
@@ -56,8 +56,8 @@
                         <div class="person phi-media"
                             v-if="(group.type !== 'relatives')"
                             v-bind:class="{ optionsBar: (group.people.length > 0) }"
-                            @click="openGroup(group)" 
-                        >   
+                            @click="openGroup(group)"
+                        >
                             <div class="phi-media-body"
                                  v-bind:class="{ optionsHelp: (group.people.length > 0) }"
                             >
@@ -66,7 +66,7 @@
                                     <span v-show="(group.people.length <= 0)">{{group.name}}</span>
                                 </h1>
                             </div>
-                                
+
                             </h1>
                             <div class="phi-media-options">
                                 <i class="fa fa-chevron-right"></i>
@@ -80,7 +80,7 @@
                 <!-- DORSO de la caja: Listado de personas en el grupo activo -->
                 <div class="back">
                     <div v-if="activeGroup">
-                        
+
                          <div class="toolbar phi-media">
                             <button class="phi-media-left phi-button" @click="closeGroup()">
                                 <i class="fa fa-chevron-left"></i>
@@ -99,16 +99,16 @@
                                     <li @click="activeGroup.members.forEach(selectPerson); getRelatives(activeGroup.members).forEach(selectPerson);">{{ $t("everyone")}}</li>
                                     <li @click="activeGroup.members.forEach(deselectPerson); getRelatives(activeGroup.members).forEach(deselectPerson);">{{ $t("noone")}}</li>
                                     <li v-for="role in distinctRoles(activeGroup)" @click="toggleWithRole(activeGroup.members, role)" :class="{checked: roleIsSelected(activeGroup.members, role)}">
-                                        {{ role }}
+                                        {{ $t(role) }}
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="toolbar phi-media sub-toolbar">
                             <div class="phi-media-body">
-                                <input class="search-field" type="text" 
-                                    v-model="activeQuery" 
-                                    :placeholder="$t('search people by name')"
+                                <input class="search-field" type="text"
+                                    v-model="activeQuery"
+                                    :placeholder="$t('search')"
                                 />
                             </div>
                             <button class="phi-media-right phi-button" v-if="activeQuery.length > 0" @click="activeQuery = ''">
@@ -136,7 +136,7 @@
                                     <i class="blue fa fa-check"></i>
                                 </div>
                             </div>
-                            
+
                             <!-- relatives -->
                             <div class="person phi-media"
                                 v-for="relative in person.relatives"
@@ -361,7 +361,7 @@ export default {
                 if (person.roles.indexOf(role) >= 0) {
                     this.selectPerson(person);
                 }
-                
+
                 if (person.hasOwnProperty('relatives')) {
                     person.relatives.forEach(relative => {
                         if (relative.roles.indexOf(role) >= 0) {
@@ -398,7 +398,7 @@ export default {
             } else {
                 this.template.panelIsOpen = !this.template.panelIsOpen
             }
-            
+
             //prevent scroll displacement between navigation steps
             this.$el.querySelector("div.box div.front").scrollTop = 0;
             this.$el.querySelector("div.box div.back").scrollTop = 0;
@@ -524,7 +524,11 @@ export default {
 
 input.search-field{
     width: 100%;
-    content: '\1F50D'
+    content: '\1F50D';
+    background: transparent;
+    font-size: 1em;
+    border: 0;
+    border-bottom: 1px solid #999;
 }
 
 .toolbar{
@@ -547,8 +551,8 @@ input.search-field{
 }
 
 .sub-toolbar{
-    height: 40px;   
-    padding: 0 16px 10px 16px; 
+    height: 40px;
+    padding: 0 16px 10px 16px;
 }
 
 .phi-menu li{

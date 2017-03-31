@@ -208,6 +208,10 @@ export default class Collection {
         return this._items.filter(item => !this.isHidden(item));
     }
 
+    get length() {
+        return this.items.length;
+    }
+
     get isLoading() {
         return this.client.isLoading;
     }
@@ -217,7 +221,7 @@ export default class Collection {
     }
 
     get isEmpty() {
-        return !this._items.length && !this.isLoading;
+        return !this.length && !this.isLoading;
     }
 
     /* Dig into the cache and overwrite the data :) */

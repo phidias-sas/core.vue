@@ -17,8 +17,8 @@ import Dashboard from '../states/Dashboard.vue';
 import ThreadFeed from '../states/Thread/Feed.vue';
 import Thread from '../states/Thread/Thread.vue';
 
-import PostFeed from '../states/Post/Feed.vue';
-import PostArchive from '../states/Post/Archive.vue';
+// import PostFeed from '../states/Post/Feed.vue';  DEPRECATED
+
 
 import PostContainer from '../states/Post/Container.vue';
 import PostContents from '../states/Post/Contents.vue';
@@ -77,23 +77,9 @@ var router = new VueRouter({
 
                 { path: '/dashboard', component: Dashboard, meta: { order: 1, exitOnBack: true } },
 
-                { path: '/threads/feed', component: ThreadFeed, meta: { order: 2 }, name: 'feed' },
+                { path: '/archive', component: ThreadFeed, meta: { endpoint: 'archive', order: 3, exitOnBack: true }, name: 'archive' },
+                { path: '/threads/feed', component: ThreadFeed, meta: { endpoint: 'feed', order: 2 }, name: 'feed' },
                 { path: '/threads/feed/:threadId', component: Thread, meta: { order: 3 }, name: 'thread' },
-
-
-                //{ path: '/posts/feed', component: PostFeed, meta: { order: 2 }, name: 'feed' },
-                {
-                    path: '/posts/feed/:postId', component: PostContainer, meta: { order: 13 },
-                    children: [
-                        { path: '', component: PostContents, meta: { order: 14 }, name: 'post' },
-                        { path: 'thread/:thread', component: PostThread, meta: { order: 15 }, name: 'post-thread' },
-                        { path: 'audience', component: PostAudience, meta: { order: 15 }, name: 'post-audience' },
-                        // { path: 'replies', component: PostReplies, meta: {order: 15}, name: 'post-replies' },
-                    ]
-                },
-
-
-                { path: '/archive', component: PostArchive, meta: { order: 3, exitOnBack: true }, name: 'archive' },
 
                 { path: '/billing/:personId', component: Billing, name: 'billing', meta: {order: 1}},
 

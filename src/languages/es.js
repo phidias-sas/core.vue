@@ -19,6 +19,7 @@ export default {
 	'all': 'todos',
 	'archive': 'archivar',
 	'discard': 'descartar',
+	'restore': 'restaurar',
 	'read': 'leídos',
 	'mark read': 'marcar leído',
 	'mark unread': 'marcar no leído',
@@ -26,5 +27,15 @@ export default {
 	'select': 'seleccionar',
 	'send': 'enviar',
 	'to {n} people': 'para {n} personas',
-	'unread': 'no leídos'
+	'unread': 'no leídos',
+	'undo': 'deshacer',
+
+	// Picker
+	'search': 'buscar',
+	'brother': 'hermano',
+	'sister': 'hermana',
+	'more people': 'ver más',
+	'everyone': 'todos',
+	'noone': 'ninguno',
+	'employee': 'colaborador'
 }

@@ -7,9 +7,11 @@
 					<i class="fa fa-arrow-left"></i>
 				</button>
 
-				<h1 v-text="$route.query.type"></h1>
+				<h1 v-text="isArchive ? $t('Archived') : $route.query.type"></h1>
 
+				<!-- quick archive button -->
 				<button
+					v-if="!isArchive"
 					v-show="feed.count('selected') > 0"
 					class="phi-button selection-count"
 					@click="move('archive')"
@@ -17,6 +19,18 @@
 					<span v-text="feed.count('selected')"></span>
 					<i class="fa fa-archive"></i>
 				</button>
+
+				<!-- quick restore button -->
+				<button
+					v-if="isArchive"
+					v-show="feed.count('selected') > 0"
+					class="phi-button selection-count"
+					@click="move('feed')"
+				>
+					<span v-text="feed.count('selected')"></span>
+					<i class="fa fa-inbox"></i>
+				</button>
+
 
 				<div class="phi-tooltip">
 					<button class="phi-button"> <i class="fa fa-ellipsis-v"></i></button>
@@ -32,7 +46,8 @@
 								</ul>
 							</phi-drawer>
 						</li>
-						<li @click="move('archive')" :disabled="!feed.count('selected')">{{ $t("archive") }}</li>
+						<li @click="move('archive')" :disabled="!feed.count('selected')" v-if="!isArchive">{{ $t("archive") }}</li>
+						<li @click="move('feed')" :disabled="!feed.count('selected')" v-if="isArchive">{{ $t("restore") }}</li>
 						<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
 						<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
 					</ul>
@@ -70,8 +85,9 @@
 				</div>
 
 			</div>
-
 		</div>
+
+		<mu-snackbar v-if="tpl.toastIsShown && lastAction" :message="lastAction.text" :action="$t('undo')" @actionClick="undo()" @close="tpl.toastIsShown = false" />
 
 	</div>
 </template>
@@ -88,21 +104,28 @@ export default {
 	},
 
 	beforeRouteEnter(to, from, next) {
-		var feed = app.api.collection(`/people/${app.user.id}/threads/feed`);
+		var feed = app.api.collection(`/people/${app.user.id}/threads/${to.meta.endpoint}`);
 		feed.fetch({type: to.query.type})
-			.then(() => next(vm => vm.feed = feed));
+			.then(() => next(vm => {
+				vm.feed      = feed;
+				vm.isArchive = to.meta.endpoint == 'archive';
+			}));
 	},
 
 	data() {
 		return {
-			feed: app.api.collection(`/people/${app.user.id}/threads/feed`),
+			feed: app.api.collection(`/people/${app.user.id}/threads/${this.$route.meta.endpoint}`),
 			moment,
+			isArchive: this.$route.meta.endpoint == 'archive',
+			lastAction: null,
 			tpl: {
 				menuIsOpen: false,
-				toolbarIsHidden: false
+				toolbarIsHidden: false,
+				toastIsShown: false
 			}
 		}
 	},
+
 
 	methods: {
 		isUnread(post) {
@@ -147,7 +170,7 @@ export default {
 			var threadIds = selection.map(post => post.thread.thread);
 
 			app.api
-				.post(`/people/${app.user.id}/threads/` + target, threadIds)
+				.post(`/people/${app.user.id}/threads/${target}`, threadIds)
 				.then(() => {
 					if (target != "read" && target != "unread") {
 						this.feed.hide(selection);
@@ -157,16 +180,102 @@ export default {
 							post.stub.readDate = target == "unread" ? null : 111;
 						});
 					}
-				});
 
+					this.lastAction = {
+						target,
+						selection,
+						threadIds,
+						text: this.redact(target, threadIds.length)
+					};
+				});
+		},
+
+		undo() {
+			if (!this.lastAction) {
+				return;
+			}
+
+			var target;
+			switch (this.lastAction.target) {
+				case "read":
+					target = "unread";
+					break;
+
+				case "unread":
+					target = "read";
+					break;
+
+				case "feed":
+					target = "archive";
+					break;
+
+				case "archive":
+					target = "feed";
+					break;
+			}
+
+			var targetUrl = `/people/${app.user.id}/threads/${target}`;
+
+			return app.api.post(targetUrl, this.lastAction.threadIds)
+				.then(response => {
+
+					if (target != "read" && target != "unread") {
+						this.feed.show(this.lastAction.selection);
+					} else {
+						this.feed.tag(this.lastAction.selection, "selected");
+						this.lastAction.selection.forEach(thread => {
+							thread.stub.readDate = target == "unread" ? null : 123;
+						});
+					}
+
+					this.lastAction = null;
+
+					return response;
+				});
+		},
+
+		redact(target, count) {
+			var plural    = count > 1;
+			var redaction = count + ' ';
+			switch (target) {
+				case 'feed':
+					redaction = redaction + (plural ? 'restaurados' : 'restaurado');
+				break;
+				case 'archive':
+					redaction = redaction + (plural ? 'archivados' : 'archivado');
+				break;
+				case 'trash':
+					redaction = redaction + (plural ? 'eliminados' : 'eliminado');
+				break;
+				case 'read':
+					redaction = redaction + (plural ? 'marcados como leído' : 'marcado como leído');
+				break;
+				case 'unread':
+					redaction = redaction + (plural ? 'marcados como no leído' : 'marcado como no leído');
+				break;
+			}
+
+			return redaction;
 		}
 	},
 
 	mounted() {
+
+		this.$watch("lastAction", action => {
+			if (!action) {
+				this.tpl.toastIsShown = false;
+				return;
+			}
+
+			this.tpl.toastIsShown = true;
+			setTimeout(() => this.tpl.toastIsShown = false, 3000);
+		});
+
+
 		// Hide toolbar on scroll
 		// https://codepen.io/IliaSky/pen/VjgBqQ?editors=0110
-		var page        = this.$el;
 		var scrollValue = 0;
+		var page        = this.$el;
 		var toolbar     = this.$el.querySelector(".phi-page-toolbar");
 		['scroll', 'touchmove'].forEach((eventName) => {   // apparently 'touchmove' event is also needed for iOS
 			page.addEventListener(eventName, () => {
@@ -183,6 +292,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.empty {
+	text-align: center;
+	padding-top: 96px;
+	background: url('../../assets/cactus.png') no-repeat top center;
+	margin-top: 64px;
+
+	p {
+		font-size: 1.2em;
+		margin: 12px 0;
+		color: #666;
+	}
+}
+
 .phi-page-toolbar {
 	background-color: #f3f3f3;
 }

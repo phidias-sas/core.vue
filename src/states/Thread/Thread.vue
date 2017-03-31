@@ -360,9 +360,6 @@ export default {
 
         sanitizeAudience(people) {
             return people.map(person => {
-
-                console.log("sanitizing", person);
-
                 if (typeof person.firstname != 'undefined') {
                     this.$set(person, 'firstName', person.firstname);
                     this.$set(person, 'lastName', person.lastname);
