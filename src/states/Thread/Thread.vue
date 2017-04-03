@@ -97,7 +97,7 @@
                     <!-- lista de destinatarios -->
                     <label>Para:</label>
                     <div class="post-audience-people">
-                        <div class="phi-chip phi-media" v-for="person in sanitizeAudience(audience)">
+                        <div class="phi-chip phi-media" v-for="person in sanitizedAudience">
                             <div class="phi-media-figure phi-avatar">
                                 <img :src="person.avatar" alt="person.firstName">
                             </div>
@@ -111,45 +111,39 @@
                             v-model="audience"
                         >
                             <div class="phi-chip phi-media adder">
-                                <div class="phi-media-figure">
-                                    <i class="fa fa-plus"></i>
-                                </div>
-                                <div class="phi-media-body">agregar</div>
+                                <div class="phi-media-body">...</div>
+                                <i class="phi-media-right fa fa-plus"></i>
                             </div>
                         </phi-person-relevance-picker>
                     </div>
 
-                    <textarea v-model="reply.description" placeholder="Escribe aqui tu respuesta" @input="saveReply"></textarea>
+                    <textarea v-model="reply.description" @input="saveReply"></textarea>
 
-                    <div class="replyTo post phi-media" v-if="replyTo">
-                        <div class="phi-media-figure phi-avatar">
-                            <img :src="replyTo.author.avatar" alt="replyTo.author.firstName">
-                        </div>
-                        <div class="phi-media-body">
-                            <div class="post-author">{{ replyTo.author.firstName }}</div>
-                            <div class="post-date">{{ moment.unix(replyTo.publishDate).calendar(null, {sameElse: 'MMM D h:mm a'}) }}</div>
-                            <div class="post-description">{{ replyTo.description }}</div>
-                        </div>
-                    </div>
+                    <!-- reply trail -->
+                    <post-trail v-show="reply.trailIsShown" :post="reply.objTrail"></post-trail>
 
+                    <!-- reply blocks -->
                     <div class="post-blocks">
                         <div v-for="block in reply.blocks" class="phi-media">
                             <div class="phi-media-body">
-                                <phi-block :block="block" :action="block.action"></phi-block>
-                            </div>
-                            <div class="phi-media-right">
-                                <i class="fa fa-times" @click="deleteBlock(block)"></i>
-                                <i class="fa fa-pencil" @click="$set(block, 'action', 'edit')"></i>
+                                <phi-block :block="block" :action="block.type == 'files' ? 'edit' : null"></phi-block>
                             </div>
                         </div>
                     </div>
 
                     <footer>
-                        <button class="send" @click="sendReply">{{ $t('send') }}</button>
+                        <button class="cancel" @click="tpl.replyIsOpen = false">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        <button class="trail" @click="toggleTrail(reply)">
+                            ...
+                        </button>
                         <button class="attach" @click="addFilesBlock">
                             <i class="fa fa-paperclip"></i>
                         </button>
-                        <button class="cancel" @click="tpl.replyIsOpen = false">{{ $t('discard') }}</button>
+                        <button class="send phi-button" @click="sendReply">
+                            {{ $t('send') }}
+                        </button>
                     </footer>
                 </div>
 
@@ -212,7 +206,8 @@ export default {
             replyTimer: null,
 
             tpl: {
-                replyIsOpen: false
+                replyIsOpen: false,
+                replyTrailIsOpen: false
             }
         }
     },
@@ -224,7 +219,17 @@ export default {
     computed: {
         replyTo() {
             return this.reply.replyTo ? this.posts.getItem(this.reply.replyTo) : null;
-        }
+        },
+
+        sanitizedAudience() {
+            return this.audience.map(person => {
+                if (typeof person.firstname != 'undefined') {
+                    this.$set(person, 'firstName', person.firstname);
+                    this.$set(person, 'lastName', person.lastname);
+                }
+                return person;
+            });
+        },
     },
 
     methods: {
@@ -288,6 +293,7 @@ export default {
                 })
                 .then(() => {
                     setTimeout(() => {
+                        this.posts.untag(this.posts.items, 'expanded'); // collapse all posts
                         this.tpl.replyIsOpen = true;
                         this.$el.querySelector('textarea').focus();
                         this.scrollToBottom(400);
@@ -321,16 +327,18 @@ export default {
 
             for (var c = 0; c < this.reply.blocks.length; c++) {
                 if (this.reply.blocks[c].url == url) {
-                    this.$set(this.reply.blocks[c], 'action', 'edit');
                     return;
                 }
             }
 
-            this.reply.blocks.push({
+            var filesBlock = {
                 url,
-                type: "files",
-                action: "edit"
-            });
+                type: "files"
+            };
+
+            app.api
+                .post(`/posts/${this.reply.id}/blocks`, filesBlock)
+                .then(() => this.reply.blocks.push(filesBlock));
         },
 
         sendReply() {
@@ -356,16 +364,6 @@ export default {
                     }
                     this.tpl.replyIsOpen = false;
                 });
-        },
-
-        sanitizeAudience(people) {
-            return people.map(person => {
-                if (typeof person.firstname != 'undefined') {
-                    this.$set(person, 'firstName', person.firstname);
-                    this.$set(person, 'lastName', person.lastname);
-                }
-                return person;
-            });
         },
 
         scrollToBottom(delay) {
@@ -451,6 +449,7 @@ export default {
     align-items: center;
     padding: 4px !important;
     margin: 0 5px 5px 0;
+    min-height: 32px;
 
     .phi-media-figure {
         width: 24px !important;
@@ -556,14 +555,17 @@ export default {
 }
 
 .reply {
-    .replyTo {
-        font-size: 0.8em;
-        border-left: 3px solid dodgerblue;
+    position: relative;
+    padding: 36px 0;
+
+    label {
+        font-size: 14px;
+        color: #666;
     }
 
     textarea {
         width: 100%;
-        min-height: 80px;
+        min-height: 150px;
         font-size: 1em;
     }
 
@@ -571,8 +573,23 @@ export default {
         margin: 16px 0 8px 0;
     }
 
-    .cancel {
+    button {
+        padding: 8px 16px;
+        border: none;
+        font-size: 16px;
+        border-radius: 4px;
+    }
+
+    .send {
         float: right;
+    }
+
+    .cancel {
+        background: transparent;
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #777;
     }
 }
 
