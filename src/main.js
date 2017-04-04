@@ -39,11 +39,7 @@ app.on("notification", (data, notification) => {
 	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.thread}`);
 
 	if (!notification.additionalData.foreground) {
-		if (data.post.replyTo) {
-			router.push({name: 'post-thread', params: {postId: data.post.replyTo, thread: data.post.thread}});
-		} else {
-			router.push({name: 'post', params: {postId: data.post.id}});
-		}
+		router.push({name: 'thread', params: {threadId: data.post.thread2}});
 	}
 });
 

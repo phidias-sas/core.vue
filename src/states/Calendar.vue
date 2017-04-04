@@ -6,11 +6,11 @@
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
                 <h1>{{ $t("Calendar") }}</h1>
                 <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics`"><i class="fa fa-calendar-plus-o"></i></a>
-            </div>            
+            </div>
         </div>
-	
+
 		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
-        
+
 		<div class="phi-page-contents">
 			<div class="views-list-menu" v-show="displayViewsMenu">
 				<ul class="phi-menu">
@@ -31,13 +31,13 @@
 			</div>
 
 			<full-calendar
-				:options="myCalendar" 
-				:current-view="currentView" 
+				:options="myCalendar"
+				:current-view="currentView"
 				@created="setCalendar"
 			></full-calendar>
         </div>
     </div>
-	
+
 </template>
 
 <script>
@@ -49,7 +49,7 @@ import locale from '../store/i18n.js';
 export default {
 	name: "calendar",
     components: {FullCalendar},
-	
+
 	data () {
 		return {
 			app,
@@ -104,15 +104,15 @@ export default {
 				},
 				eventClick: (calEvent, jsEvent, view) => {
 					jsEvent.preventDefault();
-					
-					if(calEvent.source.googleCalendarId){
+
+					if (calEvent.source.googleCalendarId) {
 						let googleWindow = window.open(calEvent.url, '_blank');
 						googleWindow.focus();
-					}else{
+					} else {
 						if (calEvent.hasOwnProperty('post')) {
-							this.$router.push({ name: 'post', params: { postId: calEvent.post.id }});
-						}else{
-							if(calEvent.url){
+							this.$router.push({ name: 'thread', params: { threadId: calEvent.post.thread2 }});
+						} else {
+							if (calEvent.url) {
 								let newWindow = window.open(calEvent.url, '_blank');
 								newWindow.focus();
 							}
@@ -132,11 +132,11 @@ export default {
 						sources.push({
 							title: typeDef.plural,
 							url: `${app.api.host}/people/${app.user.id}/calendar/feed?type=${typeDef.singular}`,
-							headers: { 
+							headers: {
 								Accept: 'application/json+fullcalendar',
 								Authorization: `Bearer ${app.api.token}`
 							}
-						});	
+						});
 					});
 				});
 
@@ -144,7 +144,7 @@ export default {
 			//sources.push({enabled: false, title:"Lengua Extranjera: Ingl\u00e9s I 1\u00ba BXTO A",googleCalendarId:"educacem.com_8ab01jm6fnkksi46vv16u187ag@group.calendar.google.com"});
 
 			//wait for everything to finish, then configure the calendar
-			Promise.all([calendarsByType]).then( () => { 
+			Promise.all([calendarsByType]).then( () => {
 				this.preparedSources = FCUtils.prepareSources(sources);
 				this.myCalendar = calendarConfig;
 			});
@@ -180,7 +180,7 @@ export default {
 			document.body.addEventListener("click", evt => {
 				if(evt.target.classList.contains("prevent-menu-hiding")){
 					evt.stopPropagation();
-					return false;	
+					return false;
 				}
 
 				if(this.displayViewsMenu){
@@ -193,13 +193,13 @@ export default {
 			});
 
 			document.addEventListener('scroll', evt =>  {
-				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");	
+				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");
 				this.positionMenu("button.fc-sourcesFilter-button", "div.sources-filter-menu");
 			}, true);
 
 			this.$parent.$on("transitionFinished", () => {
-				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");	
-				this.positionMenu("button.fc-sourcesFilter-button", "div.sources-filter-menu");	
+				this.positionMenu("button.fc-viewSwitcher-button", "div.views-list-menu");
+				this.positionMenu("button.fc-sourcesFilter-button", "div.sources-filter-menu");
 			});
 		}
 	},

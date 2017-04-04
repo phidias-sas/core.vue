@@ -1,5 +1,5 @@
 <template>
-	<ons-splitter>
+	<ons-splitter v-if="app.user">
 
 		<ons-splitter-content id="main-view" :class="'move-'+transitionDirection">
 			<transition
