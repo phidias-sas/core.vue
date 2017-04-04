@@ -68,9 +68,9 @@
 </template>
 
 <script>
+import md5 from 'blueimp-md5';
 import app from '../store/app.js';
 
-var md5 = require("../../node_modules/blueimp-md5/js/md5");
 export default {
 	name: "about",
 	data() {

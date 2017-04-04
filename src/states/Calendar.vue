@@ -5,7 +5,7 @@
             <div class="phi-page-toolbar">
 				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
                 <h1>{{ $t("Calendar") }}</h1>
-                <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics`"><i class="fa fa-calendar-plus-o"></i></a>
+                <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics?h=${hash}`"><i class="fa fa-calendar-plus-o"></i></a>
             </div>
         </div>
 
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import md5 from 'blueimp-md5';
 import FullCalendar from '../components/Fullcalendar.vue';
 import FCUtils from '../libraries/phidias.js/lib/Fullcalendar.js';
 import app from '../store/app.js';
@@ -59,7 +60,8 @@ export default {
 			currentView: 'listMonth', //for switching views externaly
 			fullCalendarInstance: null, //fullcalendar object returned on creation
 			myCalendar: {},
-			eventSources: []
+			eventSources: [],
+			hash: md5(`cal${app.user.id}shh`)
 		}
 	},
 

@@ -78,9 +78,9 @@
 
 						<div class="post-author" v-text="post.author.firstName"></div>
 						<div class="post-count" v-text="post.thread.nTotal" v-show="post.thread.nTotal > 1"></div>
+						<div class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D'}) }}</div>
 						<div class="post-preview" v-text="post.description"></div>
 
-						<span class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D'}) }}</span>
 					</router-link>
 				</div>
 
@@ -351,11 +351,17 @@ export default {
 		padding: 0;
 	}
 
+	.post-author {
+		display: inline-block;
+		color: #777;
+	}
+
 	.post-count {
+		display: inline-block;
+
 		position: relative;
 		top: -1px;
 
-		display: inline-block;
 		color: #999;
 		font-size: 11px;
 
@@ -367,21 +373,21 @@ export default {
 		}
 	}
 
-	.post-author {
+	.post-date {
 		display: inline-block;
+		font-size: 0.8em;
+		color: #777;
+
+		&::before {
+			content: ' - ';
+		}
 	}
 
 	.post-preview {
-		color: #777;
+		color: #444;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	.post-date {
-		display: none;
-		font-size: 0.8em;
-		color: #999;
 	}
 
 	.post-author,
@@ -412,11 +418,7 @@ export default {
 
 		.post-author,
 		.post-date {
-			// color: #999;
 			font-weight: bold;
-		}
-
-		.post-date {
 		}
 
 		.post-preview {
