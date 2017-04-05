@@ -11,9 +11,26 @@
 		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 
 		<div class="phi-page-contents">
+			<mu-list>
+				<mu-sub-header>Cobros pendientes</mu-sub-header>
+				<mu-list-item v-for="pending in pendings" :title="pending.period.name">
+					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
+					<router-link :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" class="items">
+						<div class="info">
+							<p><span class="fa fa-clock-o"></span> Vence: {{pending.expiration_date|moment.format}}</p>
+							<p><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
+						</div>
+						<div class="balance" align="right">
+							<b>{{pending.balance|currency}}</b> <br>
+							<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
+						</div>
+					</router-link>
+				</mu-list-item>
+			</mu-list>
+
 
 			<!-- pendings -->
-			<section v-if="pendings.length">
+			<!-- <section v-if="pendings.length">
 				<h2>Cobros pendientes</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -32,10 +49,10 @@
 						</li>
 					</ul>
 				</div>
-			</section>
+			</section> -->
 
 			<!-- pagos recientes -->
-			<section v-if="recent.length">
+			<!-- <section v-if="recent.length">
 				<h2>Pagos recientes</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -53,10 +70,10 @@
 						</li>
 					</ul>
 				</div>
-			</section>
+			</section> -->
 
 			<!-- pagos por aplicar -->
-			<section v-if="unapplied.length">
+			<!-- <section v-if="unapplied.length">
 				<h2>Pagos por aplicar</h2>
 				<div class="types phi-card _z-0">
 					<ul class="list">
@@ -74,11 +91,8 @@
 						</li>
 					</ul>
 				</div>
-			</section>
-
-
+			</section> -->
 		</div>
-
 
 	</div>
 </template>
@@ -120,69 +134,30 @@ export default{
 </script>
 
 <style lang="scss" scoped>
+	.items {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		flex-content: justify;
+		border-bottom: 1px dashed #ccc;
 
-section {
-	margin-bottom: 24px;
-}
+		.info {
+			margin: 2px;
+			flex-grow: 5;
+			font-size: 13px;
+			line-height: 20px;
+			color: rgba(0, 0, 0, .87);
+		}
 
-section {
-	h2 {
-		color: #666;
-		font-size: 0.8em;
-		font-weight: 1em;
-		margin-bottom: 0.5em;
-		text-transform: uppercase;
-	}
-	.list {
-		border: 0;
-		list-style: none;
-
-		li {
-			border-bottom: 1px dashed #ccc;
-
-			a {
-				padding: 8px;
-				display: flex;
-				flex-wrap: wrap;
-				flex-direction: row;
-				transition: all 0.2s ease;
-
-				.col {
-					flex-grow: 1;
-					.dato {
-						color: #666;
-						margin: 5px;
-						font-size: 13px;
-						margin-left: 15px;
-					}
-					.interest {
-						color:red;
-						font-size: 11px;
-						background: #f2f2f2;
-					}
-					.fa-clock-o {
-						color: #3F51B5;
-					}
-					.fa-user-o {
-						color: #009688;
-					}
-				}
-
-				.balance {
-					color: green;
-				}
+		.balance {
+			margin: 2px;
+			flex-grow: 1;
+			color: green;
+			.interest {
+				color: red;
+				font-size: 13px;
+				background: #EEE;
 			}
 		}
-
-		li:nth-last-child(1) {
-			border-bottom: none;
-		}
-		li:hover {
-			background: #F5F5F5;
-		}
-
 	}
-
-}
-
 </style>
