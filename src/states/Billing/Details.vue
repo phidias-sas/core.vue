@@ -3,7 +3,7 @@
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar">
 				<button class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
-				<h1>{{debit.period.name}}</h1>
+				<h1 v-if="debit.period">{{debit.period.name}}</h1>
 			</div>
 		</div>
 

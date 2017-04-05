@@ -14,120 +14,61 @@
 			<!-- pendings -->
 			<mu-list>
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
-				<mu-list-item v-for="pending in pendings" :title="pending.period.name">
-					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
-					<router-link :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" class="items">
-						<div class="info">
-							<p><span class="fa fa-clock-o"></span> Vence: {{pending.expiration_date|moment.format}}</p>
-							<p><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
+				<router-link v-for="pending in pendings" :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" >
+					<mu-list-item :title="pending.period.name">
+						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #009688;" />
+						<div class="document">
+							<div class="info">
+								<p><span class="fa fa-clock-o"></span> Vence: {{pending.expiration_date|moment.format}}</p>
+								<p><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
+							</div>
+							<div class="balance" align="right">
+								<b>{{pending.balance|currency}}</b> <br>
+								<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
+							</div>
 						</div>
-						<div class="balance" align="right">
-							<b>{{pending.balance|currency}}</b> <br>
-							<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
-						</div>
-					</router-link>
-				</mu-list-item>
+					</mu-list-item>
+				</router-link>
 			</mu-list>
 
 			<!-- pagos recientes -->
 			<mu-list>
 				<mu-sub-header>Pagos recientes</mu-sub-header>
-				<mu-list-item v-for="payment in recent" :title="payment.method.name">
-					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
-					<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}" class="items">
-						<div class="info">
-							<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
-							<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+				<router-link v-for="payment in recent" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
+					<mu-list-item :title="payment.method.name">
+						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #FFFF00;"/>
+						<div class="document">
+							<div class="info">
+								<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+								<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+							</div>
+							<div class="balance" align="right">
+								<b>{{payment.value|currency}}</b> <br>
+							</div>
 						</div>
-						<div class="balance" align="right">
-							<b>{{payment.value|currency}}</b> <br>
-						</div>
-					</router-link>
-				</mu-list-item>
+					</mu-list-item>
+				</router-link>
 			</mu-list>
 
 
 			<!-- pagos por aplicar -->
 			<mu-list>
 				<mu-sub-header>Pagos por aplicar</mu-sub-header>
-				<mu-list-item v-for="payment in unapplied" :title="payment.method.name">
-					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
-					<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}"  class="items">
-						<div class="info">
-							<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
-							<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+				<router-link v-for="payment in unapplied" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
+					<mu-list-item :title="payment.method.name">
+						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #3F51B5;"/>
+						<div class="document">
+							<div class="info">
+								<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+								<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+							</div>
+							<div class="balance" align="right">
+								<b>{{payment.balance|currency}}</b> <br>
+							</div>
 						</div>
-						<div class="balance" align="right">
-							<b>{{payment.balance|currency}}</b> <br>
-						</div>
-					</router-link>
-				</mu-list-item>
+					</mu-list-item>
+				</router-link>
 			</mu-list>
-
-
-			<!-- pendings -->
-			<!-- <section v-if="pendings.length">
-				<h2>Cobros pendientes</h2>
-				<div class="types phi-card _z-0">
-					<ul class="list">
-						<li v-for="pending in pendings">
-							<router-link :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}">
-								<div class="col info">
-									<p><b>{{pending.period.name}} <small>#{{pending.sequence}}</small></b></p>
-									<p class="dato"><span class="fa fa-clock-o"></span> {{pending.expiration_date|moment.format}}</p>
-									<p class="dato"><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
-								</div>
-								<div class="col balance" align="right">
-									<b>{{pending.balance|currency}}</b> <br>
-									<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
-								</div>
-							</router-link>
-						</li>
-					</ul>
-				</div>
-			</section> -->
-
-			<!-- pagos recientes -->
-			<!-- <section v-if="recent.length">
-				<h2>Pagos recientes</h2>
-				<div class="types phi-card _z-0">
-					<ul class="list">
-						<li v-for="payment in recent">
-							<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
-								<div class="col info">
-									<p><b>{{payment.method.name}} <small>#{{payment.sequence}}</small></b></p>
-									<p class="dato"><span class="fa fa-clock-o"></span> {{payment.date|moment.format}}</p>
-									<p class="dato" v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person|person}}</p>
-								</div>
-								<div class="col balance" align="right">
-									<b>{{payment.value|currency}}</b>
-								</div>
-							</router-link>
-						</li>
-					</ul>
-				</div>
-			</section> -->
-
-			<!-- pagos por aplicar -->
-			<!-- <section v-if="unapplied.length">
-				<h2>Pagos por aplicar</h2>
-				<div class="types phi-card _z-0">
-					<ul class="list">
-						<li v-for="payment in unapplied">
-							<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
-								<div class="col info">
-									<p><b><span class="fa fa-thumb-tack"></span> {{payment.method.name}}</b></p>
-									<p class="dato"><span class="fa fa-clock-o"></span> {{payment.date|moment.format}}</p>
-									<p class="dato" v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person|person}}</p>
-								</div>
-								<div class="col balance" align="right">
-									<b>{{payment.balance|currency}}</b>
-								</div>
-							</router-link>
-						</li>
-					</ul>
-				</div>
-			</section> -->
 		</div>
 
 	</div>
@@ -169,31 +110,31 @@ export default{
 }
 </script>
 
+
 <style lang="scss" scoped>
-	.items {
-		width: 100%;
-		display: flex;
-		flex-wrap: wrap;
-		flex-content: justify;
-		border-bottom: 1px dashed #ccc;
+.document {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	flex-content: justify;
+	border-bottom: 1px dashed #ccc;
 
-		.info {
-			margin: 2px;
-			flex-grow: 5;
+	.info {
+		margin: 2px;
+		flex-grow: 5;
+		font-size: 13px;
+		line-height: 20px;
+		color: rgba(0, 0, 0, .87);
+	}
+
+	.balance {
+		margin: 2px;
+		flex-grow: 1;
+		color: green;
+		.interest {
+			color: red;
 			font-size: 13px;
-			line-height: 20px;
-			color: rgba(0, 0, 0, .87);
-		}
-
-		.balance {
-			margin: 2px;
-			flex-grow: 1;
-			color: green;
-			.interest {
-				color: red;
-				font-size: 13px;
-				background: #EEE;
-			}
 		}
 	}
+}
 </style>
