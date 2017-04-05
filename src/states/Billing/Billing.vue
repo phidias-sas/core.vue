@@ -11,6 +11,7 @@
 		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 
 		<div class="phi-page-contents">
+
 			<!-- pendings -->
 			<mu-list>
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
@@ -49,7 +50,6 @@
 					</mu-list-item>
 				</router-link>
 			</mu-list>
-
 
 			<!-- pagos por aplicar -->
 			<mu-list>
