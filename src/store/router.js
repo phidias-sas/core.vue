@@ -44,6 +44,9 @@ import Root from '../states/Root.vue';
 import People from '../states/People.vue';
 import Person from '../states/Person.vue';
 
+// geolocation
+import GeoTracker from '../states/Geo/Tracker.vue';
+
 // pruebas
 import Test from '../states/Test.vue';
 
@@ -89,6 +92,11 @@ var router = new VueRouter({
                 { path: '/calendar', component: Calendar, meta: { order: 12, exitOnBack: true }, name: 'calendar' },
                 { path: '/settings', component: Settings, meta: { order: 12, exitOnBack: true }, name: 'settings' },
                 { path: '/map', component: Map, meta: { order: 12, exitOnBack: true }, name: 'map' },
+
+
+                // Geolocation
+                { path: '/tracker/:targetId', component: GeoTracker, meta: { order: 1, exitOnBack: true }, name: 'geo-tracker' },
+
 
                 { path: '/root', component: Root, meta: { order: 12 }, name: 'root' },
 

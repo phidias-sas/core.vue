@@ -8,23 +8,16 @@
 </template>
 
 <script>
-	import PhiTracker from '../components/Phi/PhiTracker.vue';
-	import app from '../store/app.js'
+import PhiTracker from '../components/Phi/Tracker.vue';
+import app from '../store/app.js'
 
-	export default {
+export default {
 	name: 'transport',
 	components: {PhiTracker},
-		data () {
-			return {
-				app
-			}
-		},
-		mounted () {
+	data() {
+		return {
+			app
 		}
 	}
+}
 </script>
-
-<style lang="scss">
-
-
-</style>
