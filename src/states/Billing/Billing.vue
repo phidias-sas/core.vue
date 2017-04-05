@@ -11,6 +11,7 @@
 		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 
 		<div class="phi-page-contents">
+			<!-- pendings -->
 			<mu-list>
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
 				<mu-list-item v-for="pending in pendings" :title="pending.period.name">
@@ -23,6 +24,41 @@
 						<div class="balance" align="right">
 							<b>{{pending.balance|currency}}</b> <br>
 							<span class="interest"><span class="fa fa-warning" v-if="pending.interests"></span> {{pending.interests ? pending.interests.value : ''|currency}}</span>
+						</div>
+					</router-link>
+				</mu-list-item>
+			</mu-list>
+
+			<!-- pagos recientes -->
+			<mu-list>
+				<mu-sub-header>Pagos recientes</mu-sub-header>
+				<mu-list-item v-for="payment in recent" :title="payment.method.name">
+					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
+					<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}" class="items">
+						<div class="info">
+							<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+							<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+						</div>
+						<div class="balance" align="right">
+							<b>{{payment.value|currency}}</b> <br>
+						</div>
+					</router-link>
+				</mu-list-item>
+			</mu-list>
+
+
+			<!-- pagos por aplicar -->
+			<mu-list>
+				<mu-sub-header>Pagos por aplicar</mu-sub-header>
+				<mu-list-item v-for="payment in unapplied" :title="payment.method.name">
+					<mu-avatar src="../../static/img/debit.png" slot="leftAvatar"/>
+					<router-link :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}"  class="items">
+						<div class="info">
+							<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+							<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
+						</div>
+						<div class="balance" align="right">
+							<b>{{payment.balance|currency}}</b> <br>
 						</div>
 					</router-link>
 				</mu-list-item>
