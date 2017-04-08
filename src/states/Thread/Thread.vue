@@ -60,7 +60,7 @@
 
                 <div class="post-contents">
                     <div class="post-audience-people" v-show="post.audienceIsShown">
-                        <div class="phi-chip phi-media" v-for="person in post.people" @click="togglePersonDetails(person)">
+                        <div class="phi-chip phi-media" v-for="person in post.people" @click="post.author.id == app.user.id && togglePersonDetails(person)">
                             <div class="phi-media-figure phi-avatar">
                                 <img :src="person.avatar" alt="person.firstName">
                             </div>
@@ -175,10 +175,24 @@
                 <div class="contents">
                     <div class="roles">
                         <div class="role" v-for="role in currentPerson.roles">
-                            <label>{{ $t(role.role.singular) }}</label>
-                            <ul>
-                                <li v-for="node in role.nodes">{{ node.name }}</li>
-                            </ul>
+
+                            <div v-if="role.role">
+                                <label>{{ $t(role.role.singular) }}</label>
+                                <ul>
+                                    <li v-for="node in role.nodes">{{ node.name }}</li>
+                                </ul>
+                            </div>
+
+                            <div v-if="role.relation">
+                                <label>{{ $t(role.relation) }}</label>
+                                <ul>
+                                    <li v-for="relative in role.relatives">
+                                        <span>{{ relative.person.firstname }} {{ relative.person.lastname }}</span>
+                                        <span v-if="relative.node">({{ relative.node.name }})</span>
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                 </div>
