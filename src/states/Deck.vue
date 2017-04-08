@@ -89,7 +89,7 @@ export default {
 
 	mounted() {
 		app.api.allowed(`people/${app.user.id}/settings/modules/billing`)
-			.then(response => this.allowed.billing = response)
+			.then(response => this.allowed.billing = response);
 	},
 
 	methods: {

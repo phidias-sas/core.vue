@@ -85,6 +85,14 @@
 				</div>
 
 			</div>
+
+			<button
+				class="loadNext"
+				v-show="feed.hasNext"
+				@click="feed.next()"
+				v-text="feed.isLoading ? 'cargando ...' : 'cargar más'"
+			></button>
+
 		</div>
 
 		<mu-snackbar v-if="tpl.toastIsShown && lastAction" :message="lastAction.text" :action="$t('undo')" @actionClick="undo()" @close="tpl.toastIsShown = false" />
@@ -293,6 +301,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.loadNext {
+	display: block;
+	width: 100%;
+	padding: 12px;
+	margin: 12px 0;
+	background: rgba(0, 0, 0, 0.1);
+	color: #333;
+	border: 0;
+	cursor: pointer;
+}
+
 .empty {
 	text-align: center;
 	padding-top: 96px;

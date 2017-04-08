@@ -161,7 +161,6 @@
                 </div>
 
             </div>
-
         </div>
 
 
@@ -299,7 +298,7 @@ export default {
                 allowed: {
                     "reply":    false,
                     "replyAll": false,
-                    "audience": true,
+                    "audience": false,
                     "trail":    true,
                     "invites":  true
                 }
@@ -316,7 +315,7 @@ export default {
                     return post.author.id != app.user.id && post.audienceCount > 1 && settings.allowed.replyAll;
 
                 case 'audience':
-                    return post.audienceCount > 0 && settings.allowed.audience;
+                    return (post.author.id == app.user.id) || (post.audienceCount > 0 && settings.allowed.audience);
 
                 case 'trail':
                     return post.replyTo != null && settings.allowed.trail;
