@@ -212,6 +212,11 @@ import PhiBlock from '../../components/Phi/Block.vue';
 import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker.vue';
 import PhiSliderPanel from '../../components/Phi/SliderPannel.vue';
 
+import StayDown from '../../libraries/staydown.js';
+
+var destroyListener;
+var stayDownScroller;
+
 Vue.component('post-trail', {
     props: ['post'],
     data() {
@@ -249,6 +254,20 @@ export default {
 
     components: {PhiDrawer, PhiBlock, PhiPersonRelevancePicker, PhiSliderPanel},
 
+    mounted() {
+		/* stayDown */
+		stayDownScroller = new StayDown({
+			target: this.$el
+		});
+
+		destroyListener = app.on("notification", stub => {
+			if (stub.post.thread2 == this.$route.params.threadId) {
+				this.posts.unshift(stub.post);
+                this.posts.tag(stub.post, 'expanded');
+			}
+		});
+    },
+
 	beforeRouteEnter(to, from, next) {
 		var posts = app.api.collection(`/people/${app.user.id}/threads/feed/${to.params.threadId}`)
 		posts.fetch()
@@ -258,6 +277,12 @@ export default {
                 posts.items.forEach(post => !post.stub.readDate && posts.tag(post, 'expanded'));
                 posts.tag(posts.items[0], 'expanded');
             });
+	},
+
+	beforeRouteLeave(to, from, next) {
+		stayDownScroller.destroy();
+		destroyListener();
+		next();
 	},
 
     data() {
@@ -279,10 +304,6 @@ export default {
             authors: [],
             currentPerson: null
         }
-    },
-
-    mounted() {
-        this.scrollToBottom(500);
     },
 
     computed: {
