@@ -13,7 +13,7 @@
 		<div class="phi-page-contents">
 
 			<!-- pendings -->
-			<mu-list>
+			<mu-list v-if="pendings.length">
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
 				<router-link v-for="pending in pendings" :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" >
 					<mu-list-item :title="pending.period.name">
@@ -33,7 +33,7 @@
 			</mu-list>
 
 			<!-- pagos recientes -->
-			<mu-list>
+			<mu-list v-if="recent.length">
 				<mu-sub-header>Pagos recientes</mu-sub-header>
 				<router-link v-for="payment in recent" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
 					<mu-list-item :title="payment.method.name">
@@ -52,7 +52,7 @@
 			</mu-list>
 
 			<!-- pagos por aplicar -->
-			<mu-list>
+			<mu-list v-if="unapplied.length">
 				<mu-sub-header>Pagos por aplicar</mu-sub-header>
 				<router-link v-for="payment in unapplied" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
 					<mu-list-item :title="payment.method.name">

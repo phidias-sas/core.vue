@@ -14,9 +14,22 @@
 
             <div class="phi-page-header" v-if="posts.items[0]">
                 <h1 v-text="posts.items[0].title"></h1>
+
+                <div v-if="posts.items[0].event" class="phi-post-event">
+                    <i class="fa fa-calendar-o"></i>
+                    <span v-if="posts.items[0].event.allDay == '1'">
+                        {{ moment.unix(posts.items[0].event.startDate).format('LL') }}
+                    </span>
+                    <span v-if="posts.items[0].event.allDay != '1'">
+                        <span>{{ moment.unix(posts.items[0].event.startDate).format('LL h:mm a') }}</span>
+                        <span v-if="posts.items[0].event.startDate != posts.items[0].event.endDate"> - {{ moment.unix(posts.items[0].event.endDate).format('h:mm a') }}</span>
+                    </span>
+                </div>
             </div>
 
         </div>
+
+
 
         <div class="phi-page-contents">
 
@@ -28,7 +41,7 @@
 
                 <div class="post-face phi-media">
 
-                    <div class="phi-media-figure phi-avatar" @click="posts.hasTag(post, 'expanded') && toggleAuthorDetails(post)">
+                    <div class="phi-media-figure phi-avatar" @click="posts.hasTag(post, 'expanded') && togglePersonDetails(post.author)">
                         <img :src="post.author.avatar" :alt="post.author.firstName">
                         <i class="fa fa-check"></i>
                     </div>
@@ -36,27 +49,25 @@
                     <div class="phi-media-body">
                         <div class="post-author" v-text="post.author.firstName" @click.stop="posts.toggleTag(post, 'expanded')"></div>
                         <div class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D h:mm a'}) }}</div>
-
-                        <div class="post-audience" v-text="$t('to {n} people', {n: post.audienceCount})" @click="toggleAudience(post)"></div>
-                        <div class="post-audience-people" v-show="post.audienceIsShown">
-                            <div class="phi-chip phi-media" v-for="person in post.people">
-                                <div class="phi-media-figure phi-avatar">
-                                    <img :src="person.avatar" alt="person.firstName">
-                                </div>
-                                <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
-                            </div>
-                        </div>
-
+                        <div class="post-audience" v-if="allowed(post, 'audience')" v-text="$t('to {n} people', {n: post.audienceCount})" @click="toggleAudience(post)"></div>
                         <div class="post-preview" v-text="post.description"></div>
                         <div class="post-attachment-count" v-show="post.blocks.length > 0">
                             <i class="fa fa-paperclip"></i>
-                            <span v-text="post.blocks.length"></span>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="post-contents">
+                    <div class="post-audience-people" v-show="post.audienceIsShown">
+                        <div class="phi-chip phi-media" v-for="person in post.people" @click="togglePersonDetails(person)">
+                            <div class="phi-media-figure phi-avatar">
+                                <img :src="person.avatar" alt="person.firstName">
+                            </div>
+                            <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
+                        </div>
+                    </div>
+
                     <div class="post-description" v-text="post.description"></div>
 
                     <div class="post-quotes" v-if="post.quotes">
@@ -72,6 +83,11 @@
                         </div>
                     </div>
 
+                    <div v-if="allowed(post, 'trail')">
+                        <button class="post-trail-handle" @click="toggleTrail(post)">···</button>
+                        <post-trail v-show="post.trailIsShown" :post="post.objTrail"></post-trail>
+                    </div>
+
                     <div class="post-blocks">
                         <phi-block
                             v-for="block in post.blocks"
@@ -80,12 +96,10 @@
                     </div>
 
                     <div class="post-actions">
-                        <button class="post-trail-handle" @click="toggleTrail(post)" v-if="post.replyTo">···</button>
-                        <button class="post-reply-all" @click="openReply(post, true)">Responder a todos</button>
-                        <button class="post-reply" @click="openReply(post)">Responder</button>
+                        <button v-if="allowed(post, 'reply')"    class="post-reply"        @click="openReply(post)">{{ $t('reply') }}</button>
+                        <button v-if="allowed(post, 'replyAll')" class="post-reply-all"    @click="openReply(post, true)">{{ $t('reply to all') }}</button>
                     </div>
 
-                    <post-trail v-show="post.trailIsShown" :post="post.objTrail"></post-trail>
                 </div>
 
             </div>
@@ -106,6 +120,7 @@
                         </div>
 
                         <phi-person-relevance-picker
+                            v-if="reply.replyTo && allowed(posts.getItem(reply.replyTo), 'invites')"
                             :api="app.api"
                             :person-id="app.user.id"
                             v-model="audience"
@@ -120,6 +135,7 @@
                     <textarea v-model="reply.description" @input="saveReply"></textarea>
 
                     <!-- reply trail -->
+                    <button class="post-trail-handle" @click="toggleTrail(reply)">···</button>
                     <post-trail v-show="reply.trailIsShown" :post="reply.objTrail"></post-trail>
 
                     <!-- reply blocks -->
@@ -135,9 +151,6 @@
                         <button class="cancel" @click="tpl.replyIsOpen = false">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button class="trail" @click="toggleTrail(reply)">
-                            ...
-                        </button>
                         <button class="attach" @click="addFilesBlock">
                             <i class="fa fa-paperclip"></i>
                         </button>
@@ -150,6 +163,29 @@
             </div>
 
         </div>
+
+
+        <phi-slider-panel side="right" :open="currentPerson != null" @closed="currentPerson = null">
+            <div class="authorinfo" v-if="currentPerson != null">
+                <div class="cover">
+                    <div class="avatar">
+                        <img :src="currentPerson.avatar" :alt="currentPerson.firstName">
+                    </div>
+                    <h1>{{currentPerson.firstName}} {{currentPerson.lastName}}</h1>
+                </div>
+                <div class="contents">
+                    <div class="roles">
+                        <div class="role" v-for="role in currentPerson.roles">
+                            <label>{{ $t(role.role.singular) }}</label>
+                            <ul>
+                                <li v-for="node in role.nodes">{{ node.name }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </phi-slider-panel>
+
     </div>
 </template>
 
@@ -161,7 +197,7 @@ import moment from 'moment';
 import PhiDrawer from '../../components/Phi/Drawer.vue';
 import PhiBlock from '../../components/Phi/Block.vue';
 import PhiPersonRelevancePicker from '../../components/Phi/Person/Relevance/Picker.vue';
-
+import PhiSliderPanel from '../../components/Phi/SliderPannel.vue';
 
 Vue.component('post-trail', {
     props: ['post'],
@@ -177,9 +213,28 @@ Vue.component('post-trail', {
 });
 
 
+/* Recursive equivalent of Object.assign */
+var deepObjectAssign = function(target, source) {
+	if (typeof target != 'object' || target == null) {   // JavaScript typeof null returns "object" :(
+		return source;
+	}
+
+	for (var prop in source) {
+		if (source.hasOwnProperty(prop)) {
+			if (typeof source[prop] === 'object') {
+				target[prop] = deepObjectAssign(target[prop], source[prop]);
+			} else {
+				target[prop] = source[prop];
+			}
+		}
+	};
+
+	return target;
+};
+
 export default {
 
-    components: {PhiDrawer, PhiBlock, PhiPersonRelevancePicker},
+    components: {PhiDrawer, PhiBlock, PhiPersonRelevancePicker, PhiSliderPanel},
 
 	beforeRouteEnter(to, from, next) {
 		var posts = app.api.collection(`/people/${app.user.id}/threads/feed/${to.params.threadId}`)
@@ -197,18 +252,19 @@ export default {
             app,
             moment,
             posts: app.api.collection(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`),
-
             reply: {
-                replyTo: null,
-                description: null
+                replyTo:     null,
+                description: null,
+                settings:    null
             },
             audience: [],
             replyTimer: null,
-
             tpl: {
-                replyIsOpen: false,
-                replyTrailIsOpen: false
-            }
+                replyIsOpen:       false,
+                replyTrailIsOpen:  false
+            },
+            authors: [],
+            currentPerson: null
         }
     },
 
@@ -233,6 +289,47 @@ export default {
     },
 
     methods: {
+        allowed(post, action) {
+
+            if (post == null) {
+                return false;
+            }
+
+            var defaultSettings = {
+                allowed: {
+                    "reply":    false,
+                    "replyAll": false,
+                    "audience": true,
+                    "trail":    true,
+                    "invites":  true
+                }
+            };
+
+            var settings = post.settings == null ? defaultSettings : Object.assign({}, post.settings);
+            settings = deepObjectAssign(defaultSettings, settings);
+
+            switch (action) {
+                case 'reply':
+                    return post.author.id != app.user.id && settings.allowed.reply;
+
+                case 'replyAll':
+                    return post.author.id != app.user.id && post.audienceCount > 1 && settings.allowed.replyAll;
+
+                case 'audience':
+                    return post.audienceCount > 0 && settings.allowed.audience;
+
+                case 'trail':
+                    return post.replyTo != null && settings.allowed.trail;
+
+                case 'invites':
+                    return settings.allowed.invites;
+
+                default:
+                    return true;
+            }
+
+        },
+
         isUnread(post) {
             return !post.stub.readDate;
         },
@@ -267,8 +364,29 @@ export default {
             }
         },
 
-        toggleAuthorDetails(post) {
-            alert("author!");
+        togglePersonDetails(person) {
+            if (!this.currentPerson || this.currentPerson.id != person.id) {
+                this.setCurrentPerson(person);
+            } else {
+                this.currentPerson = null;
+            }
+        },
+
+        setCurrentPerson(person) {
+            for (var i = 0; i < this.authors.length; i++) {
+                if (this.authors[i].id == person.id) {
+                    this.currentPerson = this.authors[i];
+                    return;
+                }
+            }
+
+            app.api
+                .get(`/v3/people/${person.id}/roles`)
+                .then(roles => {
+                    person.roles = roles;
+                    this.authors.push(person);
+                    this.currentPerson = person;
+                });
         },
 
         openReply(post, toAll) {
@@ -348,7 +466,16 @@ export default {
                 }
             };
 
-            this.reply.audience.to.people.push(String(this.replyTo.author.id));
+            if (this.audience.indexOf(String(this.replyTo.author.id)) == -1) {
+                this.reply.audience.to.people.push(String(this.replyTo.author.id));
+            }
+
+            this.reply.settings = {
+                allowed: {
+                    reply: true,
+                    replyAll: true
+                }
+            };
 
             app.api
                 .post(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`, this.reply)
@@ -360,8 +487,10 @@ export default {
 
                     this.reply = {
                         replyTo: null,
-                        description: null
+                        description: null,
+                        settings: null
                     }
+
                     this.tpl.replyIsOpen = false;
                 });
         },
@@ -382,6 +511,10 @@ export default {
 
 
 <style lang="scss">
+.modal-mask {
+    z-index: 2;
+}
+
 .post-trail {
     font-size: 14px;
     border-left: 2px solid rgba(0, 42, 167, 0.25);
@@ -419,6 +552,12 @@ export default {
         max-width: 32px;
         max-height: 32px;
     }
+}
+
+.post-blocks {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
 }
 
 .phi-page-cover {
@@ -512,6 +651,15 @@ export default {
         padding-top: 0;
     }
 
+    .post-trail-handle {
+        font-weight: bold;
+        border: none;
+        color: #333;
+        border-radius: 3px;
+        background-color: #f8f8f8;
+        padding: 6px 12px;
+    }
+
     .post-actions {
         margin-top: 24px;
         text-align: right;
@@ -522,12 +670,6 @@ export default {
             border-radius: 3px;
             background-color: #f0f0f0;
             padding: 6px 12px;
-        }
-
-        .post-trail-handle {
-            float: left;
-            background-color: #f8f8f8;
-            font-weight: bold;
         }
     }
 
@@ -590,6 +732,61 @@ export default {
         top: 0;
         right: 0;
         color: #777;
+    }
+}
+
+
+.authorinfo {
+
+    .cover {
+        text-align: center;
+        background-color: #1C89B8;
+        padding-top: 56px;
+
+        h1 {
+            color: #fff;
+            padding: 12px 0;
+        }
+    }
+
+    .avatar {
+        margin: auto;
+        width: 96px;
+        height: 96px;
+        overflow: hidden;
+
+        border-radius: 12px;
+        border: 5px solid #fff;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .contents {
+        padding: 12px;
+    }
+
+    .role {
+        margin-bottom: 24px;
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                display: block;
+                margin-bottom: 6px;
+            }
+        }
     }
 }
 

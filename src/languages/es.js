@@ -19,6 +19,7 @@ export default {
 	'all': 'todos',
 	'archive': 'archivar',
 	'discard': 'descartar',
+	'delete': 'eliminar',
 	'restore': 'restaurar',
 	'read': 'leídos',
 	'mark read': 'marcar leído',
@@ -29,6 +30,8 @@ export default {
 	'to {n} people': 'para {n} personas',
 	'unread': 'no leídos',
 	'undo': 'deshacer',
+	'reply': 'responder',
+	'reply to all': 'responder a todos',
 
 	// Picker
 	'search': 'buscar',
@@ -37,5 +40,9 @@ export default {
 	'more people': 'ver más',
 	'everyone': 'todos',
 	'noone': 'ninguno',
-	'employee': 'colaborador'
+	'employee': 'colaborador',
+
+	// Roles
+	'group director': 'director de grupo',
+	'teacher': 'profesor'
 }

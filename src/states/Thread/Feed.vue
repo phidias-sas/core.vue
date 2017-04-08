@@ -50,6 +50,7 @@
 						<li @click="move('feed')" :disabled="!feed.count('selected')" v-if="isArchive">{{ $t("restore") }}</li>
 						<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
 						<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
+						<li @click="move('trash')" :disabled="!feed.count('selected')">{{ $t("delete") }}</li>
 					</ul>
 				</div>
 			</div>
@@ -210,6 +211,7 @@ export default {
 					break;
 
 				case "archive":
+				case "trash":
 					target = "feed";
 					break;
 			}

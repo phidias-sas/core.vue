@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "v3": "node build/v3.js"
   },
   "dependencies": {
     "blueimp-md5": "^2.6.0",

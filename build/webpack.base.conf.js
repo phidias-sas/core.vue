@@ -12,7 +12,6 @@ var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 
 module.exports = {
   entry: {
-    libraries: './src/libraries.js',
     app: './src/main.js'
   },
   output: {

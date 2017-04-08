@@ -10,7 +10,7 @@
 		<div class="phi-page-contents">
 			<section v-if="!!billboard">
 				<div class="billboard phi-card _z-0">
-					<router-link class="phi-card" :to="{name: 'post', params:{postId: billboard.id}}">
+					<router-link class="phi-card" :to="{name: 'thread', params:{threadId: billboard.thread2}}">
 						<h1 v-text="billboard.title"></h1>
 						<div v-text="billboard.description"></div>
 					</router-link>

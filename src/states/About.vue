@@ -37,7 +37,7 @@
 						</a>
 
 						<a v-if="app.organization.latitude"
-							:href="`geo:${app.organization.latitude},${app.organization.longitude}`"
+							:href="locationUrl"
 							class="phi-media"
 						>
 							<div class="phi-media-figure fa fa-map-marker"></div>
@@ -82,6 +82,15 @@ export default {
 
 	beforeMount() {
 		this.tokenLink();
+	},
+
+	computed: {
+		locationUrl() {
+			if (!window.device || !window.device.platform || window.device.platform != 'Android') {
+				return `http://maps.apple.com/?ll${app.organization.latitude},${app.organization.longitude}`;
+			}
+			return `geo:${app.organization.latitude},${app.organization.longitude}`;
+		}
 	},
 
 	methods: {
