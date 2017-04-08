@@ -3,9 +3,8 @@
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar" :class="{_hidden: tpl.toolbarIsHidden}">
 
-				<button class="phi-button" @click="$router.go(-1)">
-					<i class="fa fa-arrow-left"></i>
-				</button>
+				<button v-if="isArchive" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+				<button v-else class="phi-button" @click="$router.go(-1)"><i class="fa fa-arrow-left"></i></button>
 
 				<h1 v-text="isArchive ? $t('Archived') : $route.query.type"></h1>
 
