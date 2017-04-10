@@ -104,6 +104,9 @@
 
             </div>
 
+            INCOMING
+            <pre>{{ incoming }}</pre>
+
             <div class="reply post expanded" v-show="tpl.replyIsOpen">
 
                 <div class="post-contents">
@@ -159,9 +162,6 @@
                         </button>
                     </footer>
                 </div>
-
-                INCOMING: {{ incoming }}
-
             </div>
         </div>
 
@@ -264,11 +264,8 @@ export default {
 
 		destroyListener = app.on("notification", stub => {
 			if (stub.post.thread2 == this.$route.params.threadId) {
-                alert("incoming");
                 this.incoming = JSON.stringify(stub);
-                alert("unshifting...");
 				this.posts.unshift(stub.post);
-                alert("tagging");
                 this.posts.tag(stub.post, 'expanded');
                 alert("done");
 			}
