@@ -261,6 +261,9 @@ export default {
 		});
 
 		destroyListener = app.on("notification", stub => {
+
+            alert("Thread.vue notification " + stub.post.thread2);
+
 			if (stub.post.thread2 == this.$route.params.threadId) {
 				this.posts.unshift(stub.post);
                 this.posts.tag(stub.post, 'expanded');
@@ -425,7 +428,7 @@ export default {
 
         openReply(post, toAll) {
 
-            this.audience = [post.author];
+            this.audience = [];
 
             // Fetch a fresh draft
             app.api
@@ -444,6 +447,19 @@ export default {
                     }
                 })
                 .then(() => {
+
+                    /* Append the author if not present */
+                    var found = false;
+                    for (var i = 0; i < this.audience.length; i++) {
+                        if (this.audience[i].id == post.author.id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        this.audience.unshift(post.author);
+                    }
+
                     setTimeout(() => {
                         this.posts.untag(this.posts.items, 'expanded'); // collapse all posts
                         this.tpl.replyIsOpen = true;
