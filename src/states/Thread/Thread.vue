@@ -759,7 +759,7 @@ export default {
 
     textarea {
         width: 100%;
-        min-height: 150px;
+        min-height: 100px;
         font-size: 1em;
     }
 
