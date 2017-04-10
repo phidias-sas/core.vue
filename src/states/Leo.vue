@@ -5,35 +5,26 @@
 				<button class="phi-button" @click="$parent.$el.left.toggle()">
 					<i class="fa fa-bars"></i>
 				</button>
-				<h1>Relevance test</h1>
+				<h1>QR code components</h1>
 			</div>
 		</div>
 
 		<div class="phi-page-contents">
 			<ons-progress-bar v-show="app.api.isLoading" indeterminate ></ons-progress-bar>
 
-			<div style="max-width: 768px">
-
-
-				<phi-person-relevance-picker
-					:api="app.api"
-					:person-id="app.user.id"
-					v-model="audience1"
-				>
-					<h1>Nuevo picker ({{audience1.length}})</h1>
-				</phi-person-relevance-picker>
-
-				<div class="selected-people">
-					<div class="phi-media person" v-for="person in audience1">
-						<div class="phi-media-figure phi-avatar">
-							<img :src="person.avatar" alt="person.firstname">
-						</div>
-						<h3 class="phi-media-body">{{ person.firstname }} {{ person.lastname }}</h3>
-						<div class="phi-media-right fa fa-times" @click="audience1.splice(audience1.indexOf(person), 1)"></div>
-					</div>
-				</div>
-			</div>
-
+			<phi-qrc-generator :size="250" :value="QRValue"></phi-qrc-generator>
+			
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+			<button @click="QRReaderEnabled = !QRReaderEnabled;">Scan/Stop</button>
+			<phi-qrc-reader 
+				:enabled="QRReaderEnabled"
+				@result="qrresult" 
+				@error="qrerror"
+			></phi-qrc-reader>
 
 		</div>
 	</div>
@@ -41,22 +32,40 @@
 
 <script>
 import app from '../store/app.js';
-import personPicker from '../components/Phi/Person/Relevance/Picker.vue';
+import qrcGenerator from '../components/Phi/QRCode/Generator.vue';
+import qrcReader from '../components/Phi/QRCode/Reader.vue';
 
 export default {
 	name: "leo-sandbox",
 
 	components: {
-		"phi-person-relevance-picker": personPicker
+		"phi-qrc-generator": qrcGenerator,
+		"phi-qrc-reader": qrcReader
 	},
 
 	data () {
 		return {
 			app,
-			audience1: [],
-			audience2: []
+			QRValue: app.user.id,
+			QRReaderEnabled: false
 		}
-	}
+	},
+
+	methods: {
+		qrresult(result){	
+			alert(result);
+			this.QRReaderEnabled = false;
+		},
+
+		qrerror(err){	
+			console.log(err);
+			this.QRReaderEnabled = false;
+		}
+	},
+
+	mounted () {
+		
+    }
 }
 </script>
 
