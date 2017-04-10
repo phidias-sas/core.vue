@@ -51,7 +51,7 @@
                         <div class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D h:mm a'}) }}</div>
                         <div class="post-audience" v-if="allowed(post, 'audience')" v-text="$t('to {n} people', {n: post.audienceCount})" @click="toggleAudience(post)"></div>
                         <div class="post-preview" v-text="post.description"></div>
-                        <div class="post-attachment-count" v-show="post.blocks.length > 0">
+                        <div class="post-attachment-count" v-show="post.blocks && post.blocks.length > 0">
                             <i class="fa fa-paperclip"></i>
                         </div>
                     </div>
