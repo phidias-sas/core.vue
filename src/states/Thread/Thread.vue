@@ -104,9 +104,6 @@
 
             </div>
 
-            INCOMING
-            <pre>{{ incoming }}</pre>
-
             <div class="reply post expanded" v-show="tpl.replyIsOpen">
 
                 <div class="post-contents">
@@ -264,10 +261,14 @@ export default {
 
 		destroyListener = app.on("notification", stub => {
 			if (stub.post.thread2 == this.$route.params.threadId) {
-                this.incoming = JSON.stringify(stub);
-				this.posts.unshift(stub.post);
-                this.posts.tag(stub.post, 'expanded');
-                alert("done");
+                var incomingPost = stub.post;
+                incomingPost.stub = {
+                    readDate: stub.readDate
+                };
+
+                this.posts.untag(this.posts.items, 'expanded'); // collapse all posts
+				this.posts.unshift(incomingPost);
+                this.posts.tag(incomingPost, 'expanded');
 			}
 		});
     },
@@ -291,7 +292,6 @@ export default {
 
     data() {
         return {
-            incoming: '',
             app,
             moment,
             posts: app.api.collection(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`),
