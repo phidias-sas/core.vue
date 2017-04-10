@@ -160,6 +160,8 @@
                     </footer>
                 </div>
 
+                INCOMING: {{ incoming }}
+
             </div>
         </div>
 
@@ -261,12 +263,14 @@ export default {
 		});
 
 		destroyListener = app.on("notification", stub => {
-
-            alert("Thread.vue notification " + stub.post.thread2);
-
 			if (stub.post.thread2 == this.$route.params.threadId) {
+                alert("incoming");
+                this.incoming = JSON.stringify(stub);
+                alert("unshifting...");
 				this.posts.unshift(stub.post);
+                alert("tagging");
                 this.posts.tag(stub.post, 'expanded');
+                alert("done");
 			}
 		});
     },
@@ -290,6 +294,7 @@ export default {
 
     data() {
         return {
+            incoming: '',
             app,
             moment,
             posts: app.api.collection(`/people/${app.user.id}/threads/feed/${this.$route.params.threadId}`),

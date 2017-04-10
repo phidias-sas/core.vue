@@ -32,9 +32,6 @@ app.on("load", () => {
 
 /* Clear cache on incoming notification */
 app.on("notification", (data, notification) => {
-
-	alert("main.js notification handler " + data.post.thread2);
-
 	app.api.clear(`people/${app.user.id}/posts/types`);
 	app.api.clear(`people/${app.user.id}/posts/inbox`);
 	app.api.clear(`/people/${app.user.id}/threads/inbox`);
