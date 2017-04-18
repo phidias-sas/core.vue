@@ -19,6 +19,10 @@
 					<div class="phi-media-figure fa fa-map-marker"></div>
 					<div class="phi-media-body">Mapa v2</div>
 				</router-link>
+				<router-link to="/leo" class="phi-media">
+					<div class="phi-media-figure fa fa-map-marker"></div>
+					<div class="phi-media-body">QR Test</div>
+				</router-link>
 			</div>
 		</div>
 	</div>
