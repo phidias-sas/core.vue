@@ -16,7 +16,7 @@
 			<mu-list v-if="pendings.length">
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
 				<router-link v-for="pending in pendings" :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" >
-					<mu-list-item :title="pending.id">
+					<mu-list-item :title="pending.period.name + ' #' + pending.sequence">
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #009688;" />
 						<div class="document">
 							<div class="info">
