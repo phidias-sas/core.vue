@@ -16,11 +16,11 @@
 			<mu-list v-if="pendings.length">
 				<mu-sub-header>Cobros pendientes</mu-sub-header>
 				<router-link v-for="pending in pendings" :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" >
-					<mu-list-item :title="pending.period.name">
+					<mu-list-item :title="pending.id">
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #009688;" />
 						<div class="document">
 							<div class="info">
-								<p><span class="fa fa-clock-o"></span> Vence: {{pending.expiration_date|moment.format}}</p>
+								<p :class="pending.expiration_date <= fecha ? 'expiration': ''"><span class="fa fa-clock-o"></span> Vence: {{pending.expiration_date|moment.format}}</p>
 								<p><span class="fa fa-user-o"></span> {{pending.person.firstname}}</p>
 							</div>
 							<div class="balance" align="right">
@@ -40,7 +40,7 @@
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #FFFF00;"/>
 						<div class="document">
 							<div class="info">
-								<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+								<p :class="payment.date <= fecha ? 'expiration': ''"><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
 								<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
 							</div>
 							<div class="balance" align="right">
@@ -59,7 +59,7 @@
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #3F51B5;"/>
 						<div class="document">
 							<div class="info">
-								<p><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
+								<p :class="payment.date <= fecha ? 'expiration': ''"><span class="fa fa-calendar"></span> {{payment.date|moment.format}}</p>
 								<p v-if="payment.person"><span class="fa fa-user-o"></span> {{payment.person.firstname}}</p>
 							</div>
 							<div class="balance" align="right">
@@ -76,36 +76,31 @@
 
 <script>
 import app from '../../store/app.js';
+import moment from 'moment';
 
 export default{
 	data() {
 		return {
 			app,
+			pendings:  	[],
 			recent: 	[],
 			unapplied: 	[],
-			pendings:  	[],
 			personId: 	this.$route.params.personId,
+			fecha: moment().local().unix(this.fecha)
 		}
 	},
-
 	mounted(){
 		// pendings
 		app.api.get(`v3/people/${this.personId}/billing/debits/pending`)
-		.then(data => {
-			this.pendings = data;
-		});
+		.then(data => {this.pendings = data;});
 
 		// recent
 		app.api.get(`v3/people/${this.personId}/billing/credits?limit=5`)
-		.then(data => {
-			this.recent = data;
-		});
+		.then(data => {this.recent = data;});
 
 		// unapplied
 		app.api.get(`v3/people/${this.personId}/billing/credits?limit=5&balance=true`)
-		.then(data => {
-			this.unapplied = data;
-		});
+		.then(data => {this.unapplied = data;});
 	}
 }
 </script>
@@ -136,5 +131,10 @@ export default{
 			font-size: 13px;
 		}
 	}
+
+	.expiration {
+		color: red !important;
+	}
+
 }
 </style>

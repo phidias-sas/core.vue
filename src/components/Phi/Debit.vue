@@ -36,6 +36,8 @@ export default{
 
 .phi-debit {
 	section {
+		margin-bottom: 15px;
+		
 		h2 {
 			color: #666;
 			font-size: 0.8em;
