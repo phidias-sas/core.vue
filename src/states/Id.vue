@@ -51,7 +51,7 @@ export default {
 
 <style lang="scss" scoped>
 .phi-page-cover {
-	background: url('../assets/cover.jpg') no-repeat 0 0;
+	background: #1C89B8 url('../assets/cover.jpg') no-repeat 0 0;
 	background-size: cover;
 }
 

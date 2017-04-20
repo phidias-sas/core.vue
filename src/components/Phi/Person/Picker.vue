@@ -62,7 +62,58 @@ export default {
         },
 
         startScan() {
+            if (this.scanner.isRunning) {
+                return;
+            }
+            this.scanner.isRunning = true;
 
+            cordova.plugins.barcodeScanner.scan(
+                result => {
+                    // alert("We got a barcode\n" +
+                    //     "Result: " + result.text + "\n" +
+                    //     "Format: " + result.format + "\n" +
+                    //     "Cancelled: " + result.cancelled);
+
+                    if (result.cancelled) {
+                        this.stopScan();
+                    }
+
+                    try {
+                        this.select(JSON.parse(result.text));
+                        this.stopScan();
+                        this.startScan();
+                    } catch (e) {
+                        // not valid JSON
+                    }
+                },
+
+                error => {
+                    alert("Scanning failed: " + error);
+                },
+
+                {
+                    preferFrontCamera : false, // iOS and Android
+                    showFlipCameraButton : true, // iOS and Android
+                    showTorchButton : true, // iOS and Android
+                    torchOn: false, // Android, launch with the torch switched on (if available)
+                    prompt : "", // Android
+                    resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+                    formats : "QR_CODE", // default: all but PDF_417 and RSS_EXPANDED
+                    orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+                    disableAnimations : true, // iOS
+                    disableSuccessBeep: false // iOS
+                }
+            );
+        },
+
+        stopScan() {
+            if (!this.scanner.isRunning) {
+                return;
+            }
+            this.scanner.isRunning = false;
+        },
+
+        _startScan() {
             if (typeof QRScanner == 'undefined') {
                 alert("Lector de codigo QR no soportado");
                 return;
@@ -89,9 +140,11 @@ export default {
                 this.startScan();
             });
 
+            QRScanner.show();
+            // document.documentElement.style.opacity = 0.3;
         },
 
-        stopScan() {
+        _stopScan() {
             if (!this.scanner.isRunning) {
                 return;
             }
@@ -101,6 +154,7 @@ export default {
                 console.log(status);
                 alert("Cancel: " + JSON.stringify(status));
             });
+            // document.documentElement.style.opacity = 1;
         },
 
         toggleScan() {
@@ -126,7 +180,7 @@ export default {
 
             border: 0;
             border-radius: 8px;
-            padding: 4px 36px;
+            padding: 4px 24px;
             font-size: 24px;
 
             &.running {

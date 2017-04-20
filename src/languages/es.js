@@ -32,6 +32,9 @@ export default {
 	'undo': 'deshacer',
 	'reply': 'responder',
 	'reply to all': 'responder a todos',
+	'save': 'guardar',
+	'cancel': 'cancelar',
+	'name': 'nombre',
 
 	// Picker
 	'search': 'buscar',
@@ -41,6 +44,10 @@ export default {
 	'everyone': 'todos',
 	'noone': 'ninguno',
 	'employee': 'colaborador',
+
+	// Attendance
+	'Checkpoints': 'Portales',
+	'add checkpoint': 'agregar portal',
 
 	// Roles
 	'group director': 'director de grupo',
