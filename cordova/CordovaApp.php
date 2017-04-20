@@ -78,9 +78,9 @@ class CordovaApp
             `cordova create {$this->outputFolder}`;
         }
 
-        `rm -rf {$this->outputFolder}/www`;
-        `cp -r ../dist {$this->outputFolder}/www`;
-        `cp -r src/resources {$this->outputFolder}/resources`;
+        deleteDir("{$this->outputFolder}/www");
+        copyDir("../dist", "{$this->outputFolder}/www");
+        copyDir("src/resources", "{$this->outputFolder}/resources");
     }
 
     private function generateIndex()
@@ -209,6 +209,35 @@ class CordovaApp
 }
 
 
+function deleteDir($path)
+{
+    if (empty($path) || substr($path, -2) == "/." || substr($path, -3) == "/..") {
+        return;
+    }
+	if (is_file($path)) {
+		unlink($path);
+	} elseif (is_dir($path)) {
+		array_map(__FUNCTION__, glob($path.'/{,.}*', GLOB_BRACE));
+		rmdir($path);
+	}
+}
+
+function copyDir($src, $dst)
+{
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            if ( is_dir($src . '/' . $file) ) {
+                copyDir($src . '/' . $file,$dst . '/' . $file);
+            }
+            else {
+                copy($src . '/' . $file,$dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
+}
 
 function dump()
 {

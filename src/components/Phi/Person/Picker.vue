@@ -1,6 +1,11 @@
 <template>
 	<div class="phi-person-picker">
-        <phi-input :label="label" v-model="query" @input="debounce()"></phi-input>
+
+        <div class="search">
+            <phi-input :label="label" v-model="query" @input="debounce()"></phi-input>
+            <button :class="{running: scanner.isRunning}" @click="toggleScan"><i class="fa fa-qrcode"></i></button>
+        </div>
+
         <div class="results">
             <div v-for="person in results" class="person phi-media" @click="select(person)">
                 <div class="phi-media-figure phi-avatar">
@@ -14,32 +19,36 @@
 
 <script>
 import PhiInput from '../Input.vue';
-import app from '../../../store/app.js';
 
 export default {
     name: "phi-person-picker",
     components: {PhiInput},
-	props: ["label"],
+	props: ["api", "label"],
 
-    data () {
+    data() {
         return {
             query: "",
-            results: []
+            results: [],
+            scanner: {
+                isRunning: false
+            }
         }
     },
 
 	methods: {
-        select (person) {
+        select(person) {
             this.selected = person;
             this.$emit("select", person);
             this.reset();
         },
 
-        find () {
-            app.api.get("people", {q: this.query}).then(results => this.results = results);
+        find() {
+            this.api
+                .get("people", {q: this.query})
+                .then(results => this.results = results);
         },
 
-        debounce () {
+        debounce() {
             if (!this.query) {
                 return this.reset();
             }
@@ -47,9 +56,55 @@ export default {
             this.timer = setTimeout(() => this.find(), 500);
         },
 
-        reset () {
+        reset() {
             this.query   = "";
             this.results = [];
+        },
+
+        startScan() {
+
+            if (typeof QRScanner == 'undefined') {
+                alert("Lector de codigo QR no soportado");
+                return;
+            }
+
+            if (this.scanner.isRunning) {
+                return;
+            }
+            this.scanner.isRunning = true;
+
+            QRScanner.scan((err, contents) => {
+                if (err) {
+                    return;
+                }
+
+                try {
+                    this.select(JSON.parse(contents));
+                } catch (e) {
+                    // not valid JSON
+                }
+
+                // restart scanner
+                this.scanner.isRunning = false;
+                this.startScan();
+            });
+
+        },
+
+        stopScan() {
+            if (!this.scanner.isRunning) {
+                return;
+            }
+            this.scanner.isRunning = false;
+
+            QRScanner.cancelScan(status => {
+                console.log(status);
+                alert("Cancel: " + JSON.stringify(status));
+            });
+        },
+
+        toggleScan() {
+            this.scanner.isRunning ? this.stopScan() : this.startScan();
         }
 	}
 }
@@ -58,8 +113,27 @@ export default {
 
 <style scoped lang="scss">
 .phi-person-picker {
-    .phi-input {
-        display: block;
+
+    .search {
+        display: flex;
+
+        .phi-input {
+            flex: 1;
+        }
+
+        button {
+            margin-left: 16px;
+
+            border: 0;
+            border-radius: 8px;
+            padding: 4px 36px;
+            font-size: 24px;
+
+            &.running {
+                background-color: #ff8;
+                color: red;
+            }
+        }
     }
 
     .results {

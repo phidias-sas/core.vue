@@ -23,6 +23,10 @@
 					<div class="phi-media-figure fa fa-map-marker"></div>
 					<div class="phi-media-body">QR Test</div>
 				</router-link>
+				<router-link to="/attendance/admin" class="phi-media">
+					<div class="phi-media-figure fa fa-map-marker"></div>
+					<div class="phi-media-body">Asistencia</div>
+				</router-link>
 			</div>
 		</div>
 	</div>

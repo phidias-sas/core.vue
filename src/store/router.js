@@ -10,6 +10,7 @@ import Login from '../states/Login.vue';
 
 import Deck from '../states/Deck.vue';
 import About from '../states/About.vue';
+import Id from '../states/Id.vue';
 import Hidden from '../states/Hidden.vue';
 
 import Dashboard from '../states/Dashboard.vue';
@@ -44,6 +45,11 @@ import Root from '../states/Root.vue';
 import People from '../states/People.vue';
 import Person from '../states/Person.vue';
 
+// Attendance
+import AttendanceAdmin from '../states/Attendance/Admin.vue';
+import AttendanceCheckpoint from '../states/Attendance/Checkpoint.vue';
+
+
 // geolocation
 import GeoTracker from '../states/Geo/Tracker.vue';
 
@@ -77,6 +83,7 @@ var router = new VueRouter({
             children: [
                 { path: '/hidden', component: Hidden },
                 { path: '/about', component: About, meta: { order: 1 } },
+                { path: '/id', component: Id, meta: { order: 1 } },
 
                 { path: '/dashboard', component: Dashboard, meta: { order: 1, exitOnBack: true } },
 
@@ -93,6 +100,9 @@ var router = new VueRouter({
                 { path: '/settings', component: Settings, meta: { order: 12, exitOnBack: true }, name: 'settings' },
                 { path: '/map', component: Map, meta: { order: 12, exitOnBack: true }, name: 'map' },
 
+                // Attendance
+                { path: '/attendance/admin', component: AttendanceAdmin, meta: { order: 10, exitOnBack: true }, name: 'attendance-admin' },
+                { path: '/attendance/checkpoint/:nodeId', component: AttendanceCheckpoint, meta: { order: 20 }, name: 'attendance-checkpoint' },
 
                 // Geolocation
                 { path: '/tracker/:targetId', component: GeoTracker, meta: { order: 1, exitOnBack: true }, name: 'geo-tracker' },

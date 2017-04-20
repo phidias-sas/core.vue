@@ -56,11 +56,10 @@
 				</section>
 			</div>
 
-			<footer>
+			<footer @click="openHidden">
 				<p>Desarrollado por Phidias SAS &copy; 2016</p>
 				<p v-if="app.organization">para {{ app.organization.name }}</p>
 				<p>Todos los derechos reservados</p>
-				<div id="hidden" @click="openHidden"></div>
 			</footer>
 
 		</div>
@@ -162,14 +161,6 @@ footer {
 	text-align: center;
 	font-size: 0.8em;
 	color: #666;
-
-	#hidden {
-		display: block;
-		padding: 16px;
-		margin-top: 72px;
-
-		border-top: 1px solid #eee;
-	}
 }
 
 </style>

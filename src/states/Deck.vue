@@ -31,7 +31,7 @@
 				</div>
 
 				<div class="user" v-if="app.user" @click="toggleMenu">
-					<router-link to="/settings">
+					<router-link to="/id">
 						<div class="phi-media">
 							<div class="phi-media-figure phi-avatar">
 								<img :src="app.user.avatar" :alt="app.user.firstName">
@@ -49,8 +49,9 @@
 				<router-link :to="'/billing/'+app.user.id" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
 				<router-link to="/archive">{{ $t("Archived") }}</router-link>
 				<!-- <router-link to="/map">Mapa</router-link> -->
-
 				<hr>
+				<router-link to="/settings">{{ $t("Settings") }}</router-link>
+
 
 <!-- 				<label class="phi-menu-label">años lectivos</label>
 				<router-link v-for="node in nodes.items"
@@ -67,8 +68,8 @@
 </template>
 
 <script>
-import PhiDrawer from '../components/Phi/Drawer.vue';
 import app from '../store/app.js';
+import PhiDrawer from '../components/Phi/Drawer.vue';
 
 var incomingCover = null;
 var outgoingCover = null;
@@ -172,7 +173,7 @@ ons-splitter-mask {
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 
-	background-color: #4D5250; /* slack's */
+	background-color: #4D5250; /* slack */
 	background-color: #4D5050;
 	background-color: rgb(48, 62, 77);
 	color: #eaeaea;

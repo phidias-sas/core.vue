@@ -5,22 +5,13 @@
 				<button class="phi-button" @click="$parent.$el.left.toggle()">
 					<i class="fa fa-bars"></i>
 				</button>
-				<h1>{{ $t('Preferences') }}</h1>
+				<h1>{{ $t('Settings') }}</h1>
 			</div>
 		</div>
 
 		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
 
 		<div class="phi-page-contents" v-if="app.user">
-
-			<header>
-				<div class="phi-media">
-					<div class="phi-media-figure">
-						<img :src="app.user.avatar">
-					</div>
-					<h1 class="phi-media-body">{{app.user.firstName}} {{app.user.lastName}}</h1>
-				</div>
-			</header>
 
 			<section v-if="destinations.length">
 				<h2>{{ $t('Notifications') }}</h2>
@@ -166,31 +157,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-header {
-
-	padding: 8px 12px 48px 12px;
-
-	.phi-media {
-		margin: auto;
-		padding: 0;
-
-		.phi-media-figure {
-			width: 72px;
-			height: 72px;
-			border-radius: 8px;
-			border: 5px solid #fff;
-			overflow: hidden;
-		}
-
-		.phi-media-body {
-			font-weight: normal;
-			font-size: 1.6em;
-		}
-	}
-
-}
-
 section {
 	margin-bottom: 2em;
 

@@ -5,11 +5,11 @@ export default {
 	'Archived': 'Archivados',
 	'View': 'Vista',
 	'Type': 'Tipo',
-	'Preferences': 'Preferencias',
 	'Clear cache': 'Limpiar caché',
 	'Logout': 'Cerrar sesión',
 	'Notifications': 'Notificaciones',
 	'Language': 'Idioma',
+	'Settings': 'Configuración',
 
 	'Month': 'Mes',
 	'Day': 'Día',

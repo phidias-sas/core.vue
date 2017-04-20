@@ -54,12 +54,7 @@ ons-fab, ons-speed-dial {
 
 * {
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
-}
-
-input, textarea {
-  -webkit-user-select: auto;
 }
 
 ons-toolbar:not([inline]), ons-bottom-toolbar {
