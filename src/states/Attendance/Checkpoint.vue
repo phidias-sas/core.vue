@@ -9,11 +9,18 @@
 
         <div class="phi-page-contents">
 
-            <div class="picker">
-                <label for="">Registrar:</label>
-                <select v-model="entry.type">
-                    <option v-for="ntype in types.items" :value="ntype.singular">{{ ntype.singular }}</option>
-                </select>
+            <div class="picker phi-card">
+
+                <div class="select">
+                    <i class="fa fa-arrow-left direction leave" v-show="newRecord.type && newRecord.type.settings && newRecord.type.settings.direction < 0"></i>
+                    <i class="fa fa-arrow-right direction enter" v-show="newRecord.type && newRecord.type.settings && newRecord.type.settings.direction > 0"></i>
+                    <i class="fa fa-exclamation direction info" v-show="newRecord.type && (!newRecord.type.settings || !newRecord.type.settings.direction)"></i>
+
+                    <select v-model="newRecord.type">
+                        <option v-for="ntype in types.items" :value="ntype">{{ ntype.singular }}</option>
+                    </select>
+                </div>
+
                 <phi-person-picker :api="app.api" label="buscar" @select="selectPerson"></phi-person-picker>
             </div>
 
@@ -24,6 +31,9 @@
                     </div>
                     <div class="phi-media-body">
                         <h1 class="name">{{ entry.person.firstName }} {{ entry.person.lastName }}</h1>
+                        <i class="fa fa-arrow-left direction leave" v-show="entry.direction < 0"></i>
+                        <i class="fa fa-arrow-right direction enter" v-show="entry.direction > 0"></i>
+                        <i class="fa fa-exclamation direction info" v-show="entry.direction == 0"></i>
                         <span class="type">{{ entry.type }}</span>
                         <span class="timestamp">{{ moment.unix(entry.timestamp).calendar(null, {sameElse: 'MMM D'}) }}</span>
                     </div>
@@ -56,7 +66,7 @@ export default {
             tpl: {
                 drawerIsOpen: false
             },
-            entry: {
+            newRecord: {
                 person: null,
                 type: null
             }
@@ -65,38 +75,67 @@ export default {
 
     methods: {
         selectPerson(person) {
-            if (this.entry.person == person.id) {
+            if (person.id == this.log.items[0].person.id && this.newRecord.type.singular == this.log.items[0].type) {
                 return;
             }
 
-            this.entry.person = person.id;
-            this.saveEntry();
+            this.newRecord.person = person;
+
+            this.logEntry({
+                person: this.newRecord.person.id,
+                type:   this.newRecord.type.singular
+            });
         },
 
-        saveEntry() {
+        logEntry(entry) {
             app.api
-                .post(`/attendance/checkpoints/${this.$route.params.nodeId}/log`, this.entry)
+                .post(`/attendance/checkpoints/${this.$route.params.nodeId}/log`, entry)
                 .then(createdEntry => this.log.unshift(createdEntry));
         }
     },
 
     mounted() {
         this.log.fetch();
-        this.types.fetch().then(() => this.entry.type = this.types.items[0].singular);
+        this.types.fetch().then(() => this.newRecord.type = this.types.items[0]);
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.picker {
-    padding: 12px;
-    margin-bottom: 24px;
+$top-card-offset: 20px;
 
-    select {
-        font-size: 1em;
-        border: none;
-        padding: 4px 12px;
+.phi-page-cover {
+    background-color: #1C89B8;
+    color: #fff;
+    padding-bottom: $top-card-offset;
+}
+
+.picker {
+
+    position: relative;
+    top: -$top-card-offset;
+
+    padding: 12px;
+
+    .select {
+
+        display: flex;
+
+        & > .direction {
+            display: block;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        & > select {
+            flex: 1;
+
+            font-size: 1em;
+            border: none;
+            background: transparent;
+        }
     }
+
 
     .phi-person-picker {
         margin-top: 12px;
@@ -104,14 +143,32 @@ export default {
 }
 
 .entry {
-
     .name {
         color: #000;
+    }
+
+    .direction {
+        font-size: 11px;
+        padding-right: 3px;
     }
 
     .timestamp {
         color: #777;
         font-size: 0.9em;
+    }
+}
+
+.direction {
+    &.enter {
+        color: #23CF5F;
+    }
+
+    &.leave {
+        color: #F64744;
+    }
+
+    &.info {
+        color: #0F6698;
     }
 }
 

@@ -39,9 +39,7 @@
             // Force onsen platform theme (overrides auto-detect)
             ons.platform.select('android') // or 'ios'
             var isMobile = false;
-            document.addEventListener("deviceready", () => {
-                isMobile = true;
-            }, false);
+            document.addEventListener("deviceready", () => isMobile = true, false);
         </script>
 
         <!-- Quill text editor -->

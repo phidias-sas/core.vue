@@ -2,11 +2,18 @@
 	<div class="phi-person-picker">
 
         <div class="search">
-            <phi-input :label="label" v-model="query" @input="debounce()"></phi-input>
-            <button :class="{running: scanner.isRunning}" @click="toggleScan"><i class="fa fa-qrcode"></i></button>
+            <input type="text" :placeholder="label" v-model="query" @input="debounce()" />
+            <i class="fa fa-times clear" @click="reset" v-show="query.trim().length > 0"></i>
+
+            <phi-qr-reader :enabled="scanner.isRunning" @result="readCode" @stop="scanner.isRunning = false">
+                <i class="fa fa-barcode" @click="scanner.isRunning = !scanner.isRunning"></i>
+            </phi-qr-reader>
         </div>
 
         <div class="results">
+
+            <p class="empty" v-show="query.trim().length > 0 && !results.length && !timer">No hay resultados</p>
+
             <div v-for="person in results" class="person phi-media" @click="select(person)">
                 <div class="phi-media-figure phi-avatar">
                     <img :src="person.avatar" :alt="person.firstName">
@@ -19,15 +26,17 @@
 
 <script>
 import PhiInput from '../Input.vue';
+import PhiQrReader from '../QRCode/Reader.vue';
 
 export default {
     name: "phi-person-picker",
-    components: {PhiInput},
+    components: {PhiInput, PhiQrReader},
 	props: ["api", "label"],
 
     data() {
         return {
             query: "",
+            timer: null,
             results: [],
             scanner: {
                 isRunning: false
@@ -45,7 +54,10 @@ export default {
         find() {
             this.api
                 .get("people", {q: this.query})
-                .then(results => this.results = results);
+                .then(results => {
+                    this.results = results;
+                    this.timer   = null;
+                });
         },
 
         debounce() {
@@ -61,104 +73,13 @@ export default {
             this.results = [];
         },
 
-        startScan() {
-            if (this.scanner.isRunning) {
-                return;
+        readCode(text) {
+            try {
+                this.select(JSON.parse(text));
+                setTimeout(() => this.scanner.isRunning = true, 0);  // restart scanner
+            } catch (e) {
+                alert("invalid code");
             }
-            this.scanner.isRunning = true;
-
-            cordova.plugins.barcodeScanner.scan(
-                result => {
-                    // alert("We got a barcode\n" +
-                    //     "Result: " + result.text + "\n" +
-                    //     "Format: " + result.format + "\n" +
-                    //     "Cancelled: " + result.cancelled);
-
-                    if (result.cancelled) {
-                        this.stopScan();
-                    }
-
-                    try {
-                        this.select(JSON.parse(result.text));
-                        this.stopScan();
-                        this.startScan();
-                    } catch (e) {
-                        // not valid JSON
-                    }
-                },
-
-                error => {
-                    alert("Scanning failed: " + error);
-                },
-
-                {
-                    preferFrontCamera : false, // iOS and Android
-                    showFlipCameraButton : true, // iOS and Android
-                    showTorchButton : true, // iOS and Android
-                    torchOn: false, // Android, launch with the torch switched on (if available)
-                    prompt : "", // Android
-                    resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-                    formats : "QR_CODE", // default: all but PDF_417 and RSS_EXPANDED
-                    orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
-                    disableAnimations : true, // iOS
-                    disableSuccessBeep: false // iOS
-                }
-            );
-        },
-
-        stopScan() {
-            if (!this.scanner.isRunning) {
-                return;
-            }
-            this.scanner.isRunning = false;
-        },
-
-        _startScan() {
-            if (typeof QRScanner == 'undefined') {
-                alert("Lector de codigo QR no soportado");
-                return;
-            }
-
-            if (this.scanner.isRunning) {
-                return;
-            }
-            this.scanner.isRunning = true;
-
-            QRScanner.scan((err, contents) => {
-                if (err) {
-                    return;
-                }
-
-                try {
-                    this.select(JSON.parse(contents));
-                } catch (e) {
-                    // not valid JSON
-                }
-
-                // restart scanner
-                this.scanner.isRunning = false;
-                this.startScan();
-            });
-
-            QRScanner.show();
-            // document.documentElement.style.opacity = 0.3;
-        },
-
-        _stopScan() {
-            if (!this.scanner.isRunning) {
-                return;
-            }
-            this.scanner.isRunning = false;
-
-            QRScanner.cancelScan(status => {
-                console.log(status);
-                alert("Cancel: " + JSON.stringify(status));
-            });
-            // document.documentElement.style.opacity = 1;
-        },
-
-        toggleScan() {
-            this.scanner.isRunning ? this.stopScan() : this.startScan();
         }
 	}
 }
@@ -167,23 +88,26 @@ export default {
 
 <style scoped lang="scss">
 .phi-person-picker {
-
     .search {
         display: flex;
 
-        .phi-input {
+        input {
             flex: 1;
+            border: none;
+            background: transparent;
         }
 
-        button {
-            margin-left: 16px;
+        .clear {
+            align-self: center;
+        }
 
+        .phi-qr-reader {
             border: 0;
-            border-radius: 8px;
-            padding: 4px 24px;
+            margin-left: 16px;
             font-size: 24px;
+            padding: 0 12px;
 
-            &.running {
+            &.enabled {
                 background-color: #ff8;
                 color: red;
             }
@@ -205,6 +129,13 @@ export default {
                 align-self: center;
             }
         }
+    }
+
+    .empty {
+        color: #777;
+        display: block;
+        font-size: 14px;
+        margin-top: 12px;
     }
 }
 </style>
