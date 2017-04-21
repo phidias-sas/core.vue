@@ -1,208 +1,48 @@
 <script>
 import app from '../store/app.js';
+import deepstream from 'deepstream.io-client-js';
 
-class Collection {
-
-	constructor(client, url) {
-		this.client     = client;
-		this.url        = url;
-		this.parameters = {};
-		this._items     = [];
-
-		this.dummy = false;
-
-		this.reset();
-	}
-
-	reset() {
-		this.meta   = {};
-		this.total  = null;
-		this.pagination = {
-			page: 1,
-			limit: 10
-		};
-	}
-
-	fetch(parameters = {}, append = false) {
-		!append && this.reset();
-		this.parameters = parameters;
-		return this.client
-			.fetch(this.url, {
-				method: "get",
-				body: Object.assign({}, parameters, this.pagination)
-			})
-			.then(response => {
-				this.total = response.headers.get("x-phidias-collection-total");
-				return response.json();
-			})
-			.then(items => {
-				!append && (this._items = []);
-				return this.appendItems(items);
-			});
-	}
-
-	next() {
-		this.pagination.page++;
-		return this.fetch(this.parameters, true);
-	}
-
-	appendItems(items) {
-		items.forEach(item => this.append(item));
-		return items;
-	}
-
-	append(incomingItem) {
-		for (var i = 0; i < this._items.length; i++) {
-			if (Collection.areEqual(incomingItem, this._items[i])) {
-				this._items[i] = Collection.merge(this._items[i], incomingItem);
-				return this._items[i];
-			}
-		}
-
-		this._items.push(incomingItem);
-		return incomingItem;
-	}
-
-	splice(outgoing) {
-		this._items.splice(this.indexOf(outgoing), 1);
-	}
-
-	indexOf(item) {
-		for (var i = 0; i < this._items.length; i++) {
-			if (Collection.areEqual(item, this._items[i])) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-
-	/* Meta-data handling */
-	setMeta(item, key, value) {
-
-		if (Array.isArray(item)) {
-			return item.forEach(subitem => {
-				this.setMeta(subitem, key, value);
-			});
-		}
-
-		var itemId = this.constructor.getId(item);
-		if (this.meta[itemId] == undefined) {
-			this.meta[itemId] = {};
-		}
-		this.meta[itemId][key] = value;
-
-		this.dummy = !this.dummy; //VUE will notice this change and trigger updates in all functions that contain this.dummy
-	}
-
-	getMeta(item, key, defaultValue = null) {
-		var itemId = this.constructor.getId(item);
-		return this.meta[itemId] && this.meta[itemId][key] ? this.meta[itemId][key] : defaultValue;
-	}
-
-	show(item) {
-		this.setMeta(item, 'hidden', false);
-	}
-
-	hide(item) {
-		this.setMeta(item, 'hidden', true);
-	}
-
-	isHidden(item) {
-		return this.getMeta(item, 'hidden', false);
-	}
-
-	toggle(item) {
-		this.isHidden(item) ? this.show(item) : this.hide(item);
-	}
-
-	/* Tagging */
-	tag(item, tag) {
-		var tags = this.getMeta(item, 'tags', []);
-		if (tags.indexOf(tag) == -1) {
-			tags.push(tag);
-			this.setMeta(item, 'tags', tags);
-		}
-	}
-
-	untag(item, tag) {
-		var tags = this.getMeta(item, 'tags', []);
-		var index = tags.indexOf(tag);
-		if (index != -1) {
-			tags.splice(index, 1);
-			this.setMeta(item, 'tags', tags);
-		}
-	}
-
-	hasTag(item, tag) {
-		var tags = this.getMeta(item, 'tags', []);
-		return tags.indexOf(tag) != -1;
-	}
-
-	toggleTag(item, tag) {
-		this.hasTag(item, tag) ? this.untag(item, tag) : this.tag(item, tag);
-	}
-
-	tagged(tag) {
-		return this.items.filter(item => this.hasTag(item, tag));
-	}
-
-	count(tag) {
-		var count = 0;
-		for (var id in this.meta) {
-			if (!this.meta[id].hidden && this.meta[id].tags && this.meta[id].tags.indexOf(tag) != -1) count++;
-		}
-		return count;
-	}
-
-	//  Adds new properties from incomingObject into targetObject. Keeps all targetObject properties intact.
-	static merge(targetObject, incomingObject) {
-		return Object.assign(incomingObject, targetObject);
-	}
-
-	static areEqual(itemA, itemB) {
-		return Collection.getId(itemA) == Collection.getId(itemB);
-	}
-
-	static getId(item) {
-		return item.id ? item.id : JSON.stringify(item);
-	}
-
-
-	/* Pseudo properties */
-	get items() {
-		this.dummy; // VUE will assume this function must be refreshed when dummy changes
-		return this._items.filter(item => !this.isHidden(item));
-	}
-
-	get isLoading() {
-		return this.client.isLoading;
-	}
-
-	get hasNext() {
-		if (this.total == null) return false;
-		return this.pagination.page < Math.ceil(this.total/this.pagination.limit); // Match.ceil(...) is the total number of pages
-	}
-
-}
-
+var client = deepstream('wss://deepstream.phidias.co:6020/deepstream').login();
 
 export default {
-
 	data() {
 		return {
 			app,
 			parameters: {
 				q: ""
 			},
-			people: new Collection(app.api, '/people'),
+			people: app.api.collection('/people'),
 			timer: null,
-			selected: null
+			selected: null,
+
+			record: client.record.getRecord("testrecord"),
+			text: '',
+
+			listPointers: client.record.getList("pointers"),
+			pointers: {},
+			timer: null,
+			position: {x: null, y: null}
 		}
 	},
 
 	mounted() {
 		this.people.fetch(this.parameters);
+		this.record.subscribe('text', this.incomingText);
+
+		this.listPointers.removeEntry(`pointer/${app.user.id}`);
+		this.listPointers.addEntry(`pointer/${app.user.id}`);
+
+		this.listPointers.subscribe(this.pointersChanged);
+
+		this.listPointers.on('entry-added', entry => this.addPointer(entry));
+
+
+		document.addEventListener('mousemove', event => this.movePointer(event.clientX, event.clientY));
+	},
+
+	beforeDestroy() {
+		this.listPointers.removeEntry(`pointer/${app.user.id}`);
+		this.listPointers.discard();
 	},
 
 	methods: {
@@ -219,6 +59,54 @@ export default {
 		restore() {
 			this.people.show(this.selected);
 			this.selected = null;
+		},
+
+		incomingText(value) {
+			this.text = value;
+		},
+
+		pointersChanged(entries) {
+			entries.forEach(this.addPointer);
+		},
+
+		addPointer(pointerName) {
+			if (typeof this.pointers[pointerName] != 'undefined') {
+				return;
+			}
+
+			this.$set(this.pointers, pointerName, {
+				name: pointerName,
+				position: {
+					x: null,
+					y: null
+				}
+			});
+
+			client.record.getRecord(pointerName).subscribe('position', position => {
+				this.$set(this.pointers[pointerName], 'position',  position);
+			});
+		},
+
+		movePointer(x, y) {
+
+			this.position = {x,y};
+
+			if (this.timer) {
+				return;
+			}
+
+			this.timer = true;
+			setTimeout(() => {
+				client.record.getRecord(`pointer/${app.user.id}`).set('position', this.position);
+				this.timer = false;
+			}, 150);
+
+		}
+	},
+
+	watch: {
+		text(newValue) {
+			this.record.set("text", newValue);
 		}
 	}
 }
@@ -226,6 +114,17 @@ export default {
 
 <template>
 	<div class="phi-page">
+
+		<ul>
+			<li v-for="pointer in pointers">
+				<span>{{ pointer.name }}  {{ pointer.position }}</span>
+				<div style="position:fixed; border: 2px solid red; z-index: 999; transition: top 150ms ease-out, left 150ms ease-out" :style="{top: pointer.position.y + 16 + 'px', left: pointer.position.x + 16 + 'px'}">{{ pointer.name }}</div>
+			</li>
+		</ul>
+
+		<div class="_padded">
+			<textarea style="width: 100%; min-height: 200px;" v-model="text"></textarea>
+		</div>
 
 		<input v-model="parameters.q" @input="debounce()" />
 		<span v-show="people.isLoading">Looking for {{parameters.q}}</span>
