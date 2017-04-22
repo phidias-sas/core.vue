@@ -4,7 +4,12 @@ export default class Cache {
 
 	constructor(id) {
 		this.id = id ? id : "phidias.cache";
+		this.expirationTime = 60;
 		this.createDB();
+	}
+
+	setExpirationTime(seconds) {
+		this.expirationTime = seconds;
 	}
 
 	createDB() {
@@ -31,7 +36,15 @@ export default class Cache {
 		}
 
         var hash = Cache.getHash(request);
-		return this.db.request.get(hash).then(result => result ? Cache.parse(result.response) : undefined);
+		return this.db.request
+			.get(hash)
+			.then(result => {
+				if (!result) {
+					return undefined;
+				}
+				var age = Math.abs( (new Date().getTime() - result.timestamp.getTime())/1000 );
+				return age > this.expirationTime ? undefined : Cache.parse(result.response);
+			});
 	}
 
 	store(request, response) {

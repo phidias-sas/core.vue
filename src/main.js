@@ -7,7 +7,11 @@ locale.set("es");
 
 /* Fastclick:  removes the 300ms tap delay on mobile devices */
 import Fastclick from 'fastclick';
-Fastclick.attach(document.body);
+if ('addEventListener' in document) {
+	document.addEventListener('DOMContentLoaded', function() {
+		Fastclick.attach(document.body);
+	}, false);
+}
 
 /* Muse-UI */
 import MuseUI from 'muse-ui';
@@ -25,18 +29,15 @@ import router from './store/router.js';
 app.on("load", () => {
 	new Vue({
 		el: '#app',
-		router,
-		// store
+		router
 	});
 });
 
 /* Clear cache on incoming notification */
 app.on("notification", (data, notification) => {
-	app.api.clear(`people/${app.user.id}/posts/types`);
-	app.api.clear(`people/${app.user.id}/posts/inbox`);
-	app.api.clear(`/people/${app.user.id}/threads/inbox`);
+	app.api.clear(`/people/${app.user.id}/threads/feed`);
+	app.api.clear(`/people/${app.user.id}/threads/feed/${data.post.thread2}`);
 	app.api.clear(`/people/${app.user.id}/threads/archive`);
-	app.api.clear(`/people/${app.user.id}/threads/inbox/${data.post.thread}`);
 
 	if (!notification.additionalData.foreground) {
 		router.push({name: 'thread', params: {threadId: data.post.thread2}});

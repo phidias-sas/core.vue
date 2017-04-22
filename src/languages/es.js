@@ -3,6 +3,7 @@ export default {
 	'Calendar': 'Calendario',
 	'Billing': 'Tesorería',
 	'Archived': 'Archivados',
+	'Trash': 'Papelera',
 	'View': 'Vista',
 	'Type': 'Tipo',
 	'Clear cache': 'Limpiar caché',

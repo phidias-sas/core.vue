@@ -9,8 +9,7 @@ export default class Client {
 		this.token          = null;
 		this.cache          = new Cache;
 		this.isLoading      = false;
-		// this.cacheIsEnabled = true;
-		this.cacheIsEnabled = false; // !!! cache is DISABLED temporarily
+		this.cacheIsEnabled = true;
 		this.authorization  = {};
 	}
 
@@ -52,14 +51,12 @@ export default class Client {
 	}
 
 	fetch(url, options) {
-
 		var request = this.buildRequest(url, options);
 		var promise;
 
 		if (request.method == "GET" && this.cacheIsEnabled) {
 			promise = this.cache.fetch(request)
-				.then(response => response != undefined ? response : fetch(request))
-				.then(response => this.cache.store(request, response));
+				.then(response => response != undefined ? response : fetch(request).then(response => this.cache.store(request, response)));
 		} else {
 			this.cache.clear(url);
 			promise = fetch(request);

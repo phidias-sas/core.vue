@@ -23,7 +23,7 @@
 			<section v-show="!!types">
 				<div class="types phi-card _z-0">
 					<router-link
-						v-for="type in types"
+						v-for="type in types.items"
 						:to="{name: 'feed', query:{type: type.singular}}"
 						class="phi-media"
 					>
@@ -48,7 +48,7 @@ export default {
 	data() {
 		return {
 			app,
-			types: [],
+			types: app.api.collection(`/people/${app.user.id}/posts/types`),
 			billboard: null,
 			error: null,
 			isLoading: false,
@@ -57,36 +57,15 @@ export default {
 	},
 
 	created() {
-		this.fetch();
-	},
+		this.isLoading = true;
+		this.types
+			.fetch()
+			.then(() => this.isLoading = false);
 
-	methods: {
-		fetch() {
-
-			var baseUrl      = `people/${app.user.id}/posts/types`;
-			var collection   = app.api.collection(baseUrl);
-			var billboardUrl = `people/${app.user.id}/posts/inbox?tags=highlight&limit=1`;
-
-			this.isLoading = true;
-
-			/* Fetch type list */
-			collection.fetch()
-				.then((data) => {
-					this.types     = data;
-					this.isLoading = false;
-				})
-				.catch((error) => {
-					this.error     = error;
-					this.isLoading = false;
-				});
-
-			/* Fetch billboard */
-			this.app.api.get(billboardUrl)
-				.then((response) => {
-					this.billboard = response.length && !response[0].stub.readDate ? response[0] : null;
-				});
-
-		}
+		/* Fetch billboard */
+		this.app.api
+			.get(`/people/${app.user.id}/posts/inbox?tags=highlight&limit=1`)
+			.then(response => this.billboard = response.length && !response[0].stub.readDate ? response[0] : null);
 	},
 
 	beforeRouteLeave(to, from, next) {

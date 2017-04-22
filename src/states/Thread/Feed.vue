@@ -3,25 +3,14 @@
 		<div class="phi-page-cover">
 			<div class="phi-page-toolbar" :class="{_hidden: tpl.toolbarIsHidden}">
 
-				<button v-if="isArchive" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+				<button v-if="isArchive || isTrash" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
 				<button v-else class="phi-button" @click="$router.go(-1)"><i class="fa fa-arrow-left"></i></button>
 
-				<h1 v-text="isArchive ? $t('Archived') : $route.query.type"></h1>
-
-				<!-- quick archive button -->
-				<button
-					v-if="!isArchive"
-					v-show="feed.count('selected') > 0"
-					class="phi-button selection-count"
-					@click="move('archive')"
-				>
-					<span v-text="feed.count('selected')"></span>
-					<i class="fa fa-archive"></i>
-				</button>
+				<h1 v-text="isArchive ? $t('Archived') : ( isTrash ? $t('Trash') : $route.query.type)"></h1>
 
 				<!-- quick restore button -->
 				<button
-					v-if="isArchive"
+					v-if="isArchive || isTrash"
 					v-show="feed.count('selected') > 0"
 					class="phi-button selection-count"
 					@click="move('feed')"
@@ -30,6 +19,16 @@
 					<i class="fa fa-inbox"></i>
 				</button>
 
+				<!-- quick archive button -->
+				<button
+					v-else
+					v-show="feed.count('selected') > 0"
+					class="phi-button selection-count"
+					@click="move('archive')"
+				>
+					<span v-text="feed.count('selected')"></span>
+					<i class="fa fa-archive"></i>
+				</button>
 
 				<div class="phi-tooltip">
 					<button class="phi-button"> <i class="fa fa-ellipsis-v"></i></button>
@@ -49,7 +48,7 @@
 						<li @click="move('feed')" :disabled="!feed.count('selected')" v-if="isArchive">{{ $t("restore") }}</li>
 						<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
 						<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
-						<li @click="move('trash')" :disabled="!feed.count('selected')">{{ $t("delete") }}</li>
+						<li @click="move('trash')" :disabled="!feed.count('selected')"  v-if="!isTrash">{{ $t("delete") }}</li>
 					</ul>
 				</div>
 			</div>
@@ -73,14 +72,12 @@
 						<img :src="post.author.avatar" :alt="post.author.firstName">
 						<i class="fa fa-check"></i>
 					</div>
-					<router-link :to="{name: 'thread', params:{threadId: post.thread.thread}}" class="phi-media-body">
+					<router-link :to="{name: 'thread', params:{threadId: post.thread.thread}}" class="phi-media-body" @click.native="leave(post)">
 						<h1 class="post-title" v-text="post.title"></h1>
-
 						<div class="post-author" v-text="post.author.firstName"></div>
 						<div class="post-count" v-text="post.thread.nTotal" v-show="post.thread.nTotal > 1"></div>
 						<div class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D'}) }}</div>
 						<div class="post-preview" v-text="post.description"></div>
-
 					</router-link>
 				</div>
 
@@ -117,6 +114,7 @@ export default {
 			.then(() => next(vm => {
 				vm.feed      = feed;
 				vm.isArchive = to.meta.endpoint == 'archive';
+				vm.isTrash   = to.meta.endpoint == 'trash';
 			}));
 	},
 
@@ -125,6 +123,7 @@ export default {
 			feed: app.api.collection(`/people/${app.user.id}/threads/${this.$route.meta.endpoint}`),
 			moment,
 			isArchive: this.$route.meta.endpoint == 'archive',
+			isTrash: this.$route.meta.endpoint == 'trash',
 			lastAction: null,
 			tpl: {
 				menuIsOpen: false,
@@ -134,8 +133,28 @@ export default {
 		}
 	},
 
-
 	methods: {
+
+		/* Leaving to read post.  Override cache */
+		leave(post) {
+			if (!post.stub.readDate) {
+				post.stub.readDate = Math.floor(Date.now() / 1000);
+				this.feed.override();
+
+				// override the cached dashboard count as well
+				var dashboard = app.api.collection(`/people/${app.user.id}/posts/types`);
+				dashboard.fetch()
+					.then(() => {
+						dashboard._items.forEach(type => {
+							if (type.singular == post.type) {
+								type.unread = Math.max(parseInt(type.unread) - 1, 0);
+							}
+						});
+						dashboard.override();
+					});
+			}
+		},
+
 		isUnread(post) {
 			// return post.thread.nUnread > 0;
 			return !post.stub.readDate;
@@ -195,6 +214,11 @@ export default {
 						threadIds,
 						text: this.redact(target, threadIds.length)
 					};
+
+					/* Clear cache */
+					app.api.clear(this.feed.url);
+					app.api.clear(`/people/${app.user.id}/threads/${target}`);
+					app.api.clear(`/people/${app.user.id}/posts/types`);
 				});
 		},
 

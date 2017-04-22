@@ -48,6 +48,7 @@
 				<router-link to="/calendar">{{ $t("Calendar") }}</router-link>
 				<router-link :to="'/billing/'+app.user.id" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
 				<router-link to="/archive">{{ $t("Archived") }}</router-link>
+				<router-link to="/trash">{{ $t("Trash") }}</router-link>
 				<!-- <router-link to="/map">Mapa</router-link> -->
 				<hr>
 				<router-link to="/settings">{{ $t("Settings") }}</router-link>

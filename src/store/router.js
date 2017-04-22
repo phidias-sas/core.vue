@@ -87,9 +87,10 @@ var router = new VueRouter({
 
                 { path: '/dashboard', component: Dashboard, meta: { order: 1, exitOnBack: true } },
 
-                { path: '/archive', component: ThreadFeed, meta: { endpoint: 'archive', order: 3, exitOnBack: true }, name: 'archive' },
                 { path: '/threads/feed', component: ThreadFeed, meta: { endpoint: 'feed', order: 2 }, name: 'feed' },
                 { path: '/threads/feed/:threadId', component: Thread, meta: { order: 3 }, name: 'thread' },
+                { path: '/archive', component: ThreadFeed, meta: { endpoint: 'archive', order: 3, exitOnBack: true }, name: 'archive' },
+                { path: '/trash', component: ThreadFeed, meta: { endpoint: 'trash', order: 3, exitOnBack: true }, name: 'trash' },
 
                 { path: '/billing/:personId', component: Billing, name: 'billing', meta: {order: 1}},
 
