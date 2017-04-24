@@ -58,6 +58,7 @@ import Test from '../states/Test.vue';
 
 import Santiago from '../states/Santiago.vue';
 import Leo from '../states/Leo.vue';
+import Reko from '../states/Rekognition.vue';
 import Sebas from '../states/Sebas.vue';
 import Felipe from '../states/Felipe.vue';
 
@@ -128,6 +129,7 @@ var router = new VueRouter({
                 { path: '/sebas', component: Sebas, name: 'Sebas' },
                 { path: '/felipe', component: Felipe },
                 { path: '/leo', component: Leo },
+                { path: '/reko', component: Reko },
 
                 // billing (sebastian)
                 { path: '/billing/debits', component: BillingDebits},
