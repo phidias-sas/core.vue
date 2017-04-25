@@ -49,7 +49,11 @@
                     <div class="phi-media-body">
                         <div class="post-author" v-text="post.author.firstName" @click.stop="posts.toggleTag(post, 'expanded')"></div>
                         <div class="post-date">{{ moment.unix(post.publishDate).calendar(null, {sameElse: 'MMM D h:mm a'}) }}</div>
-                        <div class="post-audience" v-if="allowed(post, 'audience')" v-text="$t('to {n} people', {n: post.audienceCount})" @click="toggleAudience(post)"></div>
+                        <div class="post-audience" v-if="allowed(post, 'audience')" @click="toggleAudience(post)">
+                            <span>{{ $t('to {n} people', {n: post.audienceCount}) }}</span>
+                            <i class="fa fa-caret-right" v-show="!post.audienceIsShown"></i>
+                            <i class="fa fa-caret-down" v-show="post.audienceIsShown"></i>
+                        </div>
                         <div class="post-preview" v-text="post.description"></div>
                         <div class="post-attachment-count" v-show="post.blocks && post.blocks.length > 0">
                             <i class="fa fa-paperclip"></i>
@@ -58,15 +62,18 @@
 
                 </div>
 
-                <div class="post-contents">
-                    <div class="post-audience-people" v-show="post.audienceIsShown">
-                        <div class="phi-chip phi-media" v-for="person in post.people" @click="post.author.id == app.user.id && togglePersonDetails(person)">
-                            <div class="phi-media-figure phi-avatar">
-                                <img :src="person.avatar" alt="person.firstName">
+                <phi-drawer class="post-contents" :open="posts.hasTag(post, 'expanded')" :slide-down="{duration: 240}" :slide-up="{duration: 200}">
+
+                    <phi-drawer :open="post.audienceIsShown" :slide-down="{duration: 200}" :slide-up="{duration: 200}">
+                        <div class="post-audience-people">
+                            <div class="phi-chip phi-media" v-for="person in post.people" @click="post.author.id == app.user.id && togglePersonDetails(person)">
+                                <div class="phi-media-figure phi-avatar">
+                                    <img :src="person.avatar" alt="person.firstName">
+                                </div>
+                                <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
                             </div>
-                            <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
                         </div>
-                    </div>
+                    </phi-drawer>
 
                     <div class="post-description" v-text="post.description"></div>
 
@@ -100,7 +107,7 @@
                         <button v-if="allowed(post, 'replyAll')" class="post-reply-all"    @click="openReply(post, true)">{{ $t('reply to all') }}</button>
                     </div>
 
-                </div>
+                </phi-drawer>
 
             </div>
 
@@ -384,7 +391,7 @@ export default {
                 this.fetchAudience(post)
                     .then(people => {
                         this.$set(post, 'people', people);
-                        this.$set(post, 'audienceIsShown', true);
+                        setTimeout(() => this.$set(post, 'audienceIsShown', true), 50);
                     });
             } else {
                 post.audienceIsShown = !post.audienceIsShown;
@@ -683,6 +690,18 @@ export default {
         margin-top: 3px;
         color: #777;
         font-size: 0.8em;
+
+        i {
+            margin-left: 6px;
+        }
+
+        -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+
     }
 
     .post-attachment-count {
@@ -740,8 +759,7 @@ export default {
 
         .post-audience,
         .post-audience-people,
-        .post-date,
-        .post-contents {
+        .post-date {
             display: none;
         }
     }
