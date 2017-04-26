@@ -31,7 +31,15 @@ import PhiQrReader from '../QRCode/Reader.vue';
 export default {
     name: "phi-person-picker",
     components: {PhiInput, PhiQrReader},
-	props: ["api", "label"],
+	props: {
+        api: {
+            required: true
+        },
+
+        label: {
+            type: String
+        }
+    },
 
     data() {
         return {

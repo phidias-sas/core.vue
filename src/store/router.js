@@ -32,6 +32,9 @@ import Calendar from '../states/Calendar.vue';
 import Settings from '../states/Settings.vue';
 import Map from '../states/Map.vue';
 
+
+import Nodes from '../states/Nodes.vue';
+
 import NodeContainer from '../states/Node/Container.vue';
 import NodeDashboard from '../states/Node/Dashboard.vue';
 import NodePosts from '../states/Node/Posts.vue';
@@ -41,7 +44,7 @@ import NodePeople from '../states/Node/People.vue';
 import NodeNodes from '../states/Node/Nodes.vue';
 import NodeImport from '../states/Node/Import.vue';
 
-import Root from '../states/Root.vue';
+
 import People from '../states/People.vue';
 import Person from '../states/Person.vue';
 
@@ -110,8 +113,8 @@ var router = new VueRouter({
                 { path: '/tracker/:targetId', component: GeoTracker, meta: { order: 1, exitOnBack: true }, name: 'geo-tracker' },
 
 
-                { path: '/root', component: Root, meta: { order: 12 }, name: 'root' },
-
+                // Nodes
+                { path: '/nodes', component: Nodes, meta: { order: 1, exitOnBack: true }, name: 'nodes' },
                 {
                     path: '/nodes/:nodeId', component: NodeContainer, meta: { order: 13 },
                     children: [

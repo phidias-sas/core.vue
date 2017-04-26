@@ -25,7 +25,7 @@ import app from '../../store/app.js'
 export default {
 	name: "node-dashboard",
 
-	data () {
+	data() {
 		return {
             app,
             nodes: app.api.collection(`nodes/${this.$parent.nodeId}/nodes`)
@@ -33,7 +33,7 @@ export default {
 	},
 
     computed: {
-        types () {
+        types() {
             var retval = {};
             for (var i = 0; i < this.nodes.items.length; i++) {
                 var node = this.nodes.items[i];
@@ -51,13 +51,13 @@ export default {
     },
 
     methods: {
-        fetch (clear) {
+        fetch(clear) {
             clear && (this.nodes.items = []);
             this.nodes.fetch();
         }
     },
 
-	created () {
+	created() {
 		this.fetch();
 	}
 }

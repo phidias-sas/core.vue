@@ -25,7 +25,7 @@
 		</section>
 
 		<div class="phi-card _z-0">
-			<router-link :to="{name: 'read', params:{threadId: post.thread}}" v-for="post in posts.items" class="phi-media">
+			<router-link :to="{name: 'thread', params:{threadId: post.thread2}}" v-for="post in posts.items" class="phi-media">
 				<div class="phi-media-figure">
 					<img :src="post.type.icon" :alt="post.type.singular">
 				</div>
@@ -52,7 +52,7 @@ export default {
 			type:   null,
 			page:   1,
 			posts:  app.api.collection(`nodes/${this.$parent.nodeId}/posts/published`),
-			drafts: app.api.collection(`nodes/${this.$parent.nodeId}/posts/drafts`)
+			drafts: app.api.collection(`people/${app.user.id}/posts/drafts`)
 		}
 	},
 
@@ -72,13 +72,15 @@ export default {
 
 			this.drafts.fetch({
 				type: this.type,
+				node: this.$parent.nodeId,
 				order: "-creationDate"
 			});
 		},
 
 		compose() {
-			this.app.api.post(`nodes/${this.$parent.nodeId}/posts/drafts`, {type: this.type})
+			this.app.api.post(`people/${app.user.id}/posts/drafts`, {type: this.type, node: this.$parent.nodeId})
 				.then(draft => {
+					this.app.api.clear(`people/${app.user.id}/posts/drafts`)
 					this.$router.push({name: 'node-compose', params:{nodeId: this.$parent.nodeId, postId: draft.id}});
 				});
 		}

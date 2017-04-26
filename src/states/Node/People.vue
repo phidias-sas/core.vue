@@ -17,7 +17,7 @@
                         </div>
                     </div>
 
-                    <phi-person-picker label="persona" @select="appendPerson(arguments[0])"></phi-person-picker>
+                    <phi-person-picker :api="app.api" label="persona" @select="appendPerson(arguments[0])"></phi-person-picker>
 
                     <footer>
                         <button class="phi-button" :disabled="!inscriptions.length">inscribir</button>
@@ -133,7 +133,7 @@ export default {
             app.api.delete(`nodes/${this.$parent.nodeId}/people/${person.id}`)
                 .then(() => {
                     app.api.clear(`nodes/${this.$parent.nodeId}/people`);
-                    this.people.remove(person);
+                    this.people.splice(person);
                 });
         }
     },

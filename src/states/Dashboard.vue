@@ -33,6 +33,9 @@
 					</router-link>
 				</div>
 			</section>
+
+			<mu-float-button icon="add" class="compose-button" @click="compose" />
+
 		</div>
 	</div>
 </template>
@@ -53,6 +56,14 @@ export default {
 			error: null,
 			isLoading: false,
 			defaultIcon: app.api.host + "/icons/fa-file-text.png?color=2196F3&size=42"
+		}
+	},
+
+	methods: {
+		compose() {
+			app.api
+				.post(`nodes/6dd7e15a/posts/drafts`, {type: 'mensaje'})
+				.then(draft => this.$router.push({name: 'node-compose', params:{nodeId: '6dd7e15a', postId: draft.id}}));
 		}
 	},
 
@@ -77,6 +88,15 @@ export default {
 
 
 <style lang="scss" scoped>
+
+.compose-button {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+
+	background-color: #1C89B8;
+}
+
 section {
 	margin-bottom: 24px;
 }

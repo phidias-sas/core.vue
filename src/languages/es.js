@@ -11,6 +11,7 @@ export default {
 	'Notifications': 'Notificaciones',
 	'Language': 'Idioma',
 	'Settings': 'Configuración',
+	'Compose {type}': 'Redactar {type}',
 
 	'Month': 'Mes',
 	'Day': 'Día',

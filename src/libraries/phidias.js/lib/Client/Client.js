@@ -58,7 +58,7 @@ export default class Client {
 			promise = this.cache.fetch(request)
 				.then(response => response != undefined ? response : fetch(request).then(response => this.cache.store(request, response)));
 		} else {
-			this.cache.clear(url);
+			this.clear(url);
 			promise = fetch(request);
 		}
 

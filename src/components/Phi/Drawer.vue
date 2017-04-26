@@ -13,17 +13,17 @@ export default {
 	props: {
 		open: Boolean,
 		slideDown: {
-			default: {
+			default: () => ({
 				duration: 640,
 				easing: [500, 20]
-			}
+			})
 		},
 
 		slideUp: {
-			default: {
+			default: () => ({
 				duration: 420,
 				easing: [.42, 0, 0.2, 1]
-			}
+			})
 		}
 	},
 

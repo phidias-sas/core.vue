@@ -1,6 +1,5 @@
 <template>
 	<ons-splitter v-if="app.user">
-
 		<ons-splitter-content id="main-view" :class="'move-'+transitionDirection">
 			<transition
 				name="slide"
@@ -15,21 +14,18 @@
 
 		<ons-splitter-side
 			id="sidemenu"
-
 			swipe-target-width="64"
 			side="left"
 			width="314px"
 			collapse="(max-width: 800px)"
 			swipeable
 			>
-
 			<header>
 				<div class="school" @click="toggleMenu">
 					<router-link to="/about">
 						<h1 v-text="app.title"></h1>
 					</router-link>
 				</div>
-
 				<div class="user" v-if="app.user" @click="toggleMenu">
 					<router-link to="/id">
 						<div class="phi-media">
@@ -42,29 +38,26 @@
 				</div>
 			</header>
 
-
 			<div class="phi-menu main-options" @click="toggleMenu">
 				<router-link to="/dashboard">{{ $t("Inbox") }}</router-link>
+				<router-link to="/nodes">{{ $t("Groups") }}</router-link>
 				<router-link to="/calendar">{{ $t("Calendar") }}</router-link>
 				<router-link :to="'/billing/'+app.user.id" v-if="allowed.billing">{{ $t("Billing") }}</router-link>
 				<router-link to="/archive">{{ $t("Archived") }}</router-link>
 				<router-link to="/trash">{{ $t("Trash") }}</router-link>
-				<!-- <router-link to="/map">Mapa</router-link> -->
 				<hr>
 				<router-link to="/settings">{{ $t("Settings") }}</router-link>
-
-
-<!-- 				<label class="phi-menu-label">años lectivos</label>
+<!--
+				<hr>
+				<label class="phi-menu-label">años lectivos</label>
 				<router-link v-for="node in nodes.items"
 					:to="{name:'node', params:{nodeId:node.id}}"
 					v-text="node.name"
 					@click.native="app.navigation.clear()"
 				></router-link>
  -->
-
 			</div>
 		</ons-splitter-side>
-
 	</ons-splitter>
 </template>
 
@@ -194,7 +187,6 @@ ons-splitter-mask {
 	}
 
 	header {
-
 		h1 {
 			color: #fff;
 			text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
@@ -251,8 +243,6 @@ ons-splitter-mask {
 	}
 
 }
-
-
 
 .slide-enter-active,
 .slide-leave-active {
@@ -313,7 +303,6 @@ ons-splitter-mask {
 
 
 .move-left {
-
 	.slide-enter {
 		.phi-page-contents {
 			transform: translate3d($transition-displacement, 0, 0);
@@ -328,7 +317,6 @@ ons-splitter-mask {
 }
 
 .move-right {
-
 	.slide-enter {
 		.phi-page-contents {
 			transform: translate3d(-$transition-displacement, 0, 0);
