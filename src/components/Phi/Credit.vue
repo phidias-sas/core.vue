@@ -1,7 +1,7 @@
 <template>
 	<div id="phi-credit">
 		<section>
-			<h2># {{credit.sequence}}</h2>
+			<h2 v-show="credit.sequence"># {{credit.sequence}}</h2>
 			<div class="types phi-card _z-0">
 				<div class="label" v-if="credit.person"><span class="fa fa-user-o"></span>{{credit.person.firstname}} </div>
 				<div class="label"><span class="fa fa-calendar-check-o"></span> Fecha {{credit.date|moment.format}}</div>
@@ -10,16 +10,16 @@
 			</div>
 		</section>
 
-		<section>
-			<h2>conceptos pagados</h2>
+		<section v-if="credit.debits">
+			<h2>{{ $t('Concepts paid') }}</h2>
 			<div class="types phi-card _z-0">
-				<div class="concepts" v-for="debit in credit.debits">
-					<div class="concept_name">
+				<div class="debit_content" v-for="debit in credit.debits">
+					<div class="debit_name">
 						<p><b>{{debit.period.name}} <small>#{{debit.sequence}}</small></b></p>
-						<div class="concepts" v-for="item in debit.distributions">
-							<p>{{item.price.concept.name}} <small>({{item.price.name}})</small></p>
-							<div class="balance">{{item.value|currency}}</div>
-						</div>
+					</div>
+					<div class="debit_prices" v-for="item in debit.distributions">
+						<p>{{item.price.concept.name}} <small>({{item.price.name}})</small></p>
+						<div class="balance">{{item.value|currency}}</div>
 					</div>
 				</div>
 			</div>
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import app from '../../store/app.js'
 
 export default{
   props: ['credit']
@@ -57,31 +56,38 @@ export default{
 		}
 	}
 
-	.concepts {
+	.debit_content {
 		padding: 10px;
-		display: flex;
-		flex-wrap:wrap;
-		justify-content: center;
-		border-bottom: 1px dashed #ddd;
-		transition:  all 0.2s ease;
 
-		.concept_name {
-			flex-grow: 1;
-			width: 300px;
+		.debit_name {
+			width: 100%;
+		}
 
-			p:nth-child(2) {
-				font-size: 14px;
-				font-style: italic;
+		.debit_prices {
+			padding: 10px;
+			display: flex;
+			flex-wrap:wrap;
+			justify-content: center;
+			border-bottom: 1px dashed #ddd;
+			transition:  all 0.2s ease;
+
+			p{
+				width: 100%;
+			}
+
+			.balance {
+				flex-grow: 1;
+				width: 200px;
+				text-align: right;
 			}
 		}
-		.balance {
-			text-align: right;
-			flex-grow: 1;
-			width: 200px;
+		.debit_prices:nth-last-child(1) {
+			border: none;
+		}
+		.debit_prices:hover {
+			background: #eee;
 		}
 	}
-	.concepts:nth-last-child(1) {
-		border: none;
-	}
+
 }
 </style>

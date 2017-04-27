@@ -53,5 +53,12 @@ export default {
 
 	// Roles
 	'group director': 'director de grupo',
-	'teacher': 'profesor'
+	'teacher': 'profesor',
+
+	// Billing
+	'Concepts to pay': 'Conceptos a pagar',
+	'Concepts paid': 'Conceptos pagados',
+	'Pending charges': 'Cobros pendientes',
+	'Recent payments': 'Pagos recientes',
+	'Payments to apply': 'Pagos por aplicar',
 }

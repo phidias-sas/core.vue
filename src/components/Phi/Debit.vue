@@ -12,7 +12,7 @@
 		</section>
 
 		<section v-if="debit.prices">
-			<h2>conceptos a pagar</h2>
+			<h2>{{ $t('Concepts to pay') }}</h2>
 			<div class="types phi-card _z-0">
 				<div class="concepts" v-for="price in debit.prices">
 					<div class="concept_name">

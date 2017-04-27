@@ -14,7 +14,7 @@
 
 			<!-- pendings -->
 			<mu-list v-if="pendings.length">
-				<mu-sub-header>Cobros pendientes</mu-sub-header>
+				<mu-sub-header>{{ $t('Pending charges') }}</mu-sub-header>
 				<router-link v-for="pending in pendings" :to="{name: 'billing-debit-debitId', params:{debitId: pending.id}}" >
 					<mu-list-item :title="pending.period.name + ' #' + pending.sequence">
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #009688;" />
@@ -34,7 +34,7 @@
 
 			<!-- pagos recientes -->
 			<mu-list v-if="recent.length">
-				<mu-sub-header>Pagos recientes</mu-sub-header>
+				<mu-sub-header>{{ $t('Recent payments') }}</mu-sub-header>
 				<router-link v-for="payment in recent" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
 					<mu-list-item :title="payment.method.name">
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #FFFF00;"/>
@@ -53,7 +53,7 @@
 
 			<!-- pagos por aplicar -->
 			<mu-list v-if="unapplied.length">
-				<mu-sub-header>Pagos por aplicar</mu-sub-header>
+				<mu-sub-header>{{ $t('Payments to apply') }}</mu-sub-header>
 				<router-link v-for="payment in unapplied" :to="{name: 'billing-credit-creditId', params:{creditId: payment.id}}">
 					<mu-list-item :title="payment.method.name">
 						<mu-avatar src="../../static/img/billing.png" slot="leftAvatar" style="background-color: #3F51B5;"/>
@@ -95,11 +95,11 @@ export default{
 		.then(data => {this.pendings = data;});
 
 		// recent
-		app.api.get(`v3/people/${this.personId}/billing/credits?limit=5`)
+		app.api.get(`v3/people/${this.personId}/billing/credits`)
 		.then(data => {this.recent = data;});
 
 		// unapplied
-		app.api.get(`v3/people/${this.personId}/billing/credits?limit=5&balance=true`)
+		app.api.get(`v3/people/${this.personId}/billing/credits?balance=true`)
 		.then(data => {this.unapplied = data;});
 	}
 }
@@ -107,6 +107,7 @@ export default{
 
 
 <style lang="scss" scoped>
+
 .document {
 	width: 100%;
 	display: flex;
@@ -135,6 +136,7 @@ export default{
 	.expiration {
 		color: red !important;
 	}
+
 
 }
 </style>

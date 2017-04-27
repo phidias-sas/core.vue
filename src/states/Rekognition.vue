@@ -162,8 +162,8 @@ export default {
 	created () {
 		this.rekognition = new AWS.Rekognition({
 			region: "us-east-1",
-			accessKeyId: "",
-			secretAccessKey: ""
+			accessKeyId: "AKIAI2RH6U2XUMFTS5DA",
+			secretAccessKey: "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"
 		});
 
 		this.pictureTimer = null;
