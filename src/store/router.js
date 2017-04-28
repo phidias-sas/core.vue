@@ -54,7 +54,9 @@ import AttendanceCheckpoint from '../states/Attendance/Checkpoint.vue';
 
 
 // geolocation
+import GeoTargets from '../states/Geo/Targets.vue';
 import GeoTracker from '../states/Geo/Tracker.vue';
+import GeoFeed from '../states/Geo/Feed.vue';
 
 // pruebas
 import Test from '../states/Test.vue';
@@ -133,7 +135,9 @@ var router = new VueRouter({
                 { path: '/felipe', component: Felipe },
                 { path: '/leo', component: Leo },
                 { path: '/reko', component: Reko },
-
+                { path: '/geofeed', component: GeoFeed },
+                { path: '/geotargets', component: GeoTargets },
+                
                 // billing (sebastian)
                 { path: '/billing/debits', component: BillingDebits},
                 { path: '/billing/debits/:debitId', component: BillingDetails, name: 'billing-debit-debitId', meta: {order: 2} },
