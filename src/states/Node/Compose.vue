@@ -1,48 +1,47 @@
 <template>
-	<div class="phi-page" id="compose">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
-				<h1>{{ $t('Compose {type}', {type: post.type.singular}) }}</h1>
-				<button class="phi-button" @click="send"> <i class="fa fa-paper-plane"></i></button>
-			</div>
-			<div class="phi-page-header">
-				<phi-input label="Título" v-model="post.title" @input="save()"></phi-input>
-			</div>
+	<phi-page id="compose">
+		<div slot="toolbar" class="toolbar">
+			<button @click="$router.go(-1)"> <i class="fa fa-arrow-left"></i></button>
+			<h1>{{ $t('Compose {type}', {type: post.id ? post.type.singular : null}) }}</h1>
+			<button @click="send"> <i class="fa fa-paper-plane"></i></button>
 		</div>
-		<div class="phi-page-contents">
-			<div v-if="post.id" class="post">
 
-                <!-- lista de destinatarios -->
-				<div class="audience">
-                    <label>{{ $t('To') }}:</label>
-                    <div class="post-audience-people">
-                        <div class="phi-chip phi-media" v-for="person in sanitizedAudience">
-                            <div class="phi-media-figure phi-avatar">
-                                <img :src="person.avatar" alt="person.firstName">
-                            </div>
-                            <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
-                            <i class="phi-media-right fa fa-times" @click="audience.splice(audience.indexOf(person), 1)"></i>
-                        </div>
+		<div slot="header" class="header">
+			<phi-input label="Título" v-model="post.title" @input="save()"></phi-input>
+		</div>
 
-                        <phi-person-relevance-picker
-                            :api="app.api"
-                            :person-id="app.user.id"
-                            v-model="audience"
-                        >
-                            <div class="phi-chip phi-media adder">
-                                <div class="phi-media-body">...</div>
-                                <i class="phi-media-right fa fa-plus"></i>
-                            </div>
-                        </phi-person-relevance-picker>
-                    </div>
+		<div v-if="post.id" class="post">
+
+			<!-- lista de destinatarios -->
+			<div class="audience">
+				<label>{{ $t('To') }}:</label>
+				<div class="post-audience-people">
+					<div class="phi-chip phi-media" v-for="person in sanitizedAudience">
+						<div class="phi-media-figure phi-avatar">
+							<img :src="person.avatar" alt="person.firstName">
+						</div>
+						<div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
+						<i class="phi-media-right fa fa-times" @click="audience.splice(audience.indexOf(person), 1)"></i>
+					</div>
+
+					<phi-person-relevance-picker
+						:api="app.api"
+						:person-id="app.user.id"
+						v-model="audience"
+					>
+						<div class="phi-chip phi-media adder">
+							<div class="phi-media-body">...</div>
+							<i class="phi-media-right fa fa-plus"></i>
+						</div>
+					</phi-person-relevance-picker>
 				</div>
-
-				<textarea v-model="post.description" @input="save()"></textarea>
-				<phi-post-editor :post="post"></phi-post-editor>
 			</div>
+
+			<textarea v-model="post.description" @input="save()"></textarea>
+			<phi-post-editor :post="post"></phi-post-editor>
 		</div>
-	</div>
+
+	</phi-page>
 </template>
 
 <script>
@@ -131,20 +130,19 @@ textarea {
 <style lang="scss">
 #compose {
 
+	background-color: #1C89B8;
+
 	.post {
 		max-width: 768px;
 	}
 
-	.phi-page-toolbar {
+	.toolbar {
 		color: #fff;
 	}
 
-	.phi-page-cover {
-		background-color: #1C89B8;
-
-		.phi-page-header {
-			padding-top: 48px;
-		}
+	.header {
+		padding: 12px;
+		padding-top: 48px;
 
 		.phi-input {
 			font-size: 1.8em;

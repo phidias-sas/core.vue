@@ -1,16 +1,13 @@
 <template>
-	<div class="phi-page">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()">
-					<i class="fa fa-bars"></i>
-				</button>
-				<h1 v-text="app.title"></h1>
-			</div>
+	<phi-page>
+		<div slot="toolbar">
+			<button @click="$parent.$el.left.toggle()">
+				<i class="fa fa-bars"></i>
+			</button>
+			<h1 v-text="app.title"></h1>
 		</div>
 
-		<div class="phi-page-contents">
-
+		<div>
 			<div class="phi-card school">
 				<header>
 					<img :src="app.logo" :alt="app.title">
@@ -63,7 +60,7 @@
 			</footer>
 
 		</div>
-	</div>
+	</phi-page>
 </template>
 
 <script>

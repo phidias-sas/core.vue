@@ -1,16 +1,16 @@
 <template>
-	<div class="phi-page">
-		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
-		<div class="phi-page-cover" :style="{'background-image': `url(${coverImage})`}">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<ul class="phi-breadcrumbs phi-page-toolbar-wide">
-					<li v-for="crumb in app.navigation.breadcrumbs">
-						<router-link :to="{name:'node', params:{nodeId:crumb.id}}" v-text="crumb.name"></router-link>
-					</li>
-				</ul>
-			</div>
+	<phi-page :style="{'background-image': `url(${coverImage})`}">
 
+		<div slot="toolbar" class="toolbar">
+			<button @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<ul class="phi-breadcrumbs phi-page-toolbar-wide">
+				<li v-for="crumb in app.navigation.breadcrumbs">
+					<router-link :to="{name:'node', params:{nodeId:crumb.id}}" v-text="crumb.name"></router-link>
+				</li>
+			</ul>
+		</div>
+
+		<div slot="header">
 			<phi-drawer :open="!pageIsCollapsed">
 				<div class="phi-page-header">
 					<small v-html="node.type.singular || '&nbsp;'"></small> <!-- nbsp helps set the default cover height, which aides the transition animation-->
@@ -25,7 +25,8 @@
 				<router-link :to="{name:'node-nodes', params:{nodeId}}">Grupos</router-link>
 			</div>
 		</div>
-		<div class="phi-page-contents" :class="'moving-'+transitionDirection">
+
+		<div :class="'moving-'+transitionDirection">
 			<!--
 			I wasted HOURS finding this:
 			http://archive.forum.vuejs.org/topic/4840/keep-canreuse-in-vue-router-2-0/3
@@ -35,7 +36,8 @@
 				<router-view :key="$route.path"></router-view>
 			</transition>
 		</div>
-	</div>
+
+	</phi-page>
 </template>
 
 <script>
@@ -112,7 +114,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .phi-page-cover {
 	background: #f9f9f9 url('../../../static/covers/9.jpg') no-repeat 0 0;
 	background-size: cover;
@@ -122,7 +124,7 @@ export default {
 	}
 }
 
-.phi-page-toolbar {
+.toolbar {
 	color: #fff;
 }
 
@@ -147,9 +149,7 @@ $transition-displacement: 120px;
 .slidetab-enter-active,
 .slidetab-leave-active {
 	position: absolute;
-	top: 8px; /* must be the same as .phi-page-contents padding */
-	left: 8px;
-	right: 8px;
+	width: 100%;
 
 	transition: transform $transition-duration, opacity $transition-duration;
 

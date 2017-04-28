@@ -1,17 +1,12 @@
 <template>
+    <phi-page :loading="isLoading">
+		<div slot="toolbar">
+			<button @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<h1>{{ $t("Calendar") }}</h1>
+			<a :href="`${app.api.host}/people/${app.user.id}/calendar/ics?h=${hash}`"><i class="fa fa-calendar-plus-o"></i></a>
+		</div>
 
-    <div class="phi-page">
-        <div class="phi-page-cover">
-            <div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-                <h1>{{ $t("Calendar") }}</h1>
-                <a :href="`${app.api.host}/people/${app.user.id}/calendar/ics?h=${hash}`"><i class="fa fa-calendar-plus-o"></i></a>
-            </div>
-        </div>
-
-		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
-
-		<div class="phi-page-contents">
+		<div>
 			<div class="views-list-menu" v-show="displayViewsMenu">
 				<ul class="phi-menu">
 					<li @click="currentView = 'month'" 		v-bind:class="{ 'phi-menu-selected': currentView === 'month' }">{{ $t("Month") }}</li>
@@ -36,8 +31,7 @@
 				@created="setCalendar"
 			></full-calendar>
         </div>
-    </div>
-
+    </phi-page>
 </template>
 
 <script>

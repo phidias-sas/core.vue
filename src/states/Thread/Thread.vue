@@ -1,37 +1,29 @@
 <template>
-    <div class="phi-page scrollable">
-        <div class="phi-page-cover">
+    <phi-page class="page">
+        <div slot="toolbar" class="page-toolbar">
+            <button class="fa fa-arrow-left" @click="$router.go(-1)"></button>
+            <h1></h1>
+            <a v-if="posts.items[0] && posts.items[0].event"
+                :href="`${app.api.host}/calendar/events/${posts.items[0].event.id}/ics`"
+            ><button class="fa fa-calendar-plus-o"></button></a>
+        </div>
 
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$router.go(-1)">
-					<i class="fa fa-arrow-left"></i>
-				</button>
-				<h1></h1>
-				<a v-if="posts.items[0] && posts.items[0].event"
-					:href="`${app.api.host}/calendar/events/${posts.items[0].event.id}/ics`"
-				><i class="fa fa-calendar-plus-o"></i></a>
-			</div>
-
-            <div class="phi-page-header" v-if="posts.items[0]">
-                <h1 v-text="posts.items[0].title"></h1>
-
-                <div v-if="posts.items[0].event" class="phi-post-event">
-                    <i class="fa fa-calendar-o"></i>
-                    <span v-if="posts.items[0].event.allDay == '1'">
-                        {{ moment.unix(posts.items[0].event.startDate).format('LL') }}
-                    </span>
-                    <span v-if="posts.items[0].event.allDay != '1'">
-                        <span>{{ moment.unix(posts.items[0].event.startDate).format('LL h:mm a') }}</span>
-                        <span v-if="posts.items[0].event.startDate != posts.items[0].event.endDate"> - {{ moment.unix(posts.items[0].event.endDate).format('h:mm a') }}</span>
-                    </span>
-                </div>
+        <div slot="header" class="page-header" v-if="posts.items[0]">
+            <h1 v-text="posts.items[0].title"></h1>
+            <div v-if="posts.items[0].event" class="phi-post-event">
+                <i class="fa fa-calendar-o"></i>
+                <span v-if="posts.items[0].event.allDay == '1'">
+                    {{ moment.unix(posts.items[0].event.startDate).format('LL') }}
+                </span>
+                <span v-if="posts.items[0].event.allDay != '1'">
+                    <span>{{ moment.unix(posts.items[0].event.startDate).format('LL h:mm a') }}</span>
+                    <span v-if="posts.items[0].event.startDate != posts.items[0].event.endDate"> - {{ moment.unix(posts.items[0].event.endDate).format('h:mm a') }}</span>
+                </span>
             </div>
-
         </div>
 
 
-
-        <div class="phi-page-contents">
+        <div>
 
             <div v-for="post in posts.items.reverse()"
                 class="post"
@@ -111,63 +103,76 @@
 
             </div>
 
-            <div class="reply post expanded" v-show="tpl.replyIsOpen">
-
-                <div class="post-contents">
-
-                    <!-- lista de destinatarios -->
-                    <label>Para:</label>
-                    <div class="post-audience-people">
-                        <div class="phi-chip phi-media" v-for="person in sanitizedAudience">
-                            <div class="phi-media-figure phi-avatar">
-                                <img :src="person.avatar" alt="person.firstName">
-                            </div>
-                            <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
-                            <i class="phi-media-right fa fa-times" @click="audience.splice(audience.indexOf(person), 1)"></i>
-                        </div>
-
-                        <phi-person-relevance-picker
-                            v-if="reply.replyTo && allowed(posts.getItem(reply.replyTo), 'invites')"
-                            :api="app.api"
-                            :person-id="app.user.id"
-                            v-model="audience"
-                        >
-                            <div class="phi-chip phi-media adder">
-                                <div class="phi-media-body">...</div>
-                                <i class="phi-media-right fa fa-plus"></i>
-                            </div>
-                        </phi-person-relevance-picker>
-                    </div>
-
-                    <textarea v-model="reply.description" @input="saveReply"></textarea>
-
-                    <!-- reply trail -->
-                    <button class="post-trail-handle" @click="toggleTrail(reply)">···</button>
-                    <post-trail v-show="reply.trailIsShown" :post="reply.objTrail"></post-trail>
-
-                    <!-- reply blocks -->
-                    <div class="post-blocks">
-                        <div v-for="block in reply.blocks" class="phi-media">
-                            <div class="phi-media-body">
-                                <phi-block :block="block" :action="block.type == 'files' ? 'edit' : null"></phi-block>
-                            </div>
-                        </div>
-                    </div>
-
-                    <footer>
-                        <button class="cancel" @click="tpl.replyIsOpen = false">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        <button class="attach" @click="addFilesBlock">
-                            <i class="fa fa-paperclip"></i>
-                        </button>
-                        <button class="send phi-button" @click="sendReply">
-                            {{ $t('send') }}
-                        </button>
-                    </footer>
-                </div>
-            </div>
         </div>
+
+
+        <div slot="footer" class="footer">
+            <phi-drawer :open="!tpl.replyIsOpen" :slide-down="{duration: 200}" :slide-up="{duration: 200}">
+                <div class="toggler" @click="openReply(posts.items[0]); scrollToBottom();">{{ $t('Reply') }}</div>
+            </phi-drawer>
+
+            <phi-drawer :open="tpl.replyIsOpen" :slide-down="{duration: 200}" :slide-up="{duration: 200}">
+                <div class="reply post expanded">
+
+                    <div class="post-contents">
+
+                        <!-- lista de destinatarios -->
+                        <label>Para:</label>
+                        <div class="post-audience-people">
+                            <div class="phi-chip phi-media" v-for="person in sanitizedAudience">
+                                <div class="phi-media-figure phi-avatar">
+                                    <img :src="person.avatar" alt="person.firstName">
+                                </div>
+                                <div class="phi-media-body">{{person.firstName}} {{person.lastName}}</div>
+                                <i class="phi-media-right fa fa-times" @click="audience.splice(audience.indexOf(person), 1)"></i>
+                            </div>
+
+                            <phi-person-relevance-picker
+                                v-if="reply.replyTo && allowed(posts.getItem(reply.replyTo), 'invites')"
+                                :api="app.api"
+                                :person-id="app.user.id"
+                                v-model="audience"
+                            >
+                                <div class="phi-chip phi-media adder">
+                                    <div class="phi-media-body">...</div>
+                                    <i class="phi-media-right fa fa-plus"></i>
+                                </div>
+                            </phi-person-relevance-picker>
+                        </div>
+
+                        <textarea v-model="reply.description" @input="saveReply"></textarea>
+
+                        <!-- reply trail -->
+                        <button class="post-trail-handle" @click="toggleTrail(reply)">···</button>
+                        <post-trail v-show="reply.trailIsShown" :post="reply.objTrail"></post-trail>
+
+                        <!-- reply blocks -->
+                        <div class="post-blocks">
+                            <div v-for="block in reply.blocks" class="phi-media">
+                                <div class="phi-media-body">
+                                    <phi-block :block="block" :action="block.type == 'files' ? 'edit' : null"></phi-block>
+                                </div>
+                            </div>
+                        </div>
+
+                        <footer>
+                            <button class="cancel" @click="tpl.replyIsOpen = false">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                            <button class="attach" @click="addFilesBlock">
+                                <i class="fa fa-paperclip"></i>
+                            </button>
+                            <button class="send" @click="sendReply">
+                                {{ $t('send') }}
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+            </phi-drawer>
+
+
+        </div>
+
 
 
         <phi-slider-panel side="right" :open="currentPerson != null" @closed="currentPerson = null">
@@ -205,7 +210,7 @@
             </div>
         </phi-slider-panel>
 
-    </div>
+    </phi-page>
 </template>
 
 <script>
@@ -263,7 +268,7 @@ export default {
     mounted() {
 		/* stayDown */
 		stayDownScroller = new StayDown({
-			target: this.$el
+			target: this.$el.querySelector('.ph-page-body')
 		});
 
 		destroyListener = app.on("notification", stub => {
@@ -560,7 +565,8 @@ export default {
             }
 
             setTimeout(() => {
-                this.$el.scrollTop = this.$el.scrollHeight + this.$el.clientHeight;
+                var el = this.$el.querySelector('.ph-page-body');
+                el.scrollTop = el.scrollHeight + el.clientHeight;
             }, delay);
         }
     }
@@ -593,10 +599,28 @@ export default {
         white-space: pre-wrap;
     }
 }
+
 </style>
 
 
 <style lang="scss" scoped>
+.page {
+	background-color: #1C89B8 !important;
+}
+
+.page-toolbar,
+.page-header {
+    color: #fff;
+}
+
+.page-header {
+    padding: 12px;
+}
+
+.phi-menu {
+    color: #333;
+}
+
 .post-quotes {
     margin: 12px 6px;
     font-size: 0.8em;
@@ -619,15 +643,6 @@ export default {
     border-top: 1px solid #eee;
 }
 
-.phi-page-cover {
-    color: #fff;
-	background: #1C89B8 !important;
-	background-size: cover;
-
-	.phi-menu {
-		color: #333;
-	}
-}
 
 .phi-page-toolbar {
     background-color: #1C89B8;
@@ -768,7 +783,7 @@ export default {
 
 .reply {
     position: relative;
-    padding: 36px 0;
+    padding-top: 12px;
 
     label {
         font-size: 14px;
@@ -856,6 +871,19 @@ export default {
                 display: block;
                 margin-bottom: 6px;
             }
+        }
+    }
+}
+
+.footer {
+    .toggler {
+        cursor: pointer;
+        padding: 16px 32px;
+        font-size: 14px;
+        background-color: #ddd;
+
+        &:hover {
+            background-color: #eee;
         }
     }
 }

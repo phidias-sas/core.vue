@@ -1,11 +1,10 @@
 <template>
-	<div class="phi-page">
-		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
-		<div class="phi-page-toolbar">
+	<phi-page :loading="app.api.isLoading">
+		<div slot="toolbar">
 			<h1>{{ $t("Groups") }}</h1>
 		</div>
-		<div class="phi-page-cover" style="background: transparent"></div>
-		<div class="phi-page-contents">
+
+		<div>
 			<div class="phi-card">
                 <router-link class="node phi-media" v-for="node in nodes.items" :to="{name: 'node', params:{nodeId: node.id}}">
                     <div class="phi-media-body">
@@ -15,7 +14,7 @@
                 </router-link>
 			</div>
 		</div>
-	</div>
+	</phi-page>
 </template>
 
 <script>

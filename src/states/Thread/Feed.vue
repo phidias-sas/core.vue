@@ -1,69 +1,63 @@
 <template>
-	<div class="phi-page scrollable">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar" :class="{_hidden: tpl.toolbarIsHidden}">
+	<phi-page :loading="feed.isLoading" color="#f3f3f3">
 
-				<button v-if="isArchive || isTrash" class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<button v-else class="phi-button" @click="$router.go(-1)"><i class="fa fa-arrow-left"></i></button>
+		<div slot="toolbar">
+			<button v-if="isArchive || isTrash" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<button v-else @click="$router.go(-1)"><i class="fa fa-arrow-left"></i></button>
 
-				<h1 v-text="isArchive ? $t('Archived') : ( isTrash ? $t('Trash') : $route.query.type)"></h1>
+			<h1 v-text="isArchive ? $t('Archived') : ( isTrash ? $t('Trash') : $route.query.type)"></h1>
 
-				<!-- quick restore button -->
-				<button
-					v-if="isArchive || isTrash"
-					v-show="feed.count('selected') > 0"
-					class="phi-button selection-count"
-					@click="move('feed')"
-				>
-					<span v-text="feed.count('selected')"></span>
-					<i class="fa fa-inbox"></i>
-				</button>
+			<!-- quick restore button -->
+			<button
+				v-if="isArchive || isTrash"
+				v-show="feed.count('selected') > 0"
+				class="selection-count"
+				@click="move('feed')"
+			>
+				<span v-text="feed.count('selected')"></span>
+				<i class="fa fa-inbox"></i>
+			</button>
 
-				<!-- quick archive button -->
-				<button
-					v-else
-					v-show="feed.count('selected') > 0"
-					class="phi-button selection-count"
-					@click="move('archive')"
-				>
-					<span v-text="feed.count('selected')"></span>
-					<i class="fa fa-archive"></i>
-				</button>
+			<!-- quick archive button -->
+			<button
+				v-else
+				v-show="feed.count('selected') > 0"
+				class="selection-count"
+				@click="move('archive')"
+			>
+				<span v-text="feed.count('selected')"></span>
+				<i class="fa fa-archive"></i>
+			</button>
 
-				<div class="phi-tooltip">
-					<button class="phi-button"> <i class="fa fa-ellipsis-v"></i></button>
-					<ul class="phi-menu _texture-paper">
-						<li @click="tpl.menuIsOpen = !tpl.menuIsOpen">
-							<span>{{ $t("select") }}</span>
-							<phi-drawer :open="tpl.menuIsOpen">
-								<ul class="phi-menu">
-									<li @click="select('all')">{{ $t("all") }}</li>
-									<li @click="select('read')">{{ $t("read") }}</li>
-									<li @click="select('unread')">{{ $t("unread") }}</li>
-									<li @click="select('none')">{{ $t("none") }}</li>
-								</ul>
-							</phi-drawer>
-						</li>
-						<li @click="move('archive')" :disabled="!feed.count('selected')" v-if="!isArchive">{{ $t("archive") }}</li>
-						<li @click="move('feed')" :disabled="!feed.count('selected')" v-if="isArchive">{{ $t("restore") }}</li>
-						<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
-						<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
-						<li @click="move('trash')" :disabled="!feed.count('selected')"  v-if="!isTrash">{{ $t("delete") }}</li>
-					</ul>
-				</div>
+			<div class="phi-tooltip">
+				<button> <i class="fa fa-ellipsis-v"></i></button>
+				<ul class="phi-menu _texture-paper">
+					<li @click="tpl.menuIsOpen = !tpl.menuIsOpen">
+						<span>{{ $t("select") }}</span>
+						<phi-drawer :open="tpl.menuIsOpen">
+							<ul class="phi-menu">
+								<li @click="select('all')">{{ $t("all") }}</li>
+								<li @click="select('read')">{{ $t("read") }}</li>
+								<li @click="select('unread')">{{ $t("unread") }}</li>
+								<li @click="select('none')">{{ $t("none") }}</li>
+							</ul>
+						</phi-drawer>
+					</li>
+					<li @click="move('archive')" :disabled="!feed.count('selected')" v-if="!isArchive">{{ $t("archive") }}</li>
+					<li @click="move('feed')" :disabled="!feed.count('selected')" v-if="isArchive">{{ $t("restore") }}</li>
+					<li @click="move('read')" :disabled="!feed.count('selected')">{{ $t("mark read") }}</li>
+					<li @click="move('unread')" :disabled="!feed.count('selected')">{{ $t("mark unread") }}</li>
+					<li @click="move('trash')" :disabled="!feed.count('selected')"  v-if="!isTrash">{{ $t("delete") }}</li>
+				</ul>
 			</div>
 		</div>
 
-		<mu-linear-progress color="#1c89b8" v-show="feed.isLoading" />
-
-		<div class="phi-page-contents">
-
+		<div>
 			<div class="empty" v-show="feed.isEmpty">
 				<p>no hay nada aquí</p>
 			</div>
 
 			<div class="phi-card _z-0">
-
 				<div v-for="post in feed.items"
 					class="post phi-media"
 					:class="{selected: feed.hasTag(post, 'selected'), read: !isUnread(post), unread: isUnread(post)}"
@@ -80,7 +74,6 @@
 						<div class="post-preview" v-text="post.description"></div>
 					</router-link>
 				</div>
-
 			</div>
 
 			<button
@@ -94,7 +87,7 @@
 
 		<mu-snackbar v-if="tpl.toastIsShown && lastAction" :message="lastAction.text" :action="$t('undo')" @actionClick="undo()" @close="tpl.toastIsShown = false" />
 
-	</div>
+	</phi-page>
 </template>
 
 <script>
@@ -347,10 +340,6 @@ export default {
 		margin: 12px 0;
 		color: #666;
 	}
-}
-
-.phi-page-toolbar {
-	background-color: #f3f3f3;
 }
 
 .phi-menu li {

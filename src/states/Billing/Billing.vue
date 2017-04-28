@@ -1,17 +1,11 @@
 <template>
-	<div id="state-billing" class="phi-page">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<h1>{{ $t("Billing") }}</h1>
-			</div>
+	<phi-page :loading="app.api.isLoading">
+		<div slot="toolbar">
+			<button @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<h1>{{ $t("Billing") }}</h1>
 		</div>
 
-		<!-- Loading -->
-		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
-
-		<div class="phi-page-contents">
-
+		<div>
 			<!-- pendings -->
 			<mu-list v-if="pendings.length">
 				<mu-sub-header>{{ $t('Pending charges') }}</mu-sub-header>
@@ -70,8 +64,7 @@
 				</router-link>
 			</mu-list>
 		</div>
-
-	</div>
+	</phi-page>
 </template>
 
 <script>

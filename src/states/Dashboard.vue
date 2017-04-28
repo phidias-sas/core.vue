@@ -1,13 +1,12 @@
 <template>
-	<div class="phi-page">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
-				<h1>{{ $t("Inbox") }}</h1>
-			</div>
+	<phi-page :loading="isLoading" color="#f3f3f3">
+
+		<div slot="toolbar">
+			<button @click="$parent.$el.left.toggle()"> <i class="fa fa-bars"></i></button>
+			<h1>{{ $t("Inbox") }}</h1>
 		</div>
-		<mu-linear-progress color="#1c89b8" v-show="isLoading" />
-		<div class="phi-page-contents">
+
+		<div>
 			<section v-if="!!billboard">
 				<div class="billboard phi-card _z-0">
 					<router-link class="phi-card" :to="{name: 'thread', params:{threadId: billboard.thread2}}">
@@ -37,7 +36,7 @@
 			<mu-float-button icon="add" class="compose-button" @click="compose" />
 
 		</div>
-	</div>
+	</phi-page>
 </template>
 
 <script>
@@ -113,15 +112,6 @@ section {
 		padding-top: 12px;
 		border-top: 1px solid #ddd;
 	}
-}
-
-.phi-page-cover {
-	background: transparent;
-	color: #444;
-}
-
-.phi-page-toolbar {
-	background-color: #f3f3f3;
 }
 
 .phi-media-body {

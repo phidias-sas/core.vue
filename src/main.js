@@ -22,6 +22,7 @@ import '../static/muse/theme-carbon.css'; // use carbon theme
 Vue.use(MuseUI);
 
 import './store/filters.js';
+import './store/components.js';
 import app from './store/app.js';
 import router from './store/router.js';
 

@@ -52,7 +52,7 @@ export default {
 	data() {
 		return {
 			app,
-            nodes: app.api.collection(`nodes/${this.$parent.nodeId}/nodes`),
+            nodes: app.api.collection(`nodes/${this.$route.params.nodeId}/nodes`),
             search: null,
             timer: null,
             defaultIcon: app.api.host + '/icons/fa-users.png?color=2196F3&size=42',
@@ -93,7 +93,7 @@ export default {
         },
 
         createGroup() {
-            this.app.api.post(`nodes/${this.$parent.nodeId}/nodes`, this.newGroup)
+            this.app.api.post(`nodes/${this.$route.params.nodeId}/nodes`, this.newGroup)
                 .then(newGroup => {
                     newGroup.type = {singular: newGroup.type};
                     this.nodes.add(newGroup);

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<!--<router-link :to="{name: 'node-compose', params:{nodeId: $parent.nodeId}}" class="phi-card phi-media adder">
+		<!--<router-link :to="{name: 'node-compose', params:{nodeId: nodeId}}" class="phi-card phi-media adder">
 			<i class="phi-media-figure fa fa-plus"></i>
 			<h4 class="phi-media-body">publicar</h4>
 		</router-link>-->
@@ -11,7 +11,7 @@
 		<section v-if="drafts.items.length" class="drafts">
 			<label for="">borradores</label>
 			<div>
-				<router-link :to="{name: 'node-compose', params:{nodeId: $parent.nodeId, postId: post.id}}" v-for="post in drafts.items" class="phi-media">
+				<router-link :to="{name: 'node-compose', params:{nodeId: nodeId, postId: post.id}}" v-for="post in drafts.items" class="phi-media">
 					<div class="phi-media-figure">
 						<img :src="post.type.icon" :alt="post.type.singular">
 					</div>
@@ -49,9 +49,10 @@ export default {
 	data () {
 		return {
 			app,
+			nodeId: this.$route.params.nodeId,
 			type:   null,
 			page:   1,
-			posts:  app.api.collection(`nodes/${this.$parent.nodeId}/posts/published`),
+			posts:  app.api.collection(`nodes/${this.$route.params.nodeId}/posts/published`),
 			drafts: app.api.collection(`people/${app.user.id}/posts/drafts`)
 		}
 	},
@@ -72,16 +73,16 @@ export default {
 
 			this.drafts.fetch({
 				type: this.type,
-				node: this.$parent.nodeId,
+				node: this.nodeId,
 				order: "-creationDate"
 			});
 		},
 
 		compose() {
-			this.app.api.post(`people/${app.user.id}/posts/drafts`, {type: this.type, node: this.$parent.nodeId})
+			this.app.api.post(`people/${app.user.id}/posts/drafts`, {type: this.type, node: this.nodeId})
 				.then(draft => {
 					this.app.api.clear(`people/${app.user.id}/posts/drafts`)
-					this.$router.push({name: 'node-compose', params:{nodeId: this.$parent.nodeId, postId: draft.id}});
+					this.$router.push({name: 'node-compose', params:{nodeId: this.nodeId, postId: draft.id}});
 				});
 		}
 	},

@@ -28,7 +28,7 @@ export default {
 	data() {
 		return {
             app,
-            nodes: app.api.collection(`nodes/${this.$parent.nodeId}/nodes`)
+            nodes: app.api.collection(`nodes/${this.$route.params.nodeId}/nodes`)
 		}
 	},
 

@@ -22,7 +22,7 @@
                     <footer>
                         <button class="phi-button" :disabled="!inscriptions.length">inscribir</button>
                         <button type="button" class="phi-button cancel" @click="isOpen = false; inscriptions = []">cancelar</button>
-                        <router-link class="import phi-media" :to="{name:'node-import', params:{nodeId: $parent.nodeId}}">
+                        <router-link class="import phi-media" :to="{name:'node-import', params:{nodeId: nodeId}}">
                             <i class="fa fa-upload phi-media-figure"></i>
                             <span class="phi-media-body">importar archivo</span>
                         </router-link>
@@ -76,7 +76,8 @@ export default {
     data() {
 		return {
 			app,
-            people: app.api.collection(`nodes/${this.$parent.nodeId}/people`),
+            nodeId: this.$route.params.nodeId,
+            people: app.api.collection(`nodes/${this.$route.params.nodeId}/people`),
             search: null,
             timer: null,
 
@@ -107,7 +108,7 @@ export default {
                 return;
             }
 
-            app.api.post(`nodes/${this.$parent.nodeId}/people`, this.inscriptions)
+            app.api.post(`nodes/${this.nodeId}/people`, this.inscriptions)
                 .then(addedPeople => {
                     this.isOpen       = false;
                     this.inscriptions = [];
@@ -116,13 +117,13 @@ export default {
         },
 
         addRole(person, role) {
-            app.api.put(`nodes/${this.$parent.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
-                .then(() => app.api.clear(`nodes/${this.$parent.nodeId}/people`));
+            app.api.put(`nodes/${this.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
+                .then(() => app.api.clear(`nodes/${this.nodeId}/people`));
         },
 
         removeRole(person, role) {
-            app.api.delete(`nodes/${this.$parent.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
-                .then(() => app.api.clear(`nodes/${this.$parent.nodeId}/people`));
+            app.api.delete(`nodes/${this.nodeId}/people/${person.id}/roles/${role.maleNoun.singular}`)
+                .then(() => app.api.clear(`nodes/${this.nodeId}/people`));
         },
 
         deleteInscription(person) {
@@ -130,9 +131,9 @@ export default {
                 return;
             }
 
-            app.api.delete(`nodes/${this.$parent.nodeId}/people/${person.id}`)
+            app.api.delete(`nodes/${this.nodeId}/people/${person.id}`)
                 .then(() => {
-                    app.api.clear(`nodes/${this.$parent.nodeId}/people`);
+                    app.api.clear(`nodes/${this.nodeId}/people`);
                     this.people.splice(person);
                 });
         }

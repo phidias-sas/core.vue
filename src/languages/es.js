@@ -12,6 +12,8 @@ export default {
 	'Language': 'Idioma',
 	'Settings': 'Configuración',
 	'Compose {type}': 'Redactar {type}',
+	'Groups': 'Grupos',
+	'Reply': 'Responder',
 
 	'Month': 'Mes',
 	'Day': 'Día',

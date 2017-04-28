@@ -1,18 +1,14 @@
 <template>
-	<div class="phi-page">
-		<div class="phi-page-cover">
-			<div class="phi-page-toolbar">
-				<button class="phi-button" @click="$parent.$el.left.toggle()">
-					<i class="fa fa-bars"></i>
-				</button>
-				<h1>{{ $t('Settings') }}</h1>
-			</div>
+	<phi-page :loading="app.api.isLoading">
+
+		<div slot="toolbar">
+			<button @click="$parent.$el.left.toggle()">
+				<i class="fa fa-bars"></i>
+			</button>
+			<h1>{{ $t('Settings') }}</h1>
 		</div>
 
-		<mu-linear-progress color="#1c89b8" v-show="app.api.isLoading" />
-
-		<div class="phi-page-contents" v-if="app.user">
-
+		<div v-if="app.user">
 			<section v-if="destinations.length">
 				<h2>{{ $t('Notifications') }}</h2>
 				<div class="phi-card">
@@ -43,7 +39,6 @@
 							</div>
 						</phi-drawer>
 					</div>
-
 				</div>
 			</section>
 
@@ -74,10 +69,8 @@
 					</div>
 				</div>
 			</section>
-
-
 		</div>
-	</div>
+	</phi-page>
 </template>
 
 <script>

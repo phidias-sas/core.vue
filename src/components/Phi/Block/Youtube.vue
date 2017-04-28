@@ -50,23 +50,23 @@ export default {
         }
     },
 
-    data () {
+    data() {
         return {
             initialUrl: null
         }
     },
 
-    mounted () {
+    mounted() {
         this.initialUrl = this.block.url;
     },
 
     methods: {
-        save () {
+        save() {
             this.$emit('change');
             this.$emit('reset');
         },
 
-        cancel () {
+        cancel() {
             this.block.url = this.initialUrl;
             if (!this.block.url) {
                 this.$emit("destroy");
@@ -77,7 +77,7 @@ export default {
     },
 
     computed: {
-        video: function () {
+        video: function() {
 
             var url = this.block.url;
             if (!url || !url.trim().length) {
