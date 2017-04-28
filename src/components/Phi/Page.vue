@@ -150,6 +150,7 @@ $phi-page-toolbar-height: 46px;
         -webkit-overflow-scrolling: touch;
 
         .ph-page-header {
+            overflow: hidden;
         }
 
         .ph-page-contents {
