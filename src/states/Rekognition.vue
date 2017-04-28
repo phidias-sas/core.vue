@@ -159,7 +159,12 @@ export default {
 		}
 	},
 
+	created () {
+		this.rekognition = null;
 
+		this.pictureTimer = null;
+		this.processing = false;	
+    }
 }
 </script>
 
