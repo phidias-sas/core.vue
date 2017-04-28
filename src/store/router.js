@@ -52,9 +52,7 @@ import Person from '../states/Person.vue';
 import AttendanceAdmin from '../states/Attendance/Admin.vue';
 import AttendanceCheckpoint from '../states/Attendance/Checkpoint.vue';
 
-
 // geolocation
-import GeoTargets from '../states/Geo/Targets.vue';
 import GeoTracker from '../states/Geo/Tracker.vue';
 import GeoFeed from '../states/Geo/Feed.vue';
 
@@ -66,7 +64,6 @@ import Leo from '../states/Leo.vue';
 import Reko from '../states/Rekognition.vue';
 import Sebas from '../states/Sebas.vue';
 import Felipe from '../states/Felipe.vue';
-
 
 // Billing (sebastian)
 import Billing from '../states/Billing/Billing.vue';
@@ -136,7 +133,6 @@ var router = new VueRouter({
                 { path: '/leo', component: Leo },
                 { path: '/reko', component: Reko },
                 { path: '/geofeed', component: GeoFeed },
-                { path: '/geotargets', component: GeoTargets },
                 
                 // billing (sebastian)
                 { path: '/billing/debits', component: BillingDebits},
