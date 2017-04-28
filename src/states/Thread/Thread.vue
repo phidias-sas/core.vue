@@ -140,7 +140,7 @@
                             </phi-person-relevance-picker>
                         </div>
 
-                        <textarea v-model="reply.description" @input="saveReply"></textarea>
+                        <textarea v-model="reply.description" @input="saveReply" id="reply-textarea"></textarea>
 
                         <!-- reply trail -->
                         <button class="post-trail-handle" @click="toggleTrail(reply)">···</button>
@@ -443,13 +443,14 @@ export default {
         openReply(post, toAll) {
 
             this.audience = [];
+            this.tpl.replyIsOpen = true;
 
             // Fetch a fresh draft
             app.api
                 .get(`/people/${app.user.id}/posts/drafts`, {
+                    create: 1,
                     type: "mensaje",
-                    replyTo: post.id,
-                    create: 1
+                    replyTo: post.id
                 })
                 .then(drafts => {
                     this.reply = drafts[0];
@@ -475,11 +476,10 @@ export default {
                     }
 
                     setTimeout(() => {
-                        this.posts.untag(this.posts.items, 'expanded'); // collapse all posts
-                        this.tpl.replyIsOpen = true;
-                        this.$el.querySelector('textarea').focus();
-                        this.scrollToBottom(400);
-                    }, 0);
+                        // this.posts.untag(this.posts.items, 'expanded'); // collapse all posts
+                        // this.scrollToBottom(200);
+                        document.getElementById('reply-textarea').focus();
+                    }, 310);
                 });
         },
 
