@@ -61,4 +61,8 @@ export default {
 	'Pending charges': 'Cobros pendientes',
 	'Recent payments': 'Pagos recientes',
 	'Payments to apply': 'Pagos por aplicar',
+
+	// Transport
+	'Transport': 'Transporte',
+	'Tracker': 'Rastreador'
 }
