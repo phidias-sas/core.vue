@@ -159,16 +159,7 @@ export default {
 		}
 	},
 
-	created () {
-		this.rekognition = new AWS.Rekognition({
-			region: "us-east-1",
-			accessKeyId: "AKIAI2RH6U2XUMFTS5DA",
-			secretAccessKey: "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"
-		});
 
-		this.pictureTimer = null;
-		this.processing = false;	
-    }
 }
 </script>
 
